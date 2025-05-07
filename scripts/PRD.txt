@@ -1,0 +1,1153 @@
+# Product Requirements Document: CanvaPet.com
+
+# Overview  
+CanvaPet.com is a web application that enables pet owners to create stunning, customized AI-generated portraits of their pets (cats and dogs initially). The primary goal is to provide a seamless experience for users to transform their pet photos into unique artistic renditions that can be used for digital memorabilia and physical merchandise through print-on-demand services.
+
+## Business Objectives
+* Create a user-friendly platform for generating high-quality pet portraits
+* Monetize through a pay-per-image or bundle model
+* Integrate with print-on-demand services to offer physical merchandise
+* Build a loyal customer base of pet owners who return for special occasions and gifts
+* Establish the platform as a go-to service for unique pet-themed gifts
+* Achieve 15% market share among pet portrait services within 18 months of launch
+* Maintain a 30% profit margin on all transactions after covering operational costs
+
+## Success Metrics
+* User acquisition and retention rates
+   * Target: 10,000 new users per month by month 6
+   * Target: 40% retention rate after first purchase (returning for additional portraits)
+* Conversion rate from free preview to paid portraits
+   * Target: 20% conversion from upload to purchase
+* Average revenue per user
+   * Target: $35 initial ARPU
+   * Target: $75 lifetime value within first year
+* Customer satisfaction (measured through ratings and reviews)
+   * Target: Maintain 4.5/5 star average rating
+   * Target: <5% refund rate
+* Social shares and referrals
+   * Target: 25% of users share their portraits on social media
+   * Target: 15% of new users come from referrals
+
+## Competitive Analysis and Differentiation
+Key Competitors:
+* ThePetPainting - Specializes in lifelike pet portraits with premium pricing
+* PetBooth - Offers fast generation with limited customization
+* PetPortrait AI - Focuses on artistic styles with moderate pricing
+* Scruffy.ai - Targets younger users with cartoon-style renditions
+* AIPetPhotos.com - Emphasizes photo-realistic outputs
+
+Competitive Advantages:
+* Superior customization options with more parameters than competitors
+* Unique "revision system" allowing users to refine results
+* Seamless integration with print-on-demand merchandise
+* Higher-quality upscaling for print-ready output
+* Focus on both gift-giving and personal use cases
+* User-friendly interface designed for non-technical users
+
+## Target Audience
+Primary User Persona: Pet-loving Gift Givers (35-55 years old)
+* Middle to upper-middle income bracket ($75,000+ annual household income)
+* Tech-savvy enough to use web applications but not necessarily technical experts
+* Emotional connection to their pets, considering them family members
+* Enjoy celebrating special occasions with unique, personalized gifts
+* Willing to spend on premium products that feature their beloved pets
+* Likely to share their creations on social media
+* Values quality and uniqueness over speed or lowest price
+* Makes 3-5 gift purchases online per month on average
+
+Secondary User Personas include:
+* Young Pet Influencers (25-34)
+* Senior Pet Enthusiasts (55+)
+* Pet-Related Businesses
+* Gift Shoppers
+
+# Core Features  
+## Pet Photo Upload and Processing
+* Feature: Secure upload system for pet photos (cats and dogs initially)
+* Requirements:
+   * Support for common image formats (JPG, PNG, HEIF, WEBP)
+   * Basic image validation (size, resolution, content)
+   * Initial AI detection to verify image contains a cat or dog
+   * Preview of uploaded image with crop/rotate tools
+   * Warning system for low-quality images with suggestions for improvement
+   * In-app photo capture option for mobile users
+   * Cloud storage of original images with appropriate security
+* Error Handling:
+   * Clear error messages for invalid file types or sizes
+   * Alternative upload methods if browser upload fails
+   * Guided resolution process for non-pet images
+   * Automatic enhancement options for low-quality uploads
+   * Fallback manual review process for edge cases
+
+## Customization Options
+* Feature: Comprehensive customization parameters
+* Requirements:
+   * Orientation selection (landscape or portrait)
+   * Background types (solid colors, patterns, thematic scenes)
+   * Art styles (realistic, cartoon, watercolor, oil painting, etc.)
+   * Accessories (hats, costumes, props)
+   * Themed overlays (holiday, seasonal, special occasions)
+   * Color palette options
+   * Text overlay capabilities
+   * Style intensity adjustment (subtle to dramatic)
+   * Lighting and mood settings
+   * Frame and border options
+   * Multi-pet composition (future feature)
+* User Guidance:
+   * Interactive tutorial for first-time users
+   * Style previews with sample pets
+   * Recommended combinations for optimal results
+   * Style descriptions and use cases
+   * Contextual help tooltips
+
+## AI Image Generation
+* Feature: High-quality AI portrait generation
+* Requirements:
+   * Integration with OpenAI's GPT Image 1 API
+   * Processing queue with status indicators
+   * Engaging "generation in progress" experience
+   * Blur preview of generated image pre-payment
+   * Storage of generated images in user account
+   * Detailed logging of generation parameters for reproducibility
+   * Background processing for optimal performance
+   * Queue management for high-traffic periods
+* Error Handling:
+   * Automatic retry mechanism for failed generations
+   * Graceful degradation options if primary AI service is unavailable
+   * Alert system for sustained failures
+   * User notification of delays during high-traffic periods
+   * Alternative generation options if initial attempt is unsatisfactory
+* Quality Assurance:
+   * Automated quality checks on generated images
+   * Pet similarity verification
+   * Resolution and clarity standards
+   * Flag system for potentially problematic generations
+
+## Image Upscaling and Optimization
+* Feature: High-resolution image processing for print quality
+* Requirements:
+   * Integration with Clarity-upscaler API
+   * Processing for various print dimensions
+   * Color profile management for digital vs. print outputs (if needed)
+   * Image metadata preservation
+   * Optimization for different merchandise types
+   * DPI adjustment based on intended use
+   * Progressive loading for web display
+* Technical Specifications:
+   * Minimum resolution: 2048x2048 pixels for standard portraits
+   * Print-quality resolution: 4096x4096 pixels or higher
+   * Color profile: sRGB for web, CMYK conversion for print (if needed)
+   * File format: PNG for transparent backgrounds, JPG for standard backgrounds
+
+## Purchase and Payment
+* Feature: Seamless transaction process
+* Requirements:
+   * Pay-per-image and bundle package options
+   * Secure payment processing
+   * Clear pricing display
+   * Order confirmation
+   * Receipt generation
+   * Multiple payment method support (credit/debit cards, PayPal, Apple Pay, Google Pay)
+   * Coupon and promotional code functionality
+   * Tax calculation based on user location
+   * Currency conversion for international users
+   * Subscription option for frequent users (future feature)
+* Security Measures:
+   * PCI DSS compliance
+   * Tokenization of payment information
+   * Fraud detection system
+   * Secure checkout process
+   * Transaction verification
+* Error Handling:
+   * Graceful recovery from payment failures
+   * Clear error messages for payment issues
+   * Alternative payment options if primary method fails
+   * Session preservation during payment issues
+
+## Image Revisions
+* Feature: Limited image regeneration with adjustments
+* Requirements:
+   * Up to 2 additional regenerations per purchased image
+   * Ability to adjust parameters between generations
+   * Comparison view of all generated versions
+   * Selection of final preferred version
+   * Revision history tracking
+   * Parameter adjustment recommendations based on feedback
+   * Time limit for claiming revisions (30 days from purchase)
+* Policy Details:
+   * Revisions must be initiated within 30 days of original purchase
+   * Unused revisions expire after 30 days
+   * Revisions are tied to the specific purchased image
+   * Revisions maintain the same pet photo but can adjust all other parameters
+
+## User Account and Gallery
+* Feature: Personal image library and account management
+* Requirements:
+   * User registration and authentication
+   * Saved image gallery
+   * Order history
+   * Download capabilities
+   * Sharing options
+   * Account settings management
+   * Password reset functionality
+   * Email preference settings
+   * Profile information management
+   * Social media account linking
+   * Pet profile management
+* Gallery Organization:
+   * Sorting options (date, pet, style, etc.)
+   * Filtering capabilities
+   * Favoriting mechanism
+   * Collection creation
+   * Batch operations (download, share)
+   * Search functionality
+* Account Security:
+   * Two-factor authentication option
+   * Login attempt monitoring
+   * Session management
+   * Secure password requirements
+   * Account recovery process
+
+## Print-on-Demand Integration
+* Feature: Merchandise creation from generated images
+* Requirements:
+   * Integration with Printify API
+   * Product selection interface (t-shirts, mugs, wall prints, etc.)
+   * Preview of merchandise with applied images
+   * Shipping options and cost calculation
+   * Order tracking
+   * Product variant selection (sizes, colors, materials)
+   * Shipping address management
+   * International shipping support
+   * Production time estimates
+   * Quality assurance process
+* Product Categories:
+   * Wall art (canvas, framed prints, posters)
+   * Apparel (t-shirts, hoodies, hats)
+   * Accessories (mugs, phone cases, tote bags)
+   * Home decor (pillows, blankets, shower curtains)
+   * Stationery (cards, notebooks)
+* Order Management:
+   * Order status tracking
+   * Shipping notifications
+   * Return and exchange processes
+   * Problem resolution workflows
+   * Reordering capabilities
+
+# User Experience  
+## User Personas
+Primary User Persona: Pet-loving Gift Givers (35-55 years old)
+* Middle to upper-middle income bracket ($75,000+ annual household income)
+* Tech-savvy enough to use web applications but not necessarily technical experts
+* Emotional connection to their pets, considering them family members
+* Enjoy celebrating special occasions with unique, personalized gifts
+* Willing to spend on premium products that feature their beloved pets
+* Likely to share their creations on social media
+* Values quality and uniqueness over speed or lowest price
+* Makes 3-5 gift purchases online per month on average
+
+Secondary User Personas:
+* Young Pet Influencers (25-34)
+  * Active on social media platforms
+  * Looking for unique content featuring their pets
+  * More price-sensitive than the primary persona
+  * Values speed and variety of styles
+  * Interested in digital outputs more than physical merchandise
+* Senior Pet Enthusiasts (55+)
+  * Less tech-savvy but willing to learn for meaningful results
+  * Higher disposable income
+  * Value quality and customer service
+  * Prefer physical merchandise over digital outputs
+  * Less likely to share on social media
+  * May require additional guidance in the process
+* Pet-Related Businesses
+  * Pet groomers, veterinarians, pet stores
+  * Seeking custom marketing materials featuring pets
+  * Higher volume of purchases
+  * May want white-label or custom branding options
+  * Value consistency and professional appearance
+* Gift Shoppers
+  * Looking for unique presents for pet-loving friends and family
+  * May not own pets themselves
+  * Value ease of use and gift presentation
+  * Seasonal shopping patterns (holidays, birthdays)
+  * May upload photos taken by others
+
+## User Needs and Pain Points
+* Desire for unique and personalized pet memorabilia
+   * Solution: Offer extensive customization options
+* Frustration with generic pet merchandise
+   * Solution: AI-generated portraits that capture each pet's unique characteristics
+* Need for fast turnaround for occasion-based gifts
+   * Solution: Optimize processing time and provide estimated delivery dates
+* Concern about quality and likeness in artistic renditions
+   * Solution: Revision system and quality guarantee
+* Uncertainty about how to create quality merchandise from digital images
+   * Solution: Seamless integration with print-on-demand services
+* Difficulty obtaining good photos of pets
+   * Solution: Provide guidance on taking good pet photos
+* Hesitation about paying before seeing results
+   * Solution: Preview system with refund policy
+
+## Key User Flows
+1. New User Flow
+   * Landing page → Upload pet photo → Customize → Preview → Purchase → View final image → Account creation
+2. Returning User Flow
+   * Login → Gallery → Select past image or create new → Customize → Preview → Purchase → View final image
+3. Merchandise Flow
+   * Gallery → Select image → Choose merchandise type → Customize product → Purchase → Order tracking
+4. Revision Flow
+   * Gallery → Select purchased image → Request revision → Adjust parameters → Generate new version → Compare versions → Select final version
+5. Error Recovery Flow
+   * Error encountered → Error explanation → Suggested resolution → Support contact option → Resume process after resolution
+6. Onboarding Flow
+   * First visit → Guided tour option → Key feature highlights → Sample gallery → Promotion for first-time users → Begin upload process
+
+## UI/UX Considerations
+### Overall Aesthetic
+* Clean, modern interface with focus on showcasing pet images
+* Playful but sophisticated color palette
+  * Primary: #4A7CFF (Blue)
+  * Secondary: #FF7D54 (Coral)
+  * Accent: #FFD166 (Yellow)
+  * Neutral: #F9F9F9, #EEEEEE, #666666
+* Emphasis on visual elements over text
+* Responsive design that works well on all devices
+* Consistent spacing and grid system
+* Accessibility-focused color contrast
+* Typography:
+  * Headings: Montserrat (sans-serif)
+  * Body: Open Sans (sans-serif)
+  * Accent: Caveat (handwritten style for personal touch)
+
+### Design System
+* Consistent component library
+* Buttons (primary, secondary, tertiary)
+* Form elements (inputs, dropdowns, toggles)
+* Cards and containers
+* Navigation elements
+* Modal dialogs
+* Loaders and progress indicators
+* Iconography:
+  * Consistent icon set (Phosphor Icons or similar)
+  * Custom pet-themed icons for special elements
+* Animation guidelines:
+  * Subtle, purposeful animations
+  * Loading state animations
+  * Transition effects
+  * Feedback animations
+* Component Library: shadcn/ui
+* - Utilize shadcn/ui for all UI components to ensure consistency and modern aesthetics
+* - Subtle shadows (4px–6px blur, low opacity) for depth
+* - Generous padding (16px–24px) for interactive elements
+* - Large rounded corners (2xl / 16px) for cards, buttons, inputs
+
+### Key Screens
+1. Homepage/Landing Page
+   * Value proposition (hero section with sample portraits)
+   * Sample pet portraits in various styles (carousel)
+   * Quick start process (3-step visualization)
+   * Testimonials and gallery
+   * Pricing information summary
+   * FAQ section
+   * Trust indicators (security badges, review ratings)
+2. Upload and Customize Page
+   * Step-by-step interface with progress indicator
+   * Image upload area with drag-and-drop functionality
+   * Mobile camera access button
+   * Upload guidelines and tips
+   * Real-time image preview
+   * Cropping and adjustment tools
+   * Pet detection confirmation
+   * Customization parameters organized in intuitive categories
+   * Real-time indicators of selection
+   * Style preview thumbnails
+   * Parameter preset options
+3. Processing Screen
+   * Engaging loading animation featuring pet-themed elements
+   * Progress indicators with percentage or stage information
+   * Estimated time remaining
+   * Pet facts or tips to keep users entertained
+   * Option to receive email notification when complete
+   * Cancel button with appropriate warning
+4. Preview and Purchase Page
+   * Blurred preview of generated image
+   * Clear visual indication of preview vs. final quality
+   * Before/after comparison with original photo
+   * Customization summary
+   * Clear pricing information
+   * Purchase options (single image, bundle)
+   * Security indicators
+   * Money-back guarantee information
+   * Testimonials from satisfied customers
+5. Image Gallery/Personal Area
+   * Grid view of past creations with filtering options
+   * List/grid view toggle
+   * Sorting options (date, pet, style)
+   * Quick actions (download, share, order merchandise)
+   * Pet profiles section
+   * Account settings section
+   * Order history
+   * Help and support access
+   * Revision status indicators
+6. Merchandise Selection
+   * Product categories with visual navigation
+   * Featured/recommended products
+   * Product details with specifications
+   * Preview of portrait applied to merchandise
+   * 3D visualization where applicable
+   * Sizing and options selection
+   * Price calculation
+   * Add to cart functionality
+   * Related product suggestions
+
+### Mobile-Specific Considerations
+* Touch-friendly interface elements
+* Minimum tap target size: 44×44 pixels
+* Appropriate spacing between interactive elements
+* Native input utilization (camera, gallery)
+* Bottom navigation for easier thumb access
+* Expandable/collapsible sections to optimize screen space
+* Orientation detection and optimization
+* Reduced animation for better performance
+* Offline mode for viewing purchased portraits
+
+### Accessibility Considerations
+* WCAG 2.1 AA compliance
+* Keyboard navigation support
+* Logical tab order
+* Visible focus states
+* Keyboard shortcuts for common actions
+* Screen reader compatibility
+* Proper ARIA attributes
+* Semantic HTML structure
+* Meaningful alt text for images
+* Color contrast for readability
+* Minimum contrast ratio: 4.5:1 for normal text
+* Minimum contrast ratio: 3:1 for large text
+* Alternative text for all images
+* Form error handling and clear instructions
+* Motion reduction option for animations
+* Text resizing support without breaking layouts
+* Support for browser zoom up to 200%
+
+## Mobile-First Design Approach
+* Design mobile-first: build for smallest screens first, then progressively enhance for tablet and desktop
+* Optimize one-handed thumb reach for key actions on mobile
+* Ensure responsive breakpoints adapt seamlessly between mobile and desktop
+
+## Microinteractions and UX Refinements
+* Subtle animations for hover, active, and loading states
+* Springy drag-and-drop and button press animations
+* Haptic feedback on mobile for successful actions
+* Confetti or celebratory effects after key milestones (e.g., first purchase)
+* Skeleton loading states in place of spinners for content loading
+
+## Usability Principles
+* Clear visual hierarchy: primary, secondary, tertiary actions
+* Minimum touch target size: 44×44 pixels
+* Progressive disclosure: reveal complexity only when needed
+* Smart defaults to reduce decision fatigue
+* Informative empty states guiding users to next steps
+
+# Technical Architecture  
+## Frontend
+* Framework: Next.js (React-based framework)
+* State Management: React Context API or Redux
+* Styling: Tailwind CSS or styled-components
+* Form Handling: React Hook Form
+* Image Manipulation: react-image-crop
+* Animation: Framer Motion
+* Component Library: shadcn/ui (replacing Headless UI/Chakra UI)
+* Testing: Jest, React Testing Library
+* Analytics: Google Analytics, PostHog
+
+## Backend
+Backend Services: Supabase Platform
+* Authentication: Supabase Auth (replaces Auth.js)
+* Database: Supabase PostgreSQL (managed service)
+* File Storage: Supabase Storage (replaces AWS S3)
+* Serverless Functions: Supabase Edge Functions (optional)
+* Real Time subscriptions: Supabase Realtime
+* API: Auto-generated RESTful and GraphQL APIs
+
+## Database
+Database: Supabase PostgreSQL (managed service)
+* Fully managed PostgreSQL database
+* No server setup or maintenance required
+* Built-in Row Level Security for data protection
+* Database migrations through Supabase UI or SQL editor
+* Automatic API generation based on database schema
+* Foreign key relationships preserved as in original data model
+
+## External APIs
+* AI Image Generation: OpenAI GPT Image 1
+   * Account management
+   * API key rotation
+   * Rate limit monitoring
+   * Cost tracking
+   * Fallback providers for redundancy
+* Image Upscaling: Clarity-upscaler (via Replicate)
+   * Quality monitoring
+   * Alternative upscaling options for redundancy
+* Payment Processing: Stripe
+   * Support for multiple payment methods
+   * Subscription management
+   * Secure payment handling
+   * Webhook integration for event handling
+* Print-on-Demand: Printify
+   * Product catalog synchronization
+   * Order management
+   * Shipping integration
+   * Inventory monitoring
+
+## Deployment
+Supabase Project: Managed cloud deployment of database, auth, and storage
+Frontend Hosting: Vercel (optimized for Next.js)
+* One-click deployment from GitHub
+* Preview deployments for testing
+* Environment variable management
+CI/CD: GitHub Actions (simplified workflow)
+* Automated testing before deployment
+* Direct integration with Vercel deployments
+Monitoring: Sentry for error tracking
+   * Real-time error reporting
+   * Performance monitoring
+   * User impact assessment
+   * Issue prioritization
+Infrastructure as Code: Terraform (if needed)
+   * Environment consistency
+   * Resource management
+   * Documentation through code
+
+## Scalability and Performance
+* CDN Integration: Cloudflare
+   * Global content delivery
+   * DDoS protection
+   * Cache optimization
+* Load Balancing: Automated scaling based on traffic
+   * Traffic distribution
+   * Instance health monitoring
+   * Geographic routing
+* Database Scaling:
+   * Read replicas for heavy read operations
+   * Connection pooling
+   * Query optimization
+   * Regular performance audits
+* Caching Strategy:
+   * Browser caching
+   * CDN caching
+   * API response caching
+   * Database query caching
+* Performance Monitoring:
+   * Real-time metrics
+   * Performance budgets
+   * Automated alerts
+   * Regular optimization reviews
+
+## Browser and Device Compatibility
+* Desktop Browsers:
+   * Chrome (last 2 versions)
+   * Firefox (last 2 versions)
+   * Safari (last 2 versions)
+   * Edge (last 2 versions)
+* Mobile Browsers:
+   * iOS Safari (last 2 versions)
+   * Android Chrome (last 2 versions)
+* Responsive Design Breakpoints (to be defined)
+* Progressive Enhancement:
+   * Core functionality works without JavaScript
+   * Enhanced experience with modern browser features
+   * Fallbacks for older browsers where appropriate
+
+## Data Model
+### Core Entities
+* User
+   * id: UUID (primary key)
+   * email: String (unique)
+   * passwordHash: String
+   * name: String
+   * createdAt: DateTime
+   * updatedAt: DateTime
+   * lastLoginAt: DateTime
+   * isEmailVerified: Boolean
+   * marketingPreference: Boolean
+   * accountStatus: Enum (ACTIVE, SUSPENDED, DELETED)
+   * referralCode: String
+   * referredBy: UUID (foreign key, optional)
+* Pet
+   * id: UUID (primary key)
+   * userId: UUID (foreign key)
+   * name: String
+   * type: Enum (DOG, CAT)
+   * breed: String (optional)
+   * ageYears: Integer (optional)
+   * originalImageUrl: String
+   * additionalImageUrls: Array<String>
+   * createdAt: DateTime
+   * updatedAt: DateTime
+   * isActive: Boolean
+* Portrait
+   * id: UUID (primary key)
+   * petId: UUID (foreign key)
+   * userId: UUID (foreign key)
+   * status: Enum (PROCESSING, PREVIEW, COMPLETED, FAILED)
+   * previewUrl: String
+   * fullResolutionUrl: String
+   * parameters: JSON (stores all customization options)
+   * isPurchased: Boolean
+   * revisionCount: Integer
+   * revisionsRemaining: Integer
+   * revisionsExpiry: DateTime
+   * aiGenerationId: String
+   * processingError: String (optional)
+   * createdAt: DateTime
+   * updatedAt: DateTime
+   * isActive: Boolean
+* Order
+   * id: UUID (primary key)
+   * userId: UUID (foreign key)
+   * portraitIds: Array<UUID>
+   * amount: Decimal
+   * currency: String
+   * paymentIntentId: String
+   * status: Enum (PENDING, COMPLETED, FAILED, REFUNDED)
+   * discountCode: String (optional)
+   * discountAmount: Decimal
+   * taxAmount: Decimal
+   * createdAt: DateTime
+   * updatedAt: DateTime
+   * refundReason: String (optional)
+* Merchandise
+   * id: UUID (primary key)
+   * orderId: UUID (foreign key)
+   * portraitId: UUID (foreign key)
+   * productType: String
+   * productVariant: String
+   * quantity: Integer
+   * unitPrice: Decimal
+   * totalPrice: Decimal
+   * printifyProductId: String
+   * printifyOrderId: String
+   * status: Enum (PENDING, PROCESSING, SHIPPED, DELIVERED, RETURNED)
+   * trackingNumber: String
+   * estimatedDeliveryDate: DateTime
+   * createdAt: DateTime
+   * updatedAt: DateTime
+* UserSession
+   * id: UUID (primary key)
+   * userId: UUID (foreign key)
+   * token: String
+   * deviceInfo: JSON
+   * ipAddress: String
+   * createdAt: DateTime
+   * expiresAt: DateTime
+   * isActive: Boolean
+* Feedback
+   * id: UUID (primary key)
+   * userId: UUID (foreign key, optional)
+   * portraitId: UUID (foreign key, optional)
+   * rating: Integer (1-5)
+   * comment: Text
+   * category: Enum (PORTRAIT_QUALITY, WEBSITE_USABILITY, CUSTOMER_SERVICE, MERCHANDISE_QUALITY)
+   * createdAt: DateTime
+   * isPublic: Boolean
+   * status: Enum (NEW, REVIEWED, RESPONDED)
+
+### Relationships
+* One User can have many Pets
+* One Pet can have many Portraits
+* One User can have many Orders
+* One Order can contain many Portraits
+* One Portrait can be used for many Merchandise items
+* One User can have many UserSessions
+* One User can provide many Feedback entries
+* One Portrait can have many Feedback entries
+* One User can refer many other Users
+
+### Security Considerations
+* User Data Protection:
+   * Secure user authentication with email verification
+   * Multi-factor authentication option
+   * Strong password requirements
+   * Account lockout after failed attempts
+   * Password hashing and salting using bcrypt
+   * Minimum work factor: 10
+   * Regular security audits
+   * HTTPS for all communications
+   * TLS 1.3 or higher
+   * Secure cookie attributes
+   * HTTP Strict Transport Security (HSTS)
+   * Input validation and sanitization
+   * Content Security Policy
+   * Cross-Site Scripting (XSS) protection
+
+* Payment Security:
+   * PCI DSS compliance through Stripe integration
+   * No storage of credit card details on servers
+   * Tokenization of payment information
+   * Regular security scanning
+   * Secure checkout process
+   * 3D Secure support
+   * Fraud detection mechanisms
+   * Transaction logging and auditing
+
+* Image and Content Security:
+   * Watermarking of preview images
+   * Secure storage of original and generated images
+   * Content moderation for uploaded images
+   * Copyright respect and DMCA compliance process
+
+* API Security:
+   * API rate limiting
+   * Authentication for all API requests
+   * API key management
+   * Least privilege principle
+   * Regular security audits
+
+* Compliance and Regulations:
+   * GDPR Compliance
+   * CCPA/CPRA Compliance
+   * ADA Compliance
+   * Data Protection Impact Assessment
+   * Intellectual Property Management
+
+## Data Retention and Privacy
+* **User data** retained for account lifetime **plus 90 days** after account deletion request (for billing & fraud audits)
+* **Original pet images** retained for account lifetime (to enable re-downloads and revisions)
+* **Generated images** retained for account lifetime (user may delete at any time)
+* **Order data** retained for **7 years** to satisfy financial-compliance regulations
+* **Inactive accounts** (no login for >12 months) archived; data purged after additional 12 months unless required for legal reasons
+* **Data export** endpoint provided for GDPR "Right to Access"
+* **Data deletion** workflow (GDPR/CCPA) completes within 30 days of verified request
+* **Analytics data** anonymised and retained indefinitely for product insights
+* Regular **Privacy Impact Assessments** and documented data-flow diagrams maintained
+
+# Development Roadmap  
+## Phase 1: MVP
+* Objectives:
+   * Launch a functional product with core features
+   * Begin collecting user feedback
+   * Establish technical foundation
+* Features:
+   * Basic user authentication
+   * Pet photo upload and validation
+   * Limited customization options (5–7 styles, basic backgrounds)
+   * Integration with OpenAI GPT Image 1
+   * Payment processing
+   * Basic user gallery
+   * Core responsive UI
+   * Static merchandise mock-ups with "Coming Soon" placeholders (no live Print-on-Demand integration)
+* Success Criteria:
+   * Functional end-to-end user journey
+   * < 3 second response time for critical operations
+   * 95% uptime
+   * Successful generation of portraits
+   * Secure payment processing
+
+## Phase 2: Enhanced Features
+* Objectives:
+   * Improve user experience
+   * Increase conversion rate
+   * Expand customization options
+* Features:
+   * Expanded customization options
+   * Image revision functionality
+   * Upscaling integration
+   * Improved gallery and account management
+   * Social sharing capabilities
+   * Performance optimizations
+   * Enhanced error handling
+* Success Criteria:
+   * 20% increase in conversion rate
+   * 15% increase in average order value
+   * 25% increase in social shares
+   * Reduced error rates by 50%
+
+## Phase 3: Merchandise Integration
+* Objectives:
+   * Create additional revenue stream
+   * Increase lifetime value
+   * Expand product offering
+* Features:
+   * Printify API integration
+   * Merchandise preview functionality
+   * Order management and tracking
+   * Additional product types
+   * Shipping calculation and optimization
+   * Merchandise recommendation engine
+* Success Criteria:
+   * 30% of portrait purchasers also buy merchandise
+   * Average merchandise order value of $40+
+   * 90% fulfillment success rate
+   * Customer satisfaction rating of 4.5/5 for merchandise
+
+## Phase 4: Growth and Optimization
+* Objectives:
+   * Scale the platform
+   * Optimize conversion and retention
+   * Expand market reach
+* Features:
+   * Analytics implementation
+   * A/B testing framework
+   * Performance optimization
+   * Search engine optimization
+   * Additional pet types support
+   * Referral and loyalty programs
+   * Internationalization
+* Success Criteria:
+   * 50% increase in organic traffic
+   * 25% improvement in key conversion metrics
+   * 40% of new users from referrals
+   * Support for 5+ additional languages
+
+## Resource Requirements
+* Infrastructure:
+   * Development, staging, and production environments
+   * CI/CD pipeline
+   * Monitoring and alerting system
+   * Backup and disaster recovery
+* External Services:
+   * OpenAI API subscription
+   * Replicate API subscription
+   * Stripe account
+   * Printify integration
+   * AWS or similar cloud services
+   * Analytics tools
+* Content Creation:
+   * Copywriting for website and marketing
+   * Sample pet portraits for demonstration
+   * Tutorial and help content
+   * Marketing materials
+
+# Logical Dependency Chain  
+## Foundation (Must Be Built First)
+1. Core Technical Infrastructure
+   * Supabase setup (authentication, database, storage)
+   * Next.js frontend scaffold
+   * CI/CD pipeline
+   * Development environments
+
+2. User Authentication and Accounts
+   * Registration and login
+   * Basic profile management
+   * Session handling
+   * Password reset functionality
+
+3. Pet Photo Upload and Management
+   * Image upload components
+   * Basic image validation
+   * Pet detection functionality
+   * Image storage in Supabase
+
+## Minimum Viable Product
+4. Basic Customization Interface
+   * Limited style options
+   * Simple parameter controls
+   * Preview system
+
+5. AI Portrait Generation
+   * OpenAI integration
+   * Image processing queue
+   * Generation status tracking
+   * Error handling
+
+6. Preview and Purchase Flow
+   * Blurred preview implementation
+   * Basic payment integration
+   * Order processing
+   * Download capabilities
+
+7. User Gallery
+   * Basic image listing
+   * Download options
+   * Order history view
+   * Simple sharing features
+
+## Enhancements (After Core Functionality)
+8. Advanced Customization Options
+   * Expanded style library
+   * Parameter presets
+   * Advanced controls
+   * Multi-pet support (future)
+
+9. Revision System
+   * Parameter adjustment interface
+   * Comparison view
+   * Version history
+   * Final selection mechanism
+
+10. Upscaling System
+    * Clarity-upscaler integration
+    * Resolution optimization
+    * Print preparation
+
+11. Merchandise Integration
+    * Printify API connection
+    * Product catalog
+    * Merchandise preview
+    * Order management
+    * Shipping integration
+
+## Growth Features
+12. Analytics and Optimization
+    * User behavior tracking
+    * Conversion optimization
+    * Performance monitoring
+
+13. Social and Marketing Features
+    * Enhanced sharing capabilities
+    * Referral system
+    * User galleries
+    * Promotional tools
+
+14. International Expansion
+    * Localization
+    * Currency support
+    * Regional payment methods
+    * International shipping
+
+# Risks and Mitigations  
+## Technical Challenges
+* Challenge: Managing database schema evolution with limited SQL knowledge
+  * Solution: Use AI assistants to generate migration scripts and Supabase UI for simple changes
+  * Mitigation Strategy: Create comprehensive entity relationship diagrams to guide AI-assisted schema development
+  * Fallback: Leverage Supabase support and community resources for complex schema issues
+
+* Challenge: Maintaining pet likeness in AI-generated images
+  * Solution: Use OpenAI API evals, implement quality checks, offer revision options
+  * Mitigation Strategy: Develop a quality scoring system to evaluate generated images, with human review for edge cases
+  * Fallback: Offer manual touchup for portraits that fail to meet quality standards
+
+* Challenge: Processing large images efficiently
+  * Solution: Implement client-side image compression before upload, use cloud functions for processing
+  * Mitigation Strategy: Progressive optimization based on usage patterns
+  * Fallback: Queue system for handling high loads with prioritization
+
+* Challenge: Seamless integration with print-on-demand services
+  * Solution: Build a robust API middleware layer, implement thorough error handling and fallbacks
+  * Mitigation Strategy: Regular synchronization and validation of product data
+  * Fallback: Manual order processing option for failed automated orders
+
+* Challenge: Scaling during high-demand periods
+  * Solution: Implement auto-scaling infrastructure, optimize database queries, implement caching
+  * Mitigation Strategy: Load testing and performance optimization before known high-traffic periods
+  * Fallback: Queue system with transparent user communication during extreme peaks
+
+* Challenge: API rate limits and costs
+  * Solution: Implement efficient batching and caching strategies, monitor usage trends
+  * Mitigation Strategy: Negotiate volume discounts, explore alternative providers
+  * Fallback: Tiered processing speeds based on system load
+
+## Business Challenges
+* Challenge: User hesitation to pay for AI-generated content
+  * Solution: Showcase high-quality examples, offer limited-time promotions, emphasize uniqueness
+  * Mitigation Strategy: Free first portrait with purchase of merchandise, money-back guarantee
+  * Fallback: Freemium model with basic styles free and premium styles paid
+
+* Challenge: Competition from other pet portrait services
+  * Solution: Focus on superior customization options, quality, and merchandise integration
+  * Mitigation Strategy: Continuous competitive analysis and feature differentiation
+  * Fallback: Price optimization and loyalty programs
+
+* Challenge: Seasonal demand fluctuations
+  * Solution: Implement seasonal marketing campaigns, special occasion promotions, and loyalty incentives
+  * Mitigation Strategy: Resource planning based on projected seasonal patterns
+  * Fallback: Dynamic pricing to balance demand
+
+* Challenge: Customer service scalability
+  * Solution: Comprehensive help center, chatbot integration, community forums
+  * Mitigation Strategy: Proactive communication about known issues
+  * Fallback: Temporary customer service team expansion during peak periods
+
+* Challenge: Evolving AI capabilities and costs
+  * Solution: Modular architecture allowing for easy provider switching
+  * Mitigation Strategy: Regular evaluation of alternative providers
+  * Fallback: Multi-tier offering with different quality/price points
+
+## Legal and Ethical Challenges
+* Challenge: Copyright concerns with AI-generated content
+  * Solution: Clear terms of service, rights management system
+  * Mitigation Strategy: Legal review of all policies and procedures
+  * Fallback: Content dispute resolution process
+
+* Challenge: Data privacy regulations
+  * Solution: Privacy-by-design architecture, comprehensive privacy policy
+  * Mitigation Strategy: Regular compliance audits
+  * Fallback: Regional data handling variations based on local laws
+
+* Challenge: AI bias in pet recognition and generation
+  * Solution: Diverse training data, regular bias audits
+  * Mitigation Strategy: User feedback collection on fairness issues
+  * Fallback: Manual review process for flagged outputs
+
+# Appendix  
+## Pricing Strategy
+### Recommended Pricing Model
+* Basic Portrait: $19.99 per image
+   * 1 high-quality portrait
+   * 5 basic styles
+   * 1 revision
+   * Digital download
+   * 30-day access to revision feature
+   * Basic social media sharing tools
+* Premium Portrait: $29.99 per image
+   * 1 high-quality portrait
+   * All available styles
+   * 2 revisions
+   * Digital download
+   * 60-day access to revision feature
+   * Enhanced social media sharing kit
+   * Priority processing
+* Bundle Package: $49.99
+   * 3 high-quality portraits
+   * All available styles
+   * 2 revisions per portrait
+   * Digital downloads
+   * 90-day access to revision feature
+   * Enhanced social media sharing kit
+   * 15% discount on merchandise
+   * Priority processing
+
+### Merchandise Pricing
+* T-shirts: $24.99 - $29.99
+* Mugs: $19.99
+* Wall Art: $29.99 - $99.99 (depending on size and material)
+* Other merchandise: Competitive market pricing + 30% margin
+* Shipping: Variable based on location and weight
+* Bundle discounts: 10% for 2 items, 15% for 3+ items
+* Seasonal pricing: 5-15% premium during holiday seasons
+
+### Special Promotions
+* First-time user discount: 20% off first portrait
+* Holiday season bundles: Themed portraits at package pricing
+* Referral program: 15% discount for both referrer and referee
+* Seasonal promotions aligned with pet holidays and occasions
+* Flash sales: Limited-time discounts on specific styles
+* Loyalty rewards: Points system for frequent purchasers
+* Win-back campaigns: Special offers for inactive users
+* Bundle offers: Portrait + merchandise packages
+
+## Marketing and User Acquisition
+### Key Marketing Channels
+* Social media promotion (Instagram, Facebook, TikTok)
+  * Strategy: Showcase before/after transformations
+  * Content types: User-generated content, pet portrait compilations
+  * Paid advertising: Targeted to pet owners
+* Pet influencer partnerships
+  * Strategy: Collaborate with pet accounts with 50k+ followers
+  * Compensation: Free portraits + revenue share
+  * Content requirements: Authentic showcasing of product
+* Content marketing (blog posts about pet photography, AI art)
+  * Topics: Pet photography tips, AI art trends, gift guides
+  * SEO strategy: Target long-tail keywords related to pet gifts
+  * Distribution: Social media, email newsletter, partnerships
+* Search engine optimization
+  * Target keywords: "pet portraits," "custom dog art," etc.
+  * Technical SEO: Site speed, mobile optimization, structured data
+  * Content strategy: Regular blog updates and user galleries
+* Email marketing campaigns
+  * Welcome series for new users
+  * Abandoned cart recovery
+  * Seasonal promotions
+  * Pet birthday reminders
+* Online pet communities and forums
+  * Non-promotional participation in pet communities
+  * Targeted ads on pet forums
+  * AMAs with product team
+
+### Retention Strategies
+* Email reminders for special occasions (pet birthdays, holidays)
+* Limited-time style offerings
+* Loyalty program with points for purchases
+* Gallery contests and featured user creations
+* Periodic discounts for returning customers
+
+## Analytics and Monitoring
+### Key Performance Indicators
+* Page load times
+  * Target: < 2 seconds for initial load
+  * Target: < 500ms for subsequent interactions
+* User flow completion rates
+  * Target: 70%+ completion of critical flows
+  * Tracking of drop-off points
+* Image generation success rate
+  * Target: 99% success rate
+  * Monitoring of failure patterns
+* Payment conversion rate
+  * Target: 90%+ of attempted payments complete successfully
+  * Analysis of abandonment reasons
+* User retention metrics
+  * Target: 40% of users return within 90 days
+  * Cohort analysis by acquisition source
+* Revenue per user
+  * Target: Initial ARPU of $35
+  * Target: LTV of $75+ within first year
+
+### Monitoring Tools
+* Application Monitoring: Sentry
+* Performance Monitoring: New Relic or Datadog
+* Log Management: Logtail or similar
+* User Analytics: Google Analytics or Amplitude
+* A/B Testing: Optimizely
+
+## Future Expansion Possibilities
+### Feature Expansion
+* Advanced customization options (scenes, multi-pet compositions)
+  * Implementation strategy: Roll out incrementally based on user feedback
+  * Timeline: Begin testing 3 months post-launch
+* Custom framing and premium printing options
+  * Implementation strategy: Partner with high-end printing services
+  * Timeline: Introduce 9 months post-launch
+
+### Business Expansion
+* White-label service for pet businesses
+  * Implementation strategy: Develop B2B offering with customization options
+  * Timeline: Begin development 18 months post-launch
+* API access for third-party integration
+  * Implementation strategy: Create developer portal and documentation
+  * Timeline: Consider after establishing stable user base
+* Physical retail partnerships
+  * Implementation strategy: Partner with pet stores for in-store kiosks
+  * Timeline: Pilot program 24 months post-launch
+* Gift card and promotional code system
+  * Implementation strategy: Integrate with existing payment system
+  * Timeline: Implement before first holiday season 
+
+# Technical Debt Management Plan
+* Document temporary mock implementations (e.g., merchandise placeholders)
+* Establish clear migration path from mock data to real services
+* Use feature flags for toggling incomplete features
+* Track known technical compromises for future refactor
+
+# Deployment Configuration
+* Containerize application with Docker for environment consistency
+* Configure CI/CD pipeline: lint, test, build, and deploy on push
+* Maintain staging environment mirroring production
+* Use blue-green deployments to minimize downtime
+* Automated database backups and rollback procedures
+
+# Quality Assurance Strategy
+* End-to-end testing with Cypress covering critical flows
+* Unit tests with Jest minimum 70% coverage
+* Visual regression testing for component snapshots
+* ErrorBoundary components to capture and report UI errors
+* Sentry integration for runtime error tracking and alerting
+* Performance budgets enforced via Lighthouse CI
+
+# Code Quality Standards
+* Enforce ESLint and Prettier with strict rules
+* Use Husky pre-commit hooks to run lint and tests
+* TypeScript strict mode enabled for full type safety
+* Document UI components in Storybook
+* Follow semantic versioning for releases
+* Peer code reviews mandatory for all pull requests 
+
+# Development Methodology: AI-Assisted "Vibe Coding"
+* **Natural-language first** – developers describe desired outcomes in plain English; AI agents generate boilerplate & scaffolding
+* **Cursor IDE** with integrated MCP server used for code generation, debugging and iterative prompts
+* **Task-Master AI** manages tasks, dependencies, and subtask expansion automatically
+* **AI pair-programming** embraced for migrations, schema changes, and test creation
+* Human developers focus on business logic, reviewing AI-generated code and enforcing code-quality standards
+* Continuous learning: implementation notes appended to Task-Master subtasks to improve future AI context
+* "Prompt PRs" – commit messages include the natural-language prompt that generated the code for full traceability 

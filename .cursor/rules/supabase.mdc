@@ -1,0 +1,164 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Supabase Development Best Practices
+
+## Authentication & Security
+
+- **Environment Variables**
+  - Store Supabase credentials in `.env.local`
+  - Never commit `.env.local` to version control
+  - Use TypeScript type assertions for environment variables
+  ```typescript
+  // ✅ DO: Type-check environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+  if (!supabaseUrl) throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
+  
+  // ❌ DON'T: Use unchecked environment variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  ```
+
+- **Client Creation**
+  - Use singleton pattern for Supabase client
+  - Create separate clients for different authentication contexts
+  ```typescript
+  // ✅ DO: Create singleton instance
+  export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  
+  // ✅ DO: Create admin client when needed
+  export const adminSupabase = createClient(supabaseUrl, serviceRoleKey);
+  ```
+
+## Row Level Security (RLS) Testing
+
+- **Service Role Approach (Development Only)**
+  - Store service role key in `.env.local` as `SUPABASE_SERVICE_KEY`
+  - Create a separate admin client that bypasses RLS
+  - Never use service role key in production frontend code
+  ```javascript
+  // ✅ DO: Create admin client for testing
+  const adminSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+  );
+  
+  // ❌ DON'T: Use service role in production frontend
+  export const supabase = createClient(url, serviceKey); // Security risk!
+  ```
+
+- **Authenticated User Testing**
+  - Test with actual user authentication
+  - Create test users for specific testing scenarios
+  - Ensure test data is owned by authenticated user
+  ```javascript
+  // ✅ DO: Test with authenticated user
+  const { data: authData } = await supabase.auth.signInWithPassword({
+    email: 'test@example.com',
+    password: 'testpassword123'
+  });
+  // Now use regular supabase client which will have authenticated context
+  ```
+
+- **Avoiding RLS Issues**
+  - Format service keys properly (as a single line without breaks)
+  - Check that auth.uid() is correctly used in RLS policies
+  - Cast UUID to text when needed in policies
+  ```sql
+  -- ✅ DO: Cast auth.uid() to text when comparing to string fields
+  CREATE POLICY "Users can view their files"
+  ON storage.objects
+  FOR SELECT
+  USING (auth.uid()::text = (storage.foldername(name))[1]);
+  
+  -- ❌ DON'T: Use uncasted auth.uid() with string operations
+  USING (auth.uid() = (storage.foldername(name))[1]); -- Type mismatch
+  ```
+
+## Database Schema & Queries
+
+- **Type Safety**
+  - Define TypeScript interfaces that match database schema
+  - Use generated types from Supabase for full type safety
+  - Specify return types for database queries
+  ```typescript
+  // ✅ DO: Use proper typing for queries
+  const { data } = await supabase
+    .from('profiles')
+    .select('*')
+    .returns<Profile[]>();
+  
+  // ❌ DON'T: Leave query results untyped
+  const { data } = await supabase.from('profiles').select('*');
+  ```
+
+- **Error Handling**
+  - Always check for errors in Supabase responses
+  - Provide user-friendly error messages
+  - Log detailed errors for debugging
+  ```typescript
+  // ✅ DO: Handle errors properly
+  const { data, error } = await supabase.from('profiles').select('*');
+  if (error) {
+    console.error('Database error:', error);
+    throw new Error('Failed to fetch profiles');
+  }
+  
+  // ❌ DON'T: Ignore potential errors
+  const { data } = await supabase.from('profiles').select('*');
+  ```
+
+## Storage
+
+- **File Organization**
+  - Use user ID in storage paths for proper RLS
+  - Create separate buckets for different file types
+  - Implement client-side validation before upload
+  ```typescript
+  // ✅ DO: Include user ID in path
+  const filePath = `${user.id}/${fileName}`;
+  await supabase.storage.from('pet-images').upload(filePath, file);
+  
+  // ❌ DON'T: Use paths without user context
+  await supabase.storage.from('pet-images').upload(fileName, file);
+  ```
+
+- **Storage RLS Policies**
+  - Grant permissions only to file owners
+  - Use storage.foldername() to extract path components
+  - Remember that RLS policies are defined per bucket
+  ```sql
+  -- ✅ DO: Restrict access to file owners
+  CREATE POLICY "Users can access their own files"
+  ON storage.objects
+  FOR ALL
+  USING (auth.uid()::text = (storage.foldername(name))[1]);
+  ```
+
+## Documentation
+
+- **Keep Supabase Config Updated**
+  - Document all tables, RLS policies, and storage buckets in `supabase-config.json`
+  - Update `MANUAL_SETUP.md` with detailed setup instructions
+  - Document any special security considerations
+
+## Test Scripts
+
+- **Create Verification Scripts**
+  - Implement scripts for testing Supabase connectivity
+  - Create helper scripts for setting up test data
+  - Document script usage in README or MANUAL_SETUP.md
+  ```javascript
+  // ✅ DO: Create verification scripts
+  // scripts/admin-test.js
+  const adminSupabase = require('./admin-client');
+  async function testAdminAccess() {
+    const { data } = await adminSupabase.from('profiles').select('*');
+    console.log('Bypassing RLS:', data);
+  }
+  ```
+
+---
+
+These best practices ensure consistent, secure, and maintainable Supabase integration throughout the CanvaPet project.

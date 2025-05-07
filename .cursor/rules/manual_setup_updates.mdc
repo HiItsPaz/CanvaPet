@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Update MANUAL_SETUP.md After Implementing Code Changes**
+  - When a task or subtask affects interface with Supabase or environment requirements, the manual setup document must be updated
+  - Review and update after each completed task that modifies database schema, authentication, or environment configuration
+  - Ensure any manual steps remain clear and accurate for team members or future developers
+
+- **Elements to Keep Updated:**
+  - **Database Schema Changes**
+    - When tables, columns, or relationships are modified in code, update corresponding setup instructions
+    - Ensure SQL definitions in documentation match actual implementation
+    - Example: If adding a `description` column to the `pets` table in code, add it to the table definition in MANUAL_SETUP.md
+
+  - **Environment Variables**
+    - Add any new environment variables to both `.env.local` and `.env.example` sections
+    - Include clear descriptions of what each variable is used for
+    - Example: 
+      ```
+      # New variable for AI service
+      NEXT_PUBLIC_AI_SERVICE_KEY=your-ai-service-key
+      ```
+
+  - **Supabase Configuration**
+    - Update RLS policies when access patterns change
+    - Document new storage buckets and their required policies
+    - Update auth provider settings when authentication options change
+
+  - **Verification Steps**
+    - Add any new verification steps needed to confirm proper setup
+    - Update testing procedures if they've changed during implementation
+
+- **Update Process:**
+  - After completing a task, compare your implementation with MANUAL_SETUP.md
+  - Make documentation changes in the same PR as code changes
+  - Add a checklist item to PR templates: "MANUAL_SETUP.md updated if needed"
+  - When updating:
+    - Maintain the same section structure
+    - Use clear, step-by-step instructions
+    - Include code examples where helpful
+    
+- **Review Completeness Periodically:**
+  - Schedule monthly reviews of MANUAL_SETUP.md for comprehensiveness
+  - Ensure onboarding a new developer would be possible using just the manual
+  - Test the setup process on a clean environment occasionally to verify accuracy

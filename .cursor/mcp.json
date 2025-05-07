@@ -1,0 +1,32 @@
+{
+    "mcpServers": {
+        "task-master-ai": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "--package=task-master-ai",
+                "task-master-ai"
+            ],
+            "env": {
+                "ANTHROPIC_API_KEY": "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",
+                "PERPLEXITY_API_KEY": "Ppplx-PDRL41ODfnA9IpgVp5OyxHXoKLurHkMZ6MpRbjqEBOuJMKwd",
+                "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
+                "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
+                "XAI_API_KEY": "XAI_API_KEY_HERE",
+                "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
+                "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
+                "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
+                "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
+            }
+        },
+        "supabase": {
+            "command": "npx",
+            "args": [
+              "-y",
+              "@supabase/mcp-server-supabase@latest",
+              "--access-token",
+              "sbp_352e7185147b4310e363f63b5cf621e530b51c81"
+            ]
+          }
+    }
+}

@@ -1,0 +1,39 @@
+---
+description: Universal clean‑code & workflow guidelines  
+globs:  
+alwaysApply: true
+---
+
+### ➊ Code‑style & readability
+- Follow the project’s formatter / linter; if none, default to:
+  - 2‑space indentation, 80‑120 col max line length, trailing newline.  
+  - Descriptive PascalCase for types/classes, camelCase for variables/functions.  
+- Prefer expressive names over comments; comments should **explain *why***, not *what*.  
+
+### ➋ Structural principles
+- One function ↔ one responsibility.  
+- Keep functions ≤ 40 lines; extract helpers when logic branches multiply.  
+- Favour composition and pure functions; avoid global mutable state.  
+
+### ➌ Efficiency without sacrificing clarity
+- Write for readability first; optimise only after a profiler reveals a bottleneck.  
+- When optimising, annotate **why** the change is needed and its big‑O impact.
+
+### ➍ Robustness & testing
+- Validate inputs at module boundaries; fail fast with clear error messages.  
+- Generate or update unit tests when you create/modify code; aim ≥ 70 % coverage.  
+
+### ➎ Documentation & DX
+- Auto‑generate docstrings / JSDoc / type hints as you code.  
+- Update README or in‑code usage examples when APIs change.  
+
+### ➏ Process with AI assistance
+- Before generating code, outline the approach in comments (“PLAN:” block).  
+- After generation, run the formatter & linter, then explain any deviations.  
+- If the user asks a question, answer briefly **before** showing code.
+
+### ➐ Review & refactor cadence
+- Suggest incremental refactors when complexity > 15 cyclomatic or file > 400 LOC.  
+- Surface TODO/FIXME comments to the user once per session.
+
+@CONTRIBUTING.md        # Include existing style‑guide if present

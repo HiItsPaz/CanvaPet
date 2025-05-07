@@ -1,0 +1,82 @@
+{
+  "project_id": "ksabvfdnmkkdzloxqdpk",
+  "tables": {
+    "profiles": {
+      "columns": [
+        {"name": "id", "type": "UUID", "constraints": "PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE"},
+        {"name": "updated_at", "type": "TIMESTAMPTZ"},
+        {"name": "username", "type": "TEXT", "constraints": "UNIQUE"},
+        {"name": "full_name", "type": "TEXT"},
+        {"name": "avatar_url", "type": "TEXT"}
+      ],
+      "constraints": [
+        {"name": "username_length", "definition": "CHECK (char_length(username) >= 3)"}
+      ],
+      "rls_enabled": true,
+      "policies": [
+        {"name": "Users can view their own profile", "operation": "SELECT", "using": "auth.uid() = id"},
+        {"name": "Users can update their own profile", "operation": "UPDATE", "using": "auth.uid() = id", "check": "auth.uid() = id"},
+        {"name": "Users can insert their own profile", "operation": "INSERT", "check": "auth.uid() = id"}
+      ]
+    },
+    "pets": {
+      "columns": [
+        {"name": "id", "type": "UUID", "constraints": "PRIMARY KEY DEFAULT uuid_generate_v4()"},
+        {"name": "created_at", "type": "TIMESTAMPTZ", "constraints": "DEFAULT now()"},
+        {"name": "name", "type": "TEXT", "constraints": "NOT NULL"},
+        {"name": "species", "type": "TEXT", "constraints": "NOT NULL"},
+        {"name": "breed", "type": "TEXT"},
+        {"name": "user_id", "type": "UUID", "constraints": "REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL"},
+        {"name": "image_path", "type": "TEXT"},
+        {"name": "portrait_path", "type": "TEXT"}
+      ],
+      "rls_enabled": true,
+      "policies": [
+        {"name": "Users can view their own pets", "operation": "SELECT", "using": "auth.uid() = user_id"},
+        {"name": "Users can create their own pets", "operation": "INSERT", "check": "auth.uid() = user_id"},
+        {"name": "Users can update their own pets", "operation": "UPDATE", "using": "auth.uid() = user_id", "check": "auth.uid() = user_id"},
+        {"name": "Users can delete their own pets", "operation": "DELETE", "using": "auth.uid() = user_id"}
+      ]
+    }
+  },
+  "storage": {
+    "buckets": [
+      {
+        "name": "pet-images",
+        "public": false,
+        "status": "configured",
+        "policies_status": "configured",
+        "policies": [
+          {"name": "Users can view their own pet images", "operation": "SELECT", "to": "authenticated", "using": "bucket_id = 'pet-images' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can upload their own pet images", "operation": "INSERT", "to": "authenticated", "check": "bucket_id = 'pet-images' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can update their own pet images", "operation": "UPDATE", "to": "authenticated", "using": "bucket_id = 'pet-images' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can delete their own pet images", "operation": "DELETE", "to": "authenticated", "using": "bucket_id = 'pet-images' AND auth.uid()::text = (storage.foldername(name))[1]"}
+        ]
+      },
+      {
+        "name": "pet-portraits",
+        "public": false,
+        "status": "configured",
+        "policies_status": "configured",
+        "policies": [
+          {"name": "Users can view their own pet portraits", "operation": "SELECT", "to": "authenticated", "using": "bucket_id = 'pet-portraits' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can upload their own pet portraits", "operation": "INSERT", "to": "authenticated", "check": "bucket_id = 'pet-portraits' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can update their own pet portraits", "operation": "UPDATE", "to": "authenticated", "using": "bucket_id = 'pet-portraits' AND auth.uid()::text = (storage.foldername(name))[1]"},
+          {"name": "Users can delete their own pet portraits", "operation": "DELETE", "to": "authenticated", "using": "bucket_id = 'pet-portraits' AND auth.uid()::text = (storage.foldername(name))[1]"}
+        ]
+      }
+    ]
+  },
+  "auth": {
+    "providers": {
+      "email": {
+        "enabled": true,
+        "confirmations_required": true,
+        "status": "configured"
+      }
+    },
+    "site_url": "http://localhost:3000",
+    "status": "configured"
+  },
+  "last_updated": "CURRENT_TIMESTAMP_ISO8601"
+} 

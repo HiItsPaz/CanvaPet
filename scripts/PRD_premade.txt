@@ -1,0 +1,1425 @@
+﻿Product Requirements Document: CanvaPet.com
+1. App Overview and Objectives
+1.1 Product Vision
+CanvaPet.com is a web application that enables pet owners to create stunning, customized AI-generated portraits of their pets (cats and dogs initially). The primary goal is to provide a seamless experience for users to transform their pet photos into unique artistic renditions that can be used for digital memorabilia and physical merchandise through print-on-demand services.
+1.2 Business Objectives
+* Create a user-friendly platform for generating high-quality pet portraits
+* Monetize through a pay-per-image or bundle model
+* Integrate with print-on-demand services to offer physical merchandise
+* Build a loyal customer base of pet owners who return for special occasions and gifts
+* Establish the platform as a go-to service for unique pet-themed gifts
+* Achieve 15% market share among pet portrait services within 18 months of launch
+* Maintain a 30% profit margin on all transactions after covering operational costs
+1.3 Success Metrics
+* User acquisition and retention rates
+   * Target: 10,000 new users per month by month 6
+   * Target: 40% retention rate after first purchase (returning for additional portraits)
+* Conversion rate from free preview to paid portraits
+   * Target: 20% conversion from upload to purchase
+* Average revenue per user
+   * Target: $35 initial ARPU
+   * Target: $75 lifetime value within first year
+* Customer satisfaction (measured through ratings and reviews)
+   * Target: Maintain 4.5/5 star average rating
+   * Target: <5% refund rate
+* Social shares and referrals
+   * Target: 25% of users share their portraits on social media
+   * Target: 15% of new users come from referrals
+1.4 Competitive Analysis and Differentiation
+Key Competitors
+* ThePetPainting - Specializes in lifelike pet portraits with premium pricing
+* PetBooth - Offers fast generation with limited customization
+* PetPortrait AI - Focuses on artistic styles with moderate pricing
+* Scruffy.ai - Targets younger users with cartoon-style renditions
+* AIPetPhotos.com - Emphasizes photo-realistic outputs
+Competitive Advantages
+* Superior customization options with more parameters than competitors
+* Unique "revision system" allowing users to refine results
+* Seamless integration with print-on-demand merchandise
+* Higher-quality upscaling for print-ready output
+* Focus on both gift-giving and personal use cases
+* User-friendly interface designed for non-technical users
+2. Target Audience
+2.1 Primary User Persona
+Based on market research of competitors in the space:
+Pet-loving Gift Givers (35-55 years old)
+* Middle to upper-middle income bracket ($75,000+ annual household income)
+* Tech-savvy enough to use web applications but not necessarily technical experts
+* Emotional connection to their pets, considering them family members
+* Enjoy celebrating special occasions with unique, personalized gifts
+* Willing to spend on premium products that feature their beloved pets
+* Likely to share their creations on social media
+* Values quality and uniqueness over speed or lowest price
+* Makes 3-5 gift purchases online per month on average
+2.2 Secondary User Personas
+Young Pet Influencers (25-34)
+* Active on social media platforms
+* Looking for unique content featuring their pets
+* More price-sensitive than the primary persona
+* Values speed and variety of styles
+* Interested in digital outputs more than physical merchandise
+Senior Pet Enthusiasts (55+)
+* Less tech-savvy but willing to learn for meaningful results
+* Higher disposable income
+* Value quality and customer service
+* Prefer physical merchandise over digital outputs
+* Less likely to share on social media
+* May require additional guidance in the process
+Pet-Related Businesses
+* Pet groomers, veterinarians, pet stores
+* Seeking custom marketing materials featuring pets
+* Higher volume of purchases
+* May want white-label or custom branding options
+* Value consistency and professional appearance
+Gift Shoppers
+* Looking for unique presents for pet-loving friends and family
+* May not own pets themselves
+* Value ease of use and gift presentation
+* Seasonal shopping patterns (holidays, birthdays)
+* May upload photos taken by others
+2.3 User Needs and Pain Points
+* Desire for unique and personalized pet memorabilia
+   * Solution: Offer extensive customization options
+* Frustration with generic pet merchandise
+   * Solution: AI-generated portraits that capture each pet's unique characteristics
+* Need for fast turnaround for occasion-based gifts
+   * Solution: Optimize processing time and provide estimated delivery dates
+* Concern about quality and likeness in artistic renditions
+   * Solution: Revision system and quality guarantee
+* Uncertainty about how to create quality merchandise from digital images
+   * Solution: Seamless integration with print-on-demand services
+* Difficulty obtaining good photos of pets
+   * Solution: Provide guidance on taking good pet photos
+* Hesitation about paying before seeing results
+   * Solution: Preview system with refund policy
+3. Core Features and Functionality
+3.1 Pet Photo Upload and Processing
+* Feature: Secure upload system for pet photos (cats and dogs initially)
+* Requirements:
+   * Support for common image formats (JPG, PNG, HEIF, WEBP)
+   * Basic image validation (size, resolution, content)
+   * Initial AI detection to verify image contains a cat or dog
+   * Preview of uploaded image with crop/rotate tools
+   * Warning system for low-quality images with suggestions for improvement
+   * In-app photo capture option for mobile users
+   * Cloud storage of original images with appropriate security
+* Error Handling:
+   * Clear error messages for invalid file types or sizes
+   * Alternative upload methods if browser upload fails
+   * Guided resolution process for non-pet images
+   * Automatic enhancement options for low-quality uploads
+   * Fallback manual review process for edge cases
+* Acceptance Criteria:
+   * Users can upload, preview, and adjust their pet photos within the interface
+   * System correctly identifies 95%+ of pet vs. non-pet images
+   * Low-quality images are flagged with specific improvement suggestions
+   * Users receive confirmation of successful upload within 3 seconds
+3.2 Customization Options
+* Feature: Comprehensive customization parameters
+* Requirements:
+   * Orientation selection (landscape or portrait)
+   * Background types (solid colors, patterns, thematic scenes)
+   * Art styles (realistic, cartoon, watercolor, oil painting, etc.)
+   * Accessories (hats, costumes, props)
+   * Themed overlays (holiday, seasonal, special occasions)
+   * Color palette options
+   * Text overlay capabilities
+   * Style intensity adjustment (subtle to dramatic)
+   * Lighting and mood settings
+   * Frame and border options
+   * Multi-pet composition (future feature)
+* User Guidance:
+   * Interactive tutorial for first-time users
+   * Style previews with sample pets
+   * Recommended combinations for optimal results
+   * Style descriptions and use cases
+   * Contextual help tooltips
+* Acceptance Criteria:
+   * Users can adjust all parameters through an intuitive interface with real-time preview indicators
+   * Style previews load within 1 second
+   * Settings can be saved as presets for future use
+   * Parameters can be reset to defaults with a single click
+3.3 AI Image Generation
+* Feature: High-quality AI portrait generation
+* Requirements:
+   * Integration with OpenAI's GPT Image 1 API
+   * Processing queue with status indicators
+   * Engaging "generation in progress" experience
+   * Blur preview of generated image pre-payment
+   * Storage of generated images in user account
+   * Detailed logging of generation parameters for reproducibility
+   * Background processing for optimal performance
+   * Queue management for high-traffic periods
+* Error Handling:
+   * Automatic retry mechanism for failed generations
+   * Graceful degradation options if primary AI service is unavailable
+   * Alert system for sustained failures
+   * User notification of delays during high-traffic periods
+   * Alternative generation options if initial attempt is unsatisfactory
+* Quality Assurance:
+   * Automated quality checks on generated images
+   * Pet similarity verification
+   * Resolution and clarity standards
+   * Flag system for potentially problematic generations
+* Acceptance Criteria:
+   * System successfully generates portraits that maintain pet likeness while applying selected customizations
+   * 90% of generations complete within 45 seconds
+   * 95% of users rate the likeness as "good" or "excellent"
+   * Failed generations are automatically retried without user intervention
+3.4 Image Upscaling and Optimization
+* Feature: High-resolution image processing for print quality
+* Requirements:
+   * Integration with Clarity-upscaler API
+   * Processing for various print dimensions
+   * [Make sure if needed prior to write any code] Color profile management for digital vs. print outputs
+   * Image metadata preservation
+   * Optimization for different merchandise types
+   * DPI adjustment based on intended use
+   * Progressive loading for web display
+* Technical Specifications:
+   * Minimum resolution: 2048x2048 pixels for standard portraits
+   * Print-quality resolution: 4096x4096 pixels or higher
+   * [Make sure if needed prior to write any code] Color profile: sRGB for web, CMYK conversion for print
+   * File format: PNG for transparent backgrounds, JPG for standard backgrounds
+* Acceptance Criteria:
+   * Generated images are suitable for high-quality printing on various merchandise
+   * Upscaled images maintain quality without artifacts
+   * Color accuracy is preserved across digital and print mediums
+   * Upscaling process completes within 30 seconds for standard images
+3.5 Purchase and Payment
+* Feature: Seamless transaction process
+* Requirements:
+   * Pay-per-image and bundle package options
+   * Secure payment processing
+   * Clear pricing display
+   * Order confirmation
+   * Receipt generation
+   * Multiple payment method support (credit/debit cards, PayPal, Apple Pay, Google Pay)
+   * Coupon and promotional code functionality
+   * Tax calculation based on user location
+   * Currency conversion for international users
+   * Subscription option for frequent users (future feature)
+* Security Measures:
+   * PCI DSS compliance
+   * Tokenization of payment information
+   * Fraud detection system
+   * Secure checkout process
+   * Transaction verification
+* Error Handling:
+   * Graceful recovery from payment failures
+   * Clear error messages for payment issues
+   * Alternative payment options if primary method fails
+   * Session preservation during payment issues
+* Acceptance Criteria:
+   * Users can complete purchases and immediately access their full-resolution images
+   * 98% of payment transactions complete without errors
+   * Average checkout time is less than 60 seconds
+   * Receipt is delivered to user email within 2 minutes of purchase
+3.6 Image Revisions
+* Feature: Limited image regeneration with adjustments
+* Requirements:
+   * Up to 2 additional regenerations per purchased image
+   * Ability to adjust parameters between generations
+   * Comparison view of all generated versions
+   * Selection of final preferred version
+   * Revision history tracking
+   * Parameter adjustment recommendations based on feedback
+   * Time limit for claiming revisions (30 days from purchase)
+* Policy Details:
+   * Revisions must be initiated within 30 days of original purchase
+   * Unused revisions expire after 30 days
+   * Revisions are tied to the specific purchased image
+   * Revisions maintain the same pet photo but can adjust all other parameters
+* Acceptance Criteria:
+   * Users can regenerate images with parameter adjustments and select their preferred version
+   * Revision history clearly shows differences between versions
+   * System accurately tracks remaining revisions per purchase
+   * Revision process takes no more than 60 seconds to initiate
+3.7 User Account and Gallery
+* Feature: Personal image library and account management
+* Requirements:
+   * User registration and authentication
+   * Saved image gallery
+   * Order history
+   * Download capabilities
+   * Sharing options
+   * Account settings management
+   * Password reset functionality
+   * Email preference settings
+   * Profile information management
+   * Social media account linking
+   * Pet profile management
+* Gallery Organization:
+   * Sorting options (date, pet, style, etc.)
+   * Filtering capabilities
+   * Favoriting mechanism
+   * Collection creation
+   * Batch operations (download, share)
+   * Search functionality
+* Account Security:
+   * Two-factor authentication option
+   * Login attempt monitoring
+   * Session management
+   * Secure password requirements
+   * Account recovery process
+* Acceptance Criteria:
+   * Users can access their past creations and manage their account details
+   * Gallery loads within 3 seconds for accounts with up to 100 images
+   * Account settings changes are applied immediately
+   * Downloads start within 2 seconds of request
+3.8 Print-on-Demand Integration
+* Feature: Merchandise creation from generated images
+* Requirements:
+   * Integration with Printify API
+   * Product selection interface (t-shirts, mugs, wall prints, etc.)
+   * Preview of merchandise with applied images
+   * Shipping options and cost calculation
+   * Order tracking
+   * Product variant selection (sizes, colors, materials)
+   * Shipping address management
+   * International shipping support
+   * Production time estimates
+   * Quality assurance process
+* Product Categories:
+   * Wall art (canvas, framed prints, posters)
+   * Apparel (t-shirts, hoodies, hats)
+   * Accessories (mugs, phone cases, tote bags)
+   * Home decor (pillows, blankets, shower curtains)
+   * Stationery (cards, notebooks)
+* Order Management:
+   * Order status tracking
+   * Shipping notifications
+   * Return and exchange processes
+   * Problem resolution workflows
+   * Reordering capabilities
+* Acceptance Criteria:
+   * Users can seamlessly order physical merchandise featuring their AI-generated pet portraits
+   * Product previews accurately represent final merchandise
+   * Shipping cost and time estimates are accurate within 10%
+   * Order information syncs with Printify within 5 minutes of checkout
+4. Technical Stack Recommendations
+4.1 Frontend
+* Framework: Next.js (React-based framework)
+   * Offers server-side rendering for SEO benefits
+   * Built-in API routes for backend functionality
+   * Excellent performance and user experience
+   * Strong ecosystem and community support
+* State Management: React Context API or Redux
+* Styling: Tailwind CSS or styled-components
+* Form Handling: React Hook Form
+* Image Manipulation: react-image-crop
+* Animation: Framer Motion
+* Component Library: Headless UI or Chakra UI
+* Testing: Jest, React Testing Library
+* Analytics: Google Analytics, PostHog
+4.2 Backend
+Backend Services: Supabase Platform
+* Authentication: Supabase Auth (replaces Auth.js)
+* Database: Supabase PostgreSQL (managed service)
+* File Storage: Supabase Storage (replaces AWS S3)
+* Serverless Functions: Supabase Edge Functions (optional)
+* Real Time subscriptions: Supabase Realtime
+* API: Auto-generated RESTful and GraphQL APIs
+4.3 Database
+Database: Supabase PostgreSQL (managed service)
+* Fully managed PostgreSQL database
+* No server setup or maintenance required
+* Built-in Row Level Security for data protection
+* Database migrations through Supabase UI or SQL editor
+* Automatic API generation based on database schema
+* Foreign key relationships preserved as in original data model
+4.4 External APIs
+* AI Image Generation: OpenAI GPT Image 1
+   * Account management
+   * API key rotation
+   * Rate limit monitoring
+   * Cost tracking
+   * Fallback providers for redundancy
+* Image Upscaling: Clarity-upscaler (via Replicate)
+   * Quality monitoring
+   * Alternative upscaling options for redundancy
+* Payment Processing: Stripe
+   * Support for multiple payment methods
+   * Subscription management
+   * Secure payment handling
+   * Webhook integration for event handling
+* Print-on-Demand: Printify
+   * Product catalog synchronization
+   * Order management
+   * Shipping integration
+   * Inventory monitoring
+4.5 Deployment
+Supabase Project: Managed cloud deployment of database, auth, and storage
+Frontend Hosting: Vercel (optimized for Next.js)
+* One-click deployment from GitHub
+* Preview deployments for testing
+* Environment variable management
+CI/CD: GitHub Actions (simplified workflow)
+* Automated testing before deployment
+* Direct integration with Vercel deployments
+Monitoring: Sentry for error tracking
+   * Real-time error reporting
+   * Performance monitoring
+   * User impact assessment
+   * Issue prioritization
+* [Make sure if needed before use] Infrastructure as Code: Terraform
+   * Environment consistency
+   * Resource management
+   * Documentation through code
+4.6 Scalability and Performance
+* CDN Integration: Cloudflare
+   * Global content delivery
+   * DDoS protection
+   * Cache optimization
+* Load Balancing: Automated scaling based on traffic
+   * Traffic distribution
+   * Instance health monitoring
+   * Geographic routing
+* Database Scaling:
+   * Read replicas for heavy read operations
+   * Connection pooling
+   * Query optimization
+   * Regular performance audits
+* Caching Strategy:
+   * Browser caching
+   * CDN caching
+   * API response caching
+   * Database query caching
+* Performance Monitoring:
+   * Real-time metrics
+   * Performance budgets
+   * Automated alerts
+   * Regular optimization reviews
+4.7 Browser and Device Compatibility
+* Desktop Browsers:
+   * Chrome (last 2 versions)
+   * Firefox (last 2 versions)
+   * Safari (last 2 versions)
+   * Edge (last 2 versions)
+* Mobile Browsers:
+   * iOS Safari (last 2 versions)
+   * Android Chrome (last 2 versions)
+* Responsive Design Breakpoints:
+* Progressive Enhancement:
+   * Core functionality works without JavaScript
+   * Enhanced experience with modern browser features
+   * Fallbacks for older browsers where appropriate
+4.8 Vibe Coding Implementation Approach
+* Development Methodology: AI-assisted "vibe coding" approach
+   * Using natural language prompts to generate code
+   * Leveraging Cursor IDE with MCP integration
+   * Focus on describing desired outcomes rather than implementation details
+* AI Tool Integration:
+   * Cursor IDE as primary development environment
+   * MCP for database and API interactions
+   * AI agents for code generation and debugging
+* Code Quality Management:
+   * AI-generated tests to validate functionality
+   * Regular code reviews using AI assistance
+   * Simplified error handling with AI-suggested fixe
+
+
+5. Conceptual Data Model
+5.1 Core Entities
+* User
+
+   * id: UUID (primary key)
+   * email: String (unique)
+   * passwordHash: String
+   * name: String
+   * createdAt: DateTime
+   * updatedAt: DateTime
+   * lastLoginAt: DateTime
+   * isEmailVerified: Boolean
+   * marketingPreference: Boolean
+   * accountStatus: Enum (ACTIVE, SUSPENDED, DELETED)
+   * referralCode: String
+   * referredBy: UUID (foreign key, optional)
+   * Pet
+
+      * id: UUID (primary key)
+      * userId: UUID (foreign key)
+      * name: String
+      * type: Enum (DOG, CAT)
+      * breed: String (optional)
+      * ageYears: Integer (optional)
+      * originalImageUrl: String
+      * additionalImageUrls: Array<String>
+      * createdAt: DateTime
+      * updatedAt: DateTime
+      * isActive: Boolean
+      * Portrait
+
+         * id: UUID (primary key)
+         * petId: UUID (foreign key)
+         * userId: UUID (foreign key)
+         * status: Enum (PROCESSING, PREVIEW, COMPLETED, FAILED)
+         * previewUrl: String
+         * fullResolutionUrl: String
+         * parameters: JSON (stores all customization options)
+         * isPurchased: Boolean
+         * revisionCount: Integer
+         * revisionsRemaining: Integer
+         * revisionsExpiry: DateTime
+         * aiGenerationId: String
+         * processingError: String (optional)
+         * createdAt: DateTime
+         * updatedAt: DateTime
+         * isActive: Boolean
+         * Order
+
+            * id: UUID (primary key)
+            * userId: UUID (foreign key)
+            * portraitIds: Array<UUID>
+            * amount: Decimal
+            * currency: String
+            * paymentIntentId: String
+            * status: Enum (PENDING, COMPLETED, FAILED, REFUNDED)
+            * discountCode: String (optional)
+            * discountAmount: Decimal
+            * taxAmount: Decimal
+            * createdAt: DateTime
+            * updatedAt: DateTime
+            * refundReason: String (optional)
+            * Merchandise
+
+               * id: UUID (primary key)
+               * orderId: UUID (foreign key)
+               * portraitId: UUID (foreign key)
+               * productType: String
+               * productVariant: String
+               * quantity: Integer
+               * unitPrice: Decimal
+               * totalPrice: Decimal
+               * printifyProductId: String
+               * printifyOrderId: String
+               * status: Enum (PENDING, PROCESSING, SHIPPED, DELIVERED, RETURNED)
+               * trackingNumber: String
+               * estimatedDeliveryDate: DateTime
+               * createdAt: DateTime
+               * updatedAt: DateTime
+               * UserSession
+
+                  * id: UUID (primary key)
+                  * userId: UUID (foreign key)
+                  * token: String
+                  * deviceInfo: JSON
+                  * ipAddress: String
+                  * createdAt: DateTime
+                  * expiresAt: DateTime
+                  * isActive: Boolean
+                  * Feedback
+
+                     * id: UUID (primary key)
+                     * userId: UUID (foreign key, optional)
+                     * portraitId: UUID (foreign key, optional)
+                     * rating: Integer (1-5)
+                     * comment: Text
+                     * category: Enum (PORTRAIT_QUALITY, WEBSITE_USABILITY, CUSTOMER_SERVICE, MERCHANDISE_QUALITY)
+                     * createdAt: DateTime
+                     * isPublic: Boolean
+                     * status: Enum (NEW, REVIEWED, RESPONDED)
+5.2 Relationships
+                     * One User can have many Pets
+                     * One Pet can have many Portraits
+                     * One User can have many Orders
+                     * One Order can contain many Portraits
+                     * One Portrait can be used for many Merchandise items
+                     * One User can have many UserSessions
+                     * One User can provide many Feedback entries
+                     * One Portrait can have many Feedback entries
+                     * One User can refer many other Users
+5.3 Data Integrity and Validation
+                     * Email validation with regex pattern
+                     * Password strength requirements
+                     * Required fields validation
+                     * Data type validation
+                     * Relationship integrity constraints
+                     * Soft deletion for data retention
+                     * Audit logging for critical operations
+                     * Input sanitization to prevent injection attacks
+5.4 Data Retention and Privacy
+                     * User data retained for account lifetime plus 90 days after deletion
+                     * Original pet images retained for account lifetime
+                     * Generated images retained for account lifetime
+                     * Order data retained for 7 years for financial compliance
+                     * Inactive account data archived after 1 year of inactivity
+                     * Data export functionality for GDPR compliance
+                     * Data deletion process for CCPA compliance
+                     * Anonymized analytics data retained indefinitely
+6. UI Design Principles
+6.1 Overall Aesthetic
+                     * Clean, modern interface with focus on showcasing pet images
+                     * Playful but sophisticated color palette
+                     * Primary: #4A7CFF (Blue)
+                     * Secondary: #FF7D54 (Coral)
+                     * Accent: #FFD166 (Yellow)
+                     * Neutral: #F9F9F9, #EEEEEE, #666666
+                     * Emphasis on visual elements over text
+                     * Responsive design that works well on all devices
+                     * Consistent spacing and grid system
+                     * Accessibility-focused color contrast
+                     * Typography:
+                     * Headings: Montserrat (sans-serif)
+                     * Body: Open Sans (sans-serif)
+                     * Accent: Caveat (handwritten style for personal touch)
+6.2 Design System
+                     * Consistent component library
+                     * Buttons (primary, secondary, tertiary)
+                     * Form elements (inputs, dropdowns, toggles)
+                     * Cards and containers
+                     * Navigation elements
+                     * Modal dialogs
+                     * Loaders and progress indicators
+                     * Iconography:
+                     * Consistent icon set (Phosphor Icons or similar)
+                     * Custom pet-themed icons for special elements
+                     * Animation guidelines:
+                     * Subtle, purposeful animations
+                     * Loading state animations
+                     * Transition effects
+                     * Feedback animations
+6.3 Key Screens
+                     1. Homepage/Landing Page
+
+                        * Value proposition (hero section with sample portraits)
+                        * Sample pet portraits in various styles (carousel)
+                        * Quick start process (3-step visualization)
+                        * Testimonials and gallery
+                        * Pricing information summary
+                        * FAQ section
+                        * Trust indicators (security badges, review ratings)
+                        2. Upload and Customize Page
+
+                           * Step-by-step interface with progress indicator
+                           * Image upload area with drag-and-drop functionality
+                           * Mobile camera access button
+                           * Upload guidelines and tips
+                           * Real-time image preview
+                           * Cropping and adjustment tools
+                           * Pet detection confirmation
+                           * Customization parameters organized in intuitive categories
+                           * Real-time indicators of selection
+                           * Style preview thumbnails
+                           * Parameter preset options
+                           3. Processing Screen
+
+                              * Engaging loading animation featuring pet-themed elements
+                              * Progress indicators with percentage or stage information
+                              * Estimated time remaining
+                              * Pet facts or tips to keep users entertained
+                              * Option to receive email notification when complete
+                              * Cancel button with appropriate warning
+                              4. Preview and Purchase Page
+
+                                 * Blurred preview of generated image
+                                 * Clear visual indication of preview vs. final quality
+                                 * Before/after comparison with original photo
+                                 * Customization summary
+                                 * Clear pricing information
+                                 * Purchase options (single image, bundle)
+                                 * Security indicators
+                                 * Money-back guarantee information
+                                 * Testimonials from satisfied customers
+                                 5. Image Gallery/Personal Area
+
+                                    * Grid view of past creations with filtering options
+                                    * List/grid view toggle
+                                    * Sorting options (date, pet, style)
+                                    * Quick actions (download, share, order merchandise)
+                                    * Pet profiles section
+                                    * Account settings section
+                                    * Order history
+                                    * Help and support access
+                                    * Revision status indicators
+                                    6. Merchandise Selection
+
+                                       * Product categories with visual navigation
+                                       * Featured/recommended products
+                                       * Product details with specifications
+                                       * Preview of portrait applied to merchandise
+                                       * 3D visualization where applicable
+                                       * Sizing and options selection
+                                       * Price calculation
+                                       * Add to cart functionality
+                                       * Related product suggestions
+6.4 User Experience Flows
+                                       1. New User Flow
+
+                                          * Landing page → Upload pet photo → Customize → Preview → Purchase → View final image → Account creation
+                                          2. Returning User Flow
+
+                                             * Login → Gallery → Select past image or create new → Customize → Preview → Purchase → View final image
+                                             3. Merchandise Flow
+
+                                                * Gallery → Select image → Choose merchandise type → Customize product → Purchase → Order tracking
+                                                4. Revision Flow
+
+                                                   * Gallery → Select purchased image → Request revision → Adjust parameters → Generate new version → Compare versions → Select final version
+                                                   5. Error Recovery Flow
+
+                                                      * Error encountered → Error explanation → Suggested resolution → Support contact option → Resume process after resolution
+                                                      6. Onboarding Flow
+
+                                                         * First visit → Guided tour option → Key feature highlights → Sample gallery → Promotion for first-time users → Begin upload process
+6.5 Mobile-Specific Considerations
+                                                         * Touch-friendly interface elements
+                                                         * Minimum tap target size: 44×44 pixels
+                                                         * Appropriate spacing between interactive elements
+                                                         * Native input utilization (camera, gallery)
+                                                         * Bottom navigation for easier thumb access
+                                                         * Expandable/collapsible sections to optimize screen space
+                                                         * Orientation detection and optimization
+                                                         * Reduced animation for better performance
+                                                         * Offline mode for viewing purchased portraits
+6.6 Accessibility Considerations
+                                                         * WCAG 2.1 AA compliance
+                                                         * Keyboard navigation support
+                                                         * Logical tab order
+                                                         * Visible focus states
+                                                         * Keyboard shortcuts for common actions
+                                                         * Screen reader compatibility
+                                                         * Proper ARIA attributes
+                                                         * Semantic HTML structure
+                                                         * Meaningful alt text for images
+                                                         * Color contrast for readability
+                                                         * Minimum contrast ratio: 4.5:1 for normal text
+                                                         * Minimum contrast ratio: 3:1 for large text
+                                                         * Alternative text for all images
+                                                         * Form error handling and clear instructions
+                                                         * Motion reduction option for animations
+                                                         * Text resizing support without breaking layouts
+                                                         * Support for browser zoom up to 200%
+7. Security Considerations
+7.1 User Data Protection
+                                                         * Secure user authentication with email verification
+                                                         * Multi-factor authentication option
+                                                         * Strong password requirements
+                                                         * Account lockout after failed attempts
+                                                         * Password hashing and salting using bcrypt
+                                                         * Minimum work factor: 10
+                                                         * Regular security audits
+                                                         * HTTPS for all communications
+                                                         * TLS 1.3 or higher
+                                                         * Secure cookie attributes
+                                                         * HTTP Strict Transport Security (HSTS)
+                                                         * Input validation and sanitization
+                                                         * Server-side validation
+                                                         * Parameterized queries
+                                                         * Content Security Policy
+                                                         * Cross-Site Scripting (XSS) protection
+                                                         * Output encoding
+                                                         * Content Security Policy (CSP)
+                                                         * X-XSS-Protection header
+7.2 Payment Security
+                                                         * PCI DSS compliance through Stripe integration
+                                                         * No storage of credit card details on servers
+                                                         * Tokenization of payment information
+                                                         * Regular security scanning
+                                                         * Secure checkout process
+                                                         * Dedicated SSL certificate
+                                                         * 3D Secure support
+                                                         * Address Verification Service (AVS)
+                                                         * Fraud detection mechanisms
+                                                         * Suspicious activity monitoring
+                                                         * Velocity checks
+                                                         * IP geolocation verification
+                                                         * Device fingerprinting
+                                                         * Transaction logging and auditing
+                                                         * Detailed logs of all payment activities
+                                                         * Anomaly detection
+                                                         * Admin alerts for suspicious transactions
+7.3 Image and Content Security
+                                                         * Watermarking of preview images
+                                                         * Subtle but effective watermark positioning
+                                                         * Blurring of high-value areas
+                                                         * Secure storage of original and generated images
+                                                         * Encrypted storage
+                                                         * Access control based on ownership
+                                                         * Secure URLs with expiration
+                                                         * Content moderation for uploaded images
+                                                         * Automated inappropriate content detection
+                                                         * Manual review process for flagged content
+                                                         * User reporting mechanism
+                                                         * Copyright respect and DMCA compliance process
+                                                         * Clear terms of service regarding copyright
+                                                         * Takedown procedure for infringing content
+                                                         * Counter-notification process
+                                                         * Designated agent for DMCA notices
+7.4 API Security
+                                                         * API rate limiting
+                                                         * User-based limits
+                                                         * IP-based limits
+                                                         * Graduated response (warning, throttling, blocking)
+                                                         * Authentication for all API requests
+                                                         * JWT with appropriate expiration
+                                                         * Refresh token rotation
+                                                         * API key management
+                                                         * Environment variable management for API keys
+                                                         * Separate development and production credentials
+                                                         * Secret rotation schedule
+                                                         * Least privilege principle
+                                                         * Regular security audits
+                                                         * Vulnerability scanning
+                                                         * Penetration testing
+                                                         * Dependency analysis
+                                                         * Security patch management
+7.5 Compliance and Regulations
+                                                         * GDPR Compliance
+                                                         * Data minimization
+                                                         * Purpose limitation
+                                                         * User consent management
+                                                         * Right to access and be forgotten
+                                                         * Data portability
+                                                         * Privacy by design and default
+                                                         * CCPA/CPRA Compliance
+                                                         * Privacy notices
+                                                         * Opt-out mechanisms
+                                                         * Data sale opt-out
+                                                         * Minor protection
+                                                         * ADA Compliance
+                                                         * Accessibility standards adherence
+                                                         * Regular accessibility audits
+                                                         * Data Protection Impact Assessment
+                                                         * Documentation of data flows
+                                                         * Risk assessment
+                                                         * Mitigation strategies
+7.6 Intellectual Property Management
+                                                         * User Rights:
+                                                         * Users retain ownership of their original pet photos
+                                                         * Users receive a license to use generated portraits
+                                                         * Clear terms regarding commercial usage rights
+                                                         * Platform Rights:
+                                                         * License to use generated images for marketing purposes (with opt-out)
+                                                         * Rights to improve AI models using uploaded content
+                                                         * Third-Party Rights:
+                                                         * Clear policy on celebrity pet images
+                                                         * Prohibition on copywritten content
+                                                         * Process for rights disputes
+8. Development Phases/Milestones
+8.1 Phase 1: MVP
+                                                         * Objectives:
+                                                         * Launch a functional product with core features
+                                                         * Begin collecting user feedback
+                                                         * Establish technical foundation
+                                                         * Features:
+                                                         * Basic user authentication
+                                                         * Pet photo upload and validation
+                                                         * Limited customization options (5-7 styles, basic backgrounds)
+                                                         * Integration with OpenAI GPT Image 1
+                                                         * Payment processing
+                                                         * Basic user gallery
+                                                         * Core responsive UI
+                                                         * Timeline:
+                                                         * Weeks 1-2: Setup technical infrastructure
+                                                         * Weeks 3-4: Implement user authentication and pet upload
+                                                         * Weeks 5-6: Integrate AI generation and payment processing
+                                                         * Weeks 7-8: Testing, bug fixing, and deployment
+                                                         * Success Criteria:
+                                                         * Functional end-to-end user journey
+                                                         * < 3 second response time for critical operations
+                                                         * 95% uptime
+                                                         * Successful generation of portraits
+                                                         * Secure payment processing
+8.2 Phase 2: Enhanced Features
+                                                         * Objectives:
+                                                         * Improve user experience
+                                                         * Increase conversion rate
+                                                         * Expand customization options
+                                                         * Features:
+                                                         * Expanded customization options
+                                                         * Image revision functionality
+                                                         * Upscaling integration
+                                                         * Improved gallery and account management
+                                                         * Social sharing capabilities
+                                                         * Performance optimizations
+                                                         * Enhanced error handling
+                                                         * Timeline:
+                                                         * Weeks 1-2: Implement expanded customization
+                                                         * Weeks 3-4: Develop revision system and upscaling
+                                                         * Weeks 5-6: Add social features and optimize performance
+                                                         * Success Criteria:
+                                                         * 20% increase in conversion rate
+                                                         * 15% increase in average order value
+                                                         * 25% increase in social shares
+                                                         * Reduced error rates by 50%
+8.3 Phase 3: Merchandise Integration
+                                                         * Objectives:
+                                                         * Create additional revenue stream
+                                                         * Increase lifetime value
+                                                         * Expand product offering
+                                                         * Features:
+                                                         * Printify API integration
+                                                         * Merchandise preview functionality
+                                                         * Order management and tracking
+                                                         * Additional product types
+                                                         * Shipping calculation and optimization
+                                                         * Merchandise recommendation engine
+                                                         * Timeline:
+                                                         * Weeks 1-2: Implement Printify integration
+                                                         * Weeks 3-4: Develop merchandise preview and product selection
+                                                         * Weeks 5-6: Add order management and tracking
+                                                         * Success Criteria:
+                                                         * 30% of portrait purchasers also buy merchandise
+                                                         * Average merchandise order value of $40+
+                                                         * 90% fulfillment success rate
+                                                         * Customer satisfaction rating of 4.5/5 for merchandise
+8.4 Phase 4: Growth and Optimization (Ongoing)
+                                                         * Objectives:
+                                                         * Scale the platform
+                                                         * Optimize conversion and retention
+                                                         * Expand market reach
+                                                         * Features:
+                                                         * Analytics implementation
+                                                         * A/B testing framework
+                                                         * Performance optimization
+                                                         * Search engine optimization
+                                                         * Additional pet types support
+                                                         * Referral and loyalty programs
+                                                         * Internationalization
+                                                         * Timeline:
+                                                         * Months 1-2: Implement analytics and testing framework
+                                                         * Months 3-4: Optimize performance and SEO
+                                                         * Months 5-6: Launch referral program and expand pet types
+                                                         * Months 7-12: Roll out internationalization
+                                                         * Success Criteria:
+                                                         * 50% increase in organic traffic
+                                                         * 25% improvement in key conversion metrics
+                                                         * 40% of new users from referrals
+                                                         * Support for 5+ additional languages
+8.5 Resource Requirements
+                                                         * Infrastructure:
+                                                         * Development, staging, and production environments
+                                                         * CI/CD pipeline
+                                                         * Monitoring and alerting system
+                                                         * Backup and disaster recovery
+                                                         * External Services:
+                                                         * OpenAI API subscription
+                                                         * Replicate API subscription
+                                                         * Stripe account
+                                                         * Printify integration
+                                                         * AWS or similar cloud services
+                                                         * Analytics tools
+                                                         * Content Creation:
+                                                         * Copywriting for website and marketing
+                                                         * Sample pet portraits for demonstration
+                                                         * Tutorial and help content
+                                                         * Marketing materials
+9. Potential Challenges and Solutions
+9.1 Technical Challenges
+                                                         * Challenge: Managing database schema evolution with limited SQL knowledge
+                                                         * Solution: Use AI assistants to generate migration scripts and Supabase UI for simple changes
+                                                         * Mitigation Strategy: Create comprehensive entity relationship diagrams to guide AI-assisted schema development
+                                                         * Fallback: Leverage Supabase support and community resources for complex schema issues
+                                                         * Challenge: Maintaining pet likeness in AI-generated images
+
+                                                            * Solution: Use OpenAI API evals, implement quality checks, offer revision options
+                                                            * Mitigation Strategy: Develop a quality scoring system to evaluate generated images, with human review for edge cases
+                                                            * Fallback: Offer manual touchup for portraits that fail to meet quality standards
+                                                            * Challenge: Processing large images efficiently
+
+                                                               * Solution: Implement client-side image compression before upload, use cloud functions for processing
+                                                               * Mitigation Strategy: Progressive optimization based on usage patterns
+                                                               * Fallback: Queue system for handling high loads with prioritization
+                                                               * Challenge: Seamless integration with print-on-demand services
+
+                                                                  * Solution: Build a robust API middleware layer, implement thorough error handling and fallbacks
+                                                                  * Mitigation Strategy: Regular synchronization and validation of product data
+                                                                  * Fallback: Manual order processing option for failed automated orders
+                                                                  * Challenge: Scaling during high-demand periods
+
+                                                                     * Solution: Implement auto-scaling infrastructure, optimize database queries, implement caching
+                                                                     * Mitigation Strategy: Load testing and performance optimization before known high-traffic periods
+                                                                     * Fallback: Queue system with transparent user communication during extreme peaks
+                                                                     * Challenge: API rate limits and costs
+
+                                                                        * Solution: Implement efficient batching and caching strategies, monitor usage trends
+                                                                        * Mitigation Strategy: Negotiate volume discounts, explore alternative providers
+                                                                        * Fallback: Tiered processing speeds based on system load
+9.2 Business Challenges
+                                                                        * Challenge: User hesitation to pay for AI-generated content
+
+                                                                           * Solution: Showcase high-quality examples, offer limited-time promotions, emphasize uniqueness
+                                                                           * Mitigation Strategy: Free first portrait with purchase of merchandise, money-back guarantee
+                                                                           * Fallback: Freemium model with basic styles free and premium styles paid
+                                                                           * Challenge: Competition from other pet portrait services
+
+                                                                              * Solution: Focus on superior customization options, quality, and merchandise integration
+                                                                              * Mitigation Strategy: Continuous competitive analysis and feature differentiation
+                                                                              * Fallback: Price optimization and loyalty programs
+                                                                              * Challenge: Seasonal demand fluctuations
+
+                                                                                 * Solution: Implement seasonal marketing campaigns, special occasion promotions, and loyalty incentives
+                                                                                 * Mitigation Strategy: Resource planning based on projected seasonal patterns
+                                                                                 * Fallback: Dynamic pricing to balance demand
+                                                                                 * Challenge: Customer service scalability
+
+                                                                                    * Solution: Comprehensive help center, chatbot integration, community forums
+                                                                                    * Mitigation Strategy: Proactive communication about known issues
+                                                                                    * Fallback: Temporary customer service team expansion during peak periods
+                                                                                    * Challenge: Evolving AI capabilities and costs
+
+                                                                                       * Solution: Modular architecture allowing for easy provider switching
+                                                                                       * Mitigation Strategy: Regular evaluation of alternative providers
+                                                                                       * Fallback: Multi-tier offering with different quality/price points
+9.3 Legal and Ethical Challenges
+                                                                                       * Challenge: Copyright concerns with AI-generated content
+
+                                                                                          * Solution: Clear terms of service, rights management system
+                                                                                          * Mitigation Strategy: Legal review of all policies and procedures
+                                                                                          * Fallback: Content dispute resolution process
+                                                                                          * Challenge: Data privacy regulations
+
+                                                                                             * Solution: Privacy-by-design architecture, comprehensive privacy policy
+                                                                                             * Mitigation Strategy: Regular compliance audits
+                                                                                             * Fallback: Regional data handling variations based on local laws
+                                                                                             * Challenge: AI bias in pet recognition and generation
+
+                                                                                                * Solution: Diverse training data, regular bias audits
+                                                                                                * Mitigation Strategy: User feedback collection on fairness issues
+                                                                                                * Fallback: Manual review process for flagged outputs
+10. Future Expansion Possibilities
+10.1 Feature Expansion
+                                                                                                * Advanced customization options (scenes, multi-pet compositions)
+                                                                                                * Implementation strategy: Roll out incrementally based on user feedback
+                                                                                                * Timeline: Begin testing 3 months post-launch
+                                                                                                * Custom framing and premium printing options
+                                                                                                * Implementation strategy: Partner with high-end printing services
+                                                                                                * Timeline: Introduce 9 months post-launch
+10.2 Business Expansion
+                                                                                                * White-label service for pet businesses
+                                                                                                * Implementation strategy: Develop B2B offering with customization options
+                                                                                                * Timeline: Begin development 18 months post-launch
+                                                                                                * API access for third-party integration
+                                                                                                * Implementation strategy: Create developer portal and documentation
+                                                                                                * Timeline: Consider after establishing stable user base
+                                                                                                * Physical retail partnerships
+                                                                                                * Implementation strategy: Partner with pet stores for in-store kiosks
+                                                                                                * Timeline: Pilot program 24 months post-launch
+                                                                                                * Gift card and promotional code system
+                                                                                                * Implementation strategy: Integrate with existing payment system
+                                                                                                * Timeline: Implement before first holiday season
+11. Pricing Strategy
+11.1 Recommended Pricing Model
+                                                                                                * Basic Portrait: $19.99 per image
+
+                                                                                                   * 1 high-quality portrait
+                                                                                                   * 5 basic styles
+                                                                                                   * 1 revision
+                                                                                                   * Digital download
+                                                                                                   * 30-day access to revision feature
+                                                                                                   * Basic social media sharing tools
+                                                                                                   * Premium Portrait: $29.99 per image
+
+                                                                                                      * 1 high-quality portrait
+                                                                                                      * All available styles
+                                                                                                      * 2 revisions
+                                                                                                      * Digital download
+                                                                                                      * 60-day access to revision feature
+                                                                                                      * Enhanced social media sharing kit
+                                                                                                      * Priority processing
+                                                                                                      * Bundle Package: $49.99
+
+                                                                                                         * 3 high-quality portraits
+                                                                                                         * All available styles
+                                                                                                         * 2 revisions per portrait
+                                                                                                         * Digital downloads
+                                                                                                         * 90-day access to revision feature
+                                                                                                         * Enhanced social media sharing kit
+                                                                                                         * 15% discount on merchandise
+                                                                                                         * Priority processing
+11.2 Merchandise Pricing
+                                                                                                         * T-shirts: $24.99 - $29.99
+                                                                                                         * Mugs: $19.99
+                                                                                                         * Wall Art: $29.99 - $99.99 (depending on size and material)
+                                                                                                         * Other merchandise: Competitive market pricing + 30% margin
+                                                                                                         * Shipping: Variable based on location and weight
+                                                                                                         * Bundle discounts: 10% for 2 items, 15% for 3+ items
+                                                                                                         * Seasonal pricing: 5-15% premium during holiday seasons
+11.3 Special Promotions
+                                                                                                         * First-time user discount: 20% off first portrait
+                                                                                                         * Holiday season bundles: Themed portraits at package pricing
+                                                                                                         * Referral program: 15% discount for both referrer and referee
+                                                                                                         * Seasonal promotions aligned with pet holidays and occasions
+                                                                                                         * Flash sales: Limited-time discounts on specific styles
+                                                                                                         * Loyalty rewards: Points system for frequent purchasers
+                                                                                                         * Win-back campaigns: Special offers for inactive users
+                                                                                                         * Bundle offers: Portrait + merchandise packages
+11.4 Pricing Analysis
+                                                                                                         * Cost Structure:
+                                                                                                         * OpenAI API: ~$0.02-0.10 per generation
+                                                                                                         * Upscaling: ~$0.05 per image
+                                                                                                         * Storage and bandwidth: ~$0.02 per image
+                                                                                                         * Payment processing: ~3% per transaction
+                                                                                                         * Customer acquisition: $5-15 per customer (estimated)
+                                                                                                         * Merchandise COGS: 40-60% of retail price
+                                                                                                         * Operational overhead: $X per transaction
+                                                                                                         * Margin Analysis:
+                                                                                                         * Basic Portrait: ~75% gross margin
+                                                                                                         * Premium Portrait: ~80% gross margin
+                                                                                                         * Bundle Package: ~85% gross margin
+                                                                                                         * Merchandise: ~40% gross margin after COGS
+                                                                                                         * Break-even Analysis:
+                                                                                                         * Fixed monthly costs: $X
+                                                                                                         * Required monthly transactions: Y
+                                                                                                         * Expected break-even timeline: Month Z
+12. Marketing and User Acquisition
+12.1 Key Marketing Channels
+                                                                                                         * Social media promotion (Instagram, Facebook, TikTok)
+                                                                                                         * Strategy: Showcase before/after transformations
+                                                                                                         * Content types: User-generated content, pet portrait compilations
+                                                                                                         * Paid advertising: Targeted to pet owners
+                                                                                                         * Pet influencer partnerships
+                                                                                                         * Strategy: Collaborate with pet accounts with 50k+ followers
+                                                                                                         * Compensation: Free portraits + revenue share
+                                                                                                         * Content requirements: Authentic showcasing of product
+                                                                                                         * Content marketing (blog posts about pet photography, AI art)
+                                                                                                         * Topics: Pet photography tips, AI art trends, gift guides
+                                                                                                         * SEO strategy: Target long-tail keywords related to pet gifts
+                                                                                                         * Distribution: Social media, email newsletter, partnerships
+                                                                                                         * Search engine optimization
+                                                                                                         * Target keywords: "pet portraits," "custom dog art," etc.
+                                                                                                         * Technical SEO: Site speed, mobile optimization, structured data
+                                                                                                         * Content strategy: Regular blog updates and user galleries
+                                                                                                         * Email marketing campaigns
+                                                                                                         * Welcome series for new users
+                                                                                                         * Abandoned cart recovery
+                                                                                                         * Seasonal promotions
+                                                                                                         * Pet birthday reminders
+                                                                                                         * Online pet communities and forums
+                                                                                                         * Non-promotional participation in pet communities
+                                                                                                         * Targeted ads on pet forums
+                                                                                                         * AMAs with product team
+12.2 Retention Strategies
+                                                                                                         * Email reminders for special occasions (pet birthdays, holidays)
+                                                                                                         * Implementation: Optional data collection during pet profile creation
+                                                                                                         * Timing: 2 weeks before occasion
+                                                                                                         * Offer: Special themed portrait styles
+                                                                                                         * Limited-time style offerings
+                                                                                                         * Frequency: Monthly new style release
+                                                                                                         * Duration: Some permanent, some limited-time only
+                                                                                                         * Promotion: Early access for previous customers
+                                                                                                         * Loyalty program with points for purchases
+                                                                                                         * Points structure: 10 points per dollar spent
+                                                                                                         * Redemption: Points can be used for discounts or exclusive styles
+                                                                                                         * Tiers: Bronze, Silver, Gold status with increasing benefits
+                                                                                                         * Gallery contests and featured user creations
+                                                                                                         * Monthly themed contests
+                                                                                                         * User voting mechanism
+                                                                                                         * Winners featured on homepage and social media
+                                                                                                         * Periodic discounts for returning customers
+                                                                                                         * Timing: 60 days after last purchase
+                                                                                                         * Offer: Percentage discount or bundle pricing
+                                                                                                         * Limitation: Time-limited offers to drive action
+12.3 Key Performance Indicators
+                                                                                                         * Customer Acquisition Cost (CAC)
+                                                                                                         * Target: $15 or less
+                                                                                                         * Measurement: Total marketing spend / new customers
+                                                                                                         * Customer Lifetime Value (CLV)
+                                                                                                         * Target: $75+
+                                                                                                         * Measurement: Average revenue per user * average customer lifespan
+                                                                                                         * CLV:CAC Ratio
+                                                                                                         * Target: 5:1 or better
+                                                                                                         * Measurement: CLV / CAC
+                                                                                                         * Conversion Rate
+                                                                                                         * Target: 20% from upload to purchase
+                                                                                                         * Measurement: Purchases / uploads
+                                                                                                         * Retention Rate
+                                                                                                         * Target: 40% return rate
+                                                                                                         * Measurement: Returning customers / total customers
+                                                                                                         * Social Sharing Rate
+                                                                                                         * Target: 25% of purchases shared
+                                                                                                         * Measurement: Shares / purchases
+                                                                                                         * Referral Rate
+                                                                                                         * Target: 15% of new customers from referrals
+                                                                                                         * Measurement: Referral acquisitions / total new acquisitions
+13. Technical Implementation Details
+13.1 API Integration Requirements
+Supabase Integration
+                                                                                                         * Core Services:
+                                                                                                         * Database Access: Using Supabase JavaScript client
+                                                                                                         * Authentication: Supabase Auth with JWT tokens
+                                                                                                         * Storage: Supabase Storage for image files
+                                                                                                         * Realtime: Optional subscription to data changes
+                                                                                                         * Implementation Pattern:
+                                                                                                         * Client-side data access using Supabase SDK
+                                                                                                         * Server-side secure operations using API keys in Edge Functions
+                                                                                                         * Row Level Security for data protection
+                                                                                                         * Storage policies for secure file access
+                                                                                                         * Error Handling:
+                                                                                                         * Consistent error responses from Supabase client
+                                                                                                         * Retry logic for transient failures
+                                                                                                         * Fallback procedures for service unavailability
+OpenAI GPT Image 1 Integration
+                                                                                                         * API Endpoint: https://api.openai.com/v1/images/generations
+                                                                                                         * Authentication: API key in headers
+                                                                                                         * Request Format: JSON with prompt, size, and quality parameters
+                                                                                                         * Response Handling: Parse URLs and error messages
+                                                                                                         * Error Recovery: Retry logic with exponential backoff
+                                                                                                         * Rate Limit Handling:
+                                                                                                         * Queue system for high-volume periods
+                                                                                                         * Prioritization based on user tier
+                                                                                                         * Transparent communication of delays
+                                                                                                         * Monitoring:
+                                                                                                         * Usage tracking and alerting
+                                                                                                         * Cost monitoring
+                                                                                                         * Performance metrics
+Clarity-upscaler Integration
+                                                                                                         * API Endpoint: https://api.replicate.com/v1/predictions
+                                                                                                         * Authentication: API key in headers
+                                                                                                         * Request Format: JSON with version and input parameters
+                                                                                                         * Webhook Configuration: For asynchronous processing
+                                                                                                         * Response Processing: Handle polling for results
+                                                                                                         * Error Handling:
+                                                                                                         * Fallback to alternative upscaling methods
+                                                                                                         * Graceful degradation options
+                                                                                                         * Performance Optimization:
+                                                                                                         * Parallel processing where possible
+                                                                                                         * Caching of common upscaling parameters
+Printify Integration
+                                                                                                         * API Endpoints: Multiple endpoints for products, orders, shipping
+                                                                                                         * Authentication: OAuth2 or API key
+                                                                                                         * Synchronization: Regular catalog updates
+                                                                                                         * Order Management: Create, track, and update orders
+                                                                                                         * Shipping Calculation: Integrate shipping APIs
+                                                                                                         * Inventory Management:
+                                                                                                         * Check product availability before offering
+                                                                                                         * Handle out-of-stock scenarios
+                                                                                                         * Order Status Tracking:
+                                                                                                         * Webhook integration for status updates
+                                                                                                         * Customer notification system
+Stripe Integration
+                                                                                                         * API Endpoints: Payment intents, customers, subscriptions
+                                                                                                         * Authentication: Secret key in headers
+                                                                                                         * PCI Compliance: Use Stripe Elements or Checkout
+                                                                                                         * Webhook Configuration: For payment events
+                                                                                                         * Error Handling:
+                                                                                                         * Graceful recovery from declined payments
+                                                                                                         * Clear user messaging
+                                                                                                         * Security Measures:
+                                                                                                         * Tokenization of payment methods
+                                                                                                         * Fraud prevention tools
+                                                                                                         * 3D Secure where available
+13.2 Data Storage Requirements
+Data Storage with Supabase:
+                                                                                                         * User Data: Stored in Supabase PostgreSQL tables with Row Level Security
+                                                                                                         * Images: Stored in Supabase Storage buckets with appropriate access policies
+                                                                                                         * Session Data: Managed by Supabase Auth
+                                                                                                         * Logs: Application-level logging with external service integration
+                                                                                                         * Backups: Automated backups provided by Supabase platform
+Security Implementation:
+                                                                                                         * Row Level Security policies for granular access control
+                                                                                                         * Storage bucket policies for secure file access
+                                                                                                         * JWT-based authentication with Supabase Auth
+                                                                                                         * Environment variables managed through Vercel for API keys
+13.3 Performance Considerations
+                                                                                                         * Image Processing: Offload to serverless functions
+                                                                                                         * Parallel processing where possible
+                                                                                                         * Progress tracking and user feedback
+                                                                                                         * Auto-scaling based on queue depth
+                                                                                                         * Caching: CDN for static assets and common responses
+                                                                                                         * Edge caching for global performance
+                                                                                                         * Cache invalidation strategy
+                                                                                                         * Browser caching directives
+                                                                                                         * Database Indexing: Optimize for common query patterns
+                                                                                                         * Analyze query patterns regularly
+                                                                                                         * Add/remove indexes based on usage
+                                                                                                         * Consider read replicas for heavy read operations
+                                                                                                         * Lazy Loading: Implement for image-heavy pages
+                                                                                                         * Progressive image loading
+                                                                                                         * Content placeholders
+                                                                                                         * Viewport-based loading
+                                                                                                         * Code Splitting: Reduce initial load times
+                                                                                                         * Route-based splitting
+                                                                                                         * Component-based splitting
+                                                                                                         * Vendor chunk optimization
+13.4 Testing Strategy
+                                                                                                         * Unit Testing:
+                                                                                                         * Framework: Jest
+                                                                                                         * Coverage target: 80%+
+                                                                                                         * CI integration: Run on every pull request
+                                                                                                         * Integration Testing:
+                                                                                                         * Framework: Cypress
+                                                                                                         * Key user flows covered
+                                                                                                         * Mock external services where appropriate
+                                                                                                         * End-to-End Testing:
+                                                                                                         * Critical paths tested on actual services
+                                                                                                         * Cross-browser testing
+                                                                                                         * Mobile device testing
+                                                                                                         * Performance Testing:
+                                                                                                         * Lighthouse CI for frontend performance
+                                                                                                         * Load testing with realistic traffic patterns
+                                                                                                         * Stress testing for peak scenarios
+                                                                                                         * Accessibility Testing:
+                                                                                                         * Automated testing with axe
+                                                                                                         * Manual testing with screen readers
+                                                                                                         * Keyboard navigation verification
+                                                                                                         * Security Testing:
+                                                                                                         * Dependency scanning
+                                                                                                         * Static code analysis
+                                                                                                         * Penetration testing
+                                                                                                         * Regular vulnerability assessments
+14. Analytics and Monitoring
+14.1 Key Performance Indicators
+                                                                                                         * Page load times
+                                                                                                         * Target: < 2 seconds for initial load
+                                                                                                         * Target: < 500ms for subsequent interactions
+                                                                                                         * User flow completion rates
+                                                                                                         * Target: 70%+ completion of critical flows
+                                                                                                         * Tracking of drop-off points
+                                                                                                         * Image generation success rate
+                                                                                                         * Target: 99% success rate
+                                                                                                         * Monitoring of failure patterns
+                                                                                                         * Payment conversion rate
+                                                                                                         * Target: 90%+ of attempted payments complete successfully
+                                                                                                         * Analysis of abandonment reasons
+                                                                                                         * User retention metrics
+                                                                                                         * Target: 40% of users return within 90 days
+                                                                                                         * Cohort analysis by acquisition source
+                                                                                                         * Revenue per user
+                                                                                                         * Target: Initial ARPU of $35
+                                                                                                         * Target: LTV of $75+ within first year
+14.2 Monitoring Tools
+                                                                                                         * Application Monitoring: Sentry
+                                                                                                         * Error tracking and grouping
+                                                                                                         * Performance monitoring
+                                                                                                         * User impact assessment
+                                                                                                         * Release tracking
+                                                                                                         * Performance Monitoring: New Relic or Datadog
+                                                                                                         * Real-time metrics
+                                                                                                         * Custom dashboards
+                                                                                                         * Anomaly detection
+                                                                                                         * Alerting system
+                                                                                                         * Log Management: Logtail or similar
+                                                                                                         * Centralized logging
+                                                                                                         * Search and filtering
+                                                                                                         * Retention policies
+                                                                                                         * Alert integration
+                                                                                                         * User Analytics: Google Analytics or Amplitude
+                                                                                                         * User behavior tracking
+                                                                                                         * Funnel analysis
+                                                                                                         * Conversion tracking
+                                                                                                         * Campaign attribution
+                                                                                                         * A/B Testing: Optimizely
+                                                                                                         * Experiment design
+                                                                                                         * Traffic allocation
+                                                                                                         * Results analysis
+                                                                                                         * Feature flags
+14.3 Reporting
+                                                                                                         * Weekly development status reports
+                                                                                                         * Features completed
+                                                                                                         * Issues addressed
+                                                                                                         * Upcoming priorities
+                                                                                                         * Blockers and risks
+                                                                                                         * Monthly business performance metrics
+                                                                                                         * Revenue and growth
+                                                                                                         * User acquisition and retention
+                                                                                                         * Key conversion metrics
+                                                                                                         * Cost analysis
+                                                                                                         * Quarterly strategic review
+                                                                                                         * Market position assessment
+                                                                                                         * Competitive analysis
+                                                                                                         * Long-term roadmap adjustments
+                                                                                                         * Resource planning
+                                                                                                         * Automated alerts for critical issues
+                                                                                                         * Real-time notification system
+                                                                                                         * Escalation procedures
+                                                                                                         * On-call rotation
+                                                                                                         * Post-incident reviews
+                                                                                                         * User feedback aggregation and analysis
+                                                                                                         * Sentiment analysis
+                                                                                                         * Feature request tracking
+                                                                                                         * Satisfaction trends
+                                                                                                         * Product improvement recommendations
+15. Governance and Project Management
+15.1 Development Methodology
+                                                                                                         * Agile Scrum approach
+                                                                                                         * Two-week sprints
+                                                                                                         * Daily standups
+                                                                                                         * Sprint planning and retrospectives
+                                                                                                         * Backlog grooming
+                                                                                                         * Story point estimation
+                                                                                                         * Relative effort sizing
+                                                                                                         * Velocity tracking
+                                                                                                         * Capacity planning
+                                                                                                         * Feature prioritization framework
+                                                                                                         * Impact vs. effort matrix
+                                                                                                         * MoSCoW method (Must, Should, Could, Won't)
+                                                                                                         * User value assessment
+                                                                                                         * Quality assurance process
+                                                                                                         * Pre-merge reviews
+                                                                                                         * Integration testing
+                                                                                                         * Manual verification of critical paths
+15.2 Decision Framework
+                                                                                                         * Product decisions
+                                                                                                         * Data-driven where possible
+                                                                                                         * User feedback consideration
+                                                                                                         * Strategic alignment check
+                                                                                                         * Resource impact assessment
+                                                                                                         * Technical decisions
+                                                                                                         * Architecture review board
+                                                                                                         * Technology radar evaluation
+                                                                                                         * Build vs. buy analysis
+                                                                                                         * Technical debt consideration
+                                                                                                         * Prioritization criteria
+                                                                                                         * User impact scoring
+                                                                                                         * Business value calculation
+                                                                                                         * Technical feasibility assessment
+                                                                                                         * Risk evaluation
+15.3 Change Management
+                                                                                                         * Feature request process
+                                                                                                         * Standardized documentation
+                                                                                                         * Stakeholder review
+                                                                                                         * Impact assessment
+                                                                                                         * Prioritization
+                                                                                                         * Scope change procedure
+                                                                                                         * Change request form
+                                                                                                         * Approval workflow
+                                                                                                         * Timeline and resource adjustment
+                                                                                                         * Communication plan
+                                                                                                         * Version control strategy
+                                                                                                         * Feature branching
+                                                                                                         * Pull request reviews
+                                                                                                         * Continuous integration
+                                                                                                         * Semantic versioning
+15.4 Definition of Done
+                                                                                                         * Feature level
+                                                                                                         * Code complete and peer-reviewed
+                                                                                                         * Unit tests written and passing
+                                                                                                         * Integration tests passing
+                                                                                                         * Documentation updated
+                                                                                                         * Acceptance criteria met
+                                                                                                         * UI/UX review completed
+                                                                                                         * Accessibility compliance verified
+                                                                                                         * Performance benchmarks met
+                                                                                                         * Sprint level
+                                                                                                         * All features meet DoD
+                                                                                                         * No high-priority bugs remaining
+                                                                                                         * Documentation updated
+                                                                                                         * Build passing in staging environment
+                                                                                                         * Product owner sign-off
+                                                                                                         * Release level
+                                                                                                         * Full regression testing completed
+                                                                                                         * Performance testing passed
+                                                                                                         * Security scan cleared
+                                                                                                         * Release notes prepared
+                                                                                                         * Support team briefed
+                                                                                                         * Monitoring in place
+15.5 Risk Management
+                                                                                                         * Risk identification process
+                                                                                                         * Regular risk assessment meetings
+                                                                                                         * Technical debt tracking
+                                                                                                         * External dependency monitoring
+                                                                                                         * Risk evaluation matrix
+                                                                                                         * Impact severity (1-5)
+                                                                                                         * Probability (1-5)
+                                                                                                         * Overall risk score calculation
+                                                                                                         * Mitigation strategies
+                                                                                                         * Risk-specific action plans
+                                                                                                         * Ownership assignment
+                                                                                                         * Timeline for resolution
+                                                                                                         * Contingency planning
+                                                                                                         * Status monitoring
+                                                                                                         * Weekly risk review
+                                                                                                         * Adjustment of priorities based on risk
+                                                                                                         * Escalation procedures
