@@ -5,7 +5,7 @@
  * integrating with the main error handling service.
  */
 
-import { PostgrestError } from '@supabase/supabase-js';
+import { PostgrestError, AuthError } from '@supabase/supabase-js';
 import { ErrorType, createError, AppError } from '@/lib/errorHandling';
 
 // Common Supabase error codes and their meanings
@@ -129,43 +129,53 @@ export async function safeSupabaseQuery<T>(
  * Safe wrapper for Supabase methods that use a different response format 
  * (like auth methods that don't follow the {data, error} pattern)
  */
-export async function safeSupabaseAuth<T, E = Error>(
-  operation: () => Promise<{ data: { [key: string]: T }; error: E | null }>
+export async function safeSupabaseAuth<T, E = AuthError | Error | null>(
+  operation: () => Promise<{ data: { [key: string]: T }; error: E  }>
 ): Promise<T> {
   try {
     const { data, error } = await operation();
     
     if (error) {
-      // Convert auth error to AppError
-      const authError = error as any;
-      
-      if (authError.message?.includes('Email not confirmed')) {
-        throw createError(
-          ErrorType.UNAUTHORIZED,
-          'Email not confirmed',
-          {},
-          'email_not_confirmed'
-        );
+      let message = 'Authentication failed';
+      let errorCode = 'auth_error';
+
+      if (error instanceof AuthError) {
+        message = error.message;
+        errorCode = error.code || errorCode;
+        if (error.message?.includes('Email not confirmed')) {
+          errorCode = 'email_not_confirmed';
+        }
+        if (error.message?.includes('Invalid login credentials')) {
+          errorCode = 'invalid_credentials';
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === 'string') {
+        message = error;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        // After 'message' in error check, we can cast to { message: unknown }
+        // and then check if message is string
+        const potentialErrorWithMessage = error as { message?: unknown, code?: unknown }; 
+        if (typeof potentialErrorWithMessage.message === 'string') {
+          message = potentialErrorWithMessage.message;
+        }
+        // Check for code property similarly
+        if ('code' in error && typeof potentialErrorWithMessage.code === 'string') {
+            errorCode = potentialErrorWithMessage.code;
+        }
       }
       
-      if (authError.message?.includes('Invalid login credentials')) {
-        throw createError(
-          ErrorType.UNAUTHORIZED,
-          'Invalid email or password',
-          {},
-          'invalid_credentials'
-        );
-      }
-      
-      throw createError(
-        ErrorType.UNAUTHORIZED,
-        authError.message || 'Authentication failed',
-        {},
-        authError.code || 'auth_error'
-      );
+      throw createError(ErrorType.UNAUTHORIZED, message, {}, errorCode);
     }
     
+    if (!data) {
+        throw createError(ErrorType.INTERNAL, 'No data returned from auth operation');
+    }
+
     const responseKey = Object.keys(data)[0];
+    if (responseKey === undefined) {
+        throw createError(ErrorType.INTERNAL, 'Auth operation returned empty data object');
+    }
     return data[responseKey] as T;
   } catch (error) {
     if ((error as AppError).type) {

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from 'react'; // Removed unused useState
 import { Accessory } from "@/types/customization";
-import { Button } from "@/components/ui/button";
-// import { Checkbox } from "@/components/ui/checkbox"; // Removed for now
-import { Label } from "@/components/ui/label";
-// import { ScrollArea } from "@/components/ui/scroll-area"; // Removed for now
+// import { Button } from "@/components/ui/button"; // Removed unused Button
+// Removed unused Card, CardContent imports
+// Checkbox is not used, visual checkmark is used instead
+import { Label } from "@/components/ui/label"; // Ensure Label is imported
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";

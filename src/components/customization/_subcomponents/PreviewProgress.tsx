@@ -31,7 +31,6 @@ export function PreviewProgress({
   useEffect(() => {
     if (!isGenerating) return;
     
-    const stepDuration = duration / steps.length;
     const progressInterval = 50; // Update every 50ms for smooth animation
     const progressPerInterval = 100 / (duration / progressInterval);
     

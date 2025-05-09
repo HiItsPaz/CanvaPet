@@ -25,7 +25,7 @@ const formatCurrency = (amount: number | null, currency: string = 'USD') => {
 };
 
 export default function CheckoutPage() {
-    const { items, getItemCount, getTotalPrice, clearCart } = useCartStore();
+    const { items, /* getItemCount, */ getTotalPrice, clearCart } = useCartStore(); // Removed getItemCount
     const router = useRouter();
     const { toast } = useToast();
 
@@ -36,7 +36,7 @@ export default function CheckoutPage() {
     const [shippingError, setShippingError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [paymentError, setPaymentError] = useState<string | null>(null);
-    const [internalOrderId, setInternalOrderId] = useState<string>(`order_${uuidv4()}`); // Generate unique ID for this checkout attempt
+    const [internalOrderId, /* setInternalOrderId */] = useState<string>(`order_${uuidv4()}`); // Removed setInternalOrderId
     const [showPayment, setShowPayment] = useState(false);
     const [userId, setUserId] = useState<string | null>(null); // Add state for userId
     const [authLoading, setAuthLoading] = useState(true);

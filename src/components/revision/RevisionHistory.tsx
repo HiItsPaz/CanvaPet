@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getPortrait, getPortraitRevisions, PortraitParameters } from '@/lib/ai/openai'; // Use any for now
+import { getPortrait, getPortraitRevisions } from '@/lib/ai/openai'; // Use any for now
 import { Loader2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { RevisionComparer } from './RevisionComparer';

@@ -234,6 +234,7 @@ export async function generatePortrait(parameters: PortraitParameters): Promise<
 async function processPortraitGeneration(
   portraitId: string,
   parameters: PortraitParameters,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   petImageUrl: string
 ): Promise<void> {
   let finalStatus: 'completed' | 'failed' = 'failed';
@@ -604,6 +605,7 @@ export async function createPortraitRevision(
 async function processRevisionGeneration(
   revisionId: string,
   parameters: PortraitParameters, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   inputImageUrl: string
 ): Promise<void> {
   let finalStatus: 'completed' | 'failed' = 'failed';

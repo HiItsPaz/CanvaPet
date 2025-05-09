@@ -1,4 +1,4 @@
-import { calculateScaleFactor, getImageDimensions } from '../imageUtils';
+import { calculateScaleFactor } from '../imageUtils';
 
 // Mock fetch for getImageDimensions (if testing it directly later)
 // global.fetch = jest.fn(() => Promise.resolve({ /* ... mock response ... */ })) as jest.Mock;

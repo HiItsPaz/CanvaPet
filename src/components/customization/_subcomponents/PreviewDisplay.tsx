@@ -159,7 +159,7 @@ export function PreviewDisplay({
         ) : (
           <div className="flex flex-col items-center justify-center text-center p-4">
             <p className="text-muted-foreground">
-              Select options and click "Preview" to see your {petName}'s transformation
+              Select options and click &quot;Preview&quot; to see your {petName}&apos;s transformation
             </p>
           </div>
         )}

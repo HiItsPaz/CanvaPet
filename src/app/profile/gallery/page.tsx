@@ -4,7 +4,6 @@ import { UserGallery } from '@/components/profile/UserGallery';
 import { createClient } from '@/lib/supabase/client'; // Use client component client
 import { useState, useEffect } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export default function GalleryPage() {
   const [userId, setUserId] = useState<string | null>(null);

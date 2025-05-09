@@ -16,6 +16,31 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // In-memory store for mock payment intents (replace with database in real scenario if needed outside provider)
 const mockPaymentIntents: Record<string, PaymentIntent & { orderId: string, userId: string }> = {};
 
+interface MockPaymentMethodDetailsCard {
+  number: string;
+  exp_month: number;
+  exp_year: number;
+  cvc: string;
+  name: string;
+}
+
+interface MockPaymentMethodDetails {
+  card?: MockPaymentMethodDetailsCard;
+  billing_details?: { name?: string };
+  // Add other potential payment method structures if needed
+}
+
+interface MockWebhookPayloadData {
+  object?: PaymentIntent; // Assuming the webhook object is a PaymentIntent
+  // Add other potential properties of the data object
+}
+
+interface MockWebhookPayload {
+  type: string;
+  data?: MockWebhookPayloadData;
+  // Add other top-level webhook payload properties if needed
+}
+
 export class MockPaymentService implements PaymentService {
   async createPaymentIntent(params: PaymentParameters): Promise<PaymentIntent> {
     await delay(MOCK_API_DELAY_MS);
@@ -58,7 +83,7 @@ export class MockPaymentService implements PaymentService {
     return paymentIntent;
   }
 
-  async confirmPayment(paymentIntentId: string, paymentMethodDetails?: any): Promise<PaymentConfirmationResult> {
+  async confirmPayment(paymentIntentId: string, paymentMethodDetails?: MockPaymentMethodDetails): Promise<PaymentConfirmationResult> {
     await delay(MOCK_API_DELAY_MS);
     console.log(`[MockPaymentService] Confirming payment for intent ${paymentIntentId}`, paymentMethodDetails);
 
@@ -194,7 +219,7 @@ export class MockPaymentService implements PaymentService {
     return intent;
   }
 
-  async handleWebhook(payload: any, signature?: string): Promise<void> {
+  async handleWebhook(payload: MockWebhookPayload): Promise<void> {
     await delay(MOCK_API_DELAY_MS / 2);
     console.log('[MockPaymentService] Received mock webhook:', payload);
     // In a real scenario, verify signature and process event type

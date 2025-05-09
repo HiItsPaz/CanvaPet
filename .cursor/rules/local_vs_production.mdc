@@ -1,0 +1,138 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Local vs. Production Supabase Environment Rules
+
+## **Environment Setup**
+- **Use Branch-Based Development**
+  - Create Supabase branches for feature development
+  ```bash
+  # ✅ DO: Create feature branches for development
+  supabase branches create feature-name
+  
+  # ✅ DO: Switch to a branch for local development
+  supabase branches switch feature-name
+  
+  # ❌ DON'T: Develop directly against production database
+  ```
+  - Test all changes in a development branch before merging to production
+  - Document branch purpose with detailed descriptions
+
+- **Environment Configuration**
+  - Store environment-specific connection details in `.env.local` (development) and `.env` (production)
+  - Use environment variables for all Supabase connections
+  ```typescript
+  // ✅ DO: Use environment variables for connection details
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  // ❌ DON'T: Hardcode connection values
+  const supabaseUrl = 'https://xxxxx.supabase.co'
+  ```
+
+## **Migration Workflow**
+- **Test Migrations Locally First**
+  - Run all migrations against a local database instance before applying to production
+  ```bash
+  # ✅ DO: Test migrations locally
+  supabase db reset --local
+  supabase db push --local
+  
+  # ✅ DO: Use the migration testing script
+  ./scripts/test_migration.sh
+  ```
+  
+- **Migration Validation**
+  - Verify migrations with test queries before deployment
+  - Run the comprehensive tests in `supabase/test-queries/01_comprehensive_tests.sql`
+  - Check for unexpected side effects on existing data
+
+- **Zero-Downtime Migrations**
+  - Follow the patterns in `20250507115920_rename_and_data_migration_example.sql`
+  - Add columns with NULL constraints to preserve existing data
+  - Use temporary sync triggers during transition periods
+  - Provide backward compatibility for critical columns with views if needed
+
+## **Data Management**
+- **Seed Data Usage**
+  - Create seed data scripts for development environments only
+  - Never use seed scripts in production without explicit review
+  - Keep seed data minimal but sufficient for testing
+
+- **Production Data Access**
+  - Never directly modify production data without a migration plan
+  - Use admin tools for exceptional data corrections only
+  - Log all manual data operations in the audit system
+
+## **Backup and Recovery**
+- **Regular Backups**
+  - Verify Supabase automated backup settings for production
+  - Create manual backups before major schema changes
+  ```bash
+  # ✅ DO: Create manual backup before major changes
+  supabase db dump -f pre_migration_backup.sql
+  ```
+
+- **Restore Strategy**
+  - Test restore procedures in development environment
+  - Document recovery process for different failure scenarios
+
+## **Security Considerations**
+- **API Key Management**
+  - Use different API keys for development and production
+  - Rotate production keys regularly (recommended: quarterly)
+  - Never commit API keys to the repository
+
+- **RLS Policy Testing**
+  - Test RLS policies in different user contexts:
+  ```sql
+  -- ✅ DO: Test as anonymous user
+  SET LOCAL ROLE anon;
+  SET LOCAL "request.jwt.claims" = json_build_object('role', 'anon');
+  -- Run test queries
+  
+  -- ✅ DO: Test as authenticated user
+  SET LOCAL ROLE authenticated;
+  SET LOCAL "request.jwt.claims" = json_build_object('sub', 'user-id', 'role', 'authenticated');
+  -- Run test queries
+  ```
+
+## **Monitoring and Troubleshooting**
+- **Log Collection**
+  - Enable extended query logging in development
+  - Configure appropriate logging levels for production
+  - Regularly review database logs for performance issues
+
+- **Performance Monitoring**
+  - Establish baseline performance metrics in development
+  - Monitor query performance in production
+  - Implement alerting for slow queries and high resource usage
+
+## **Deployment Checklist**
+- **Pre-Deployment**
+  - ☐ All migrations tested locally
+  - ☐ Comprehensive tests pass
+  - ☐ RLS policies verified for all tables
+  - ☐ Indexes created for common query patterns
+  - ☐ Backward compatibility provided where needed
+  - ☐ Rollback plan documented
+
+- **Post-Deployment**
+  - ☐ Verify database connects from application
+  - ☐ Run sample queries to confirm functionality
+  - ☐ Check performance of critical queries
+  - ☐ Verify RLS policies in production context
+  - ☐ Confirm audit logging is working
+
+## **Collaboration**
+- **Document Database Changes**
+  - Update ERD ([erd.md](mdc:scripts/erd.md)) with any schema changes
+  - Document any new indexes or performance optimizations
+  - Share migration plans with the team before implementation
+
+- **Code Review For Database Changes**
+  - Require peer review for all schema migrations
+  - Include SQL execution plans for complex queries
+  - Document expected impact on existing data

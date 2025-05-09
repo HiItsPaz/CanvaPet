@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import { ReactCompareSlider } from 'react-compare-slider';
 import Image from 'next/image'; // Use next/image for potential optimization
 
 interface RevisionComparerProps {

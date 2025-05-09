@@ -67,7 +67,6 @@ interface LoadingStateProps extends React.HTMLAttributes<HTMLDivElement> {
   isLoading: boolean;
   children: React.ReactNode;
   loadingText?: string;
-  loadingIcon?: 'spinner' | 'progress' | 'pulse';
   variant?: 'overlay' | 'inline' | 'replace';
   spinnerSize?: SpinnerProps['size'];
   fallback?: React.ReactNode;
@@ -77,7 +76,6 @@ export function LoadingState({
   isLoading,
   children,
   loadingText = 'Loading...',
-  loadingIcon = 'spinner',
   variant = 'overlay',
   spinnerSize = 'md',
   fallback,

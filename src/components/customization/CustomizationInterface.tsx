@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 
 interface CustomizationInterfaceProps {
-  petId: string;
+  // petId: string; // Removed unused petId prop
   initialParameters?: CustomizationParameters;
   availableStyles?: Style[];
   availableAccessories?: Accessory[];
@@ -21,7 +21,7 @@ interface CustomizationInterfaceProps {
 }
 
 export function CustomizationInterface({
-  petId,
+  // petId, // Removed unused petId prop
   initialParameters,
   availableStyles,
   availableAccessories,
@@ -105,7 +105,7 @@ export function CustomizationInterface({
               <p className="text-muted-foreground">Generating preview...</p>
             ) : (
               <p className="text-muted-foreground">
-                Select options and click "Preview" to see your pet's transformation
+                Select options and click &quot;Preview&quot; to see your pet&apos;s transformation
               </p>
             )}
           </div>

@@ -7,8 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserPets } from "@/lib/petApi";
 import { Pet } from "@/types/pet";
-import { PetCard } from "@/components/pets/PetCard";
-import { Plus, Loader2, AlertCircle, PlusCircle, Dog, Cat, Bird } from "lucide-react";
+import { Loader2, AlertCircle, PlusCircle, Dog, Cat, Bird } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -43,8 +42,9 @@ export default function PetsOverviewPage() {
         try {
           const userPets = await getUserPets();
           setPets(userPets || []);
-        } catch (err: any) {
-          setError(err.message || 'Failed to load pets.');
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Failed to load pets.';
+          setError(errorMessage);
           console.error("Error fetching pets:", err);
         } finally {
           setLoading(false);
@@ -105,19 +105,6 @@ export default function PetsOverviewPage() {
     const types = new Set(pets.map(p => p.species).filter(Boolean) as string[]);
     return Array.from(types);
   }, [pets]);
-
-  // Handle pet deletion
-  const handlePetDelete = () => {
-    // Refresh the pet list after deletion
-    if (user) {
-      getUserPets()
-        .then(petData => setPets(petData))
-        .catch(err => {
-          console.error("Error refreshing pets:", err);
-          setError(err.message || "Failed to refresh pets");
-        });
-    }
-  };
 
   if (authLoading) {
     return <div className="flex justify-center items-center min-h-[400px]"><Loader2 className="h-8 w-8 animate-spin"/></div>;

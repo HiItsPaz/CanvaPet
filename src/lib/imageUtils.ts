@@ -1,8 +1,14 @@
 import imageCompression from 'browser-image-compression';
-import { compressAccurately } from 'browser-image-compression';
 import imageSize from 'image-size';
-import { ISizeCalculationResult } from 'image-size/dist/types/interface';
 import { Buffer } from 'buffer'; // Make sure Buffer is available
+
+// Local interface for image dimensions if ISizeCalculationResult is hard to import
+interface ImageDimensions {
+  width?: number;
+  height?: number;
+  type?: string; // image-size might return other properties like type
+  // Add other potential properties if known
+}
 
 // Accepted file types for pet images
 export const ACCEPTED_FILE_TYPES = {
@@ -94,7 +100,7 @@ export async function compressImage(
  * @param file The image file to process
  * @returns Promise that resolves to metadata object
  */
-export async function extractMetadata(file: File): Promise<Record<string, any>> {
+export async function extractMetadata(file: File): Promise<Record<string, unknown>> {
   // This is a placeholder - in a full implementation, we'd use a library
   // like exif-js to extract and parse EXIF data
   
@@ -159,7 +165,7 @@ export async function getImageDimensions(imageUrl: string): Promise<{ width: num
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    const dimensions: ISizeCalculationResult = imageSize(buffer);
+    const dimensions: ImageDimensions = imageSize(buffer); // Used local ImageDimensions interface
     
     if (dimensions && dimensions.width && dimensions.height) {
       return { width: dimensions.width, height: dimensions.height };

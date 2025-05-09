@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { PrintifyBlueprint, PrintifyVariant } from '@/lib/printify/client'; // Assuming types are here
 
 export interface CartItem {
   id: string; // Unique ID for the cart item (e.g., `${blueprintId}-${variantId}-${portraitId}`)

@@ -4,32 +4,68 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getOrderByIdForUser } from '@/lib/payments/orderApi';
-import { getPrintifyOrderStatus, PrintifyAddress } from '@/lib/printify/client'; // Assuming types are defined here too
+import { getPrintifyOrderStatus, PrintifyAddress } from '@/lib/printify/client';
 import { Database } from '@/types/supabase';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, AlertCircle, Package, Home, Truck } from 'lucide-react';
 import { format } from 'date-fns';
 
-// Assuming types are properly defined/imported
-type Order = Database['public']['Tables']['orders']['Row'];
-type PrintifyOrder = any; // Define more accurately based on getPrintifyOrderStatus response
-type CartItem = any; // Define based on structure stored in order.items
+// Define more specific types
+// Add potentially missing fields to Order type for this component context
+type Order = Database['public']['Tables']['orders']['Row'] & {
+  items?: CartItem[]; 
+  printify_order_id?: string;
+  // 'amount' is named 'total_amount' in the DB schema, but original code used 'amount'
+  // We will use total_amount from the DB but if the fetchedOrder somehow has 'amount', 
+  // it will be preferred by the formatCurrency calls if not careful.
+  // Let's ensure we consistently use total_amount from the DB type and make CartItem use price.
+};
 
-// Helper to format currency (same as in checkout)
+interface PrintifyShipment {
+  carrier: string;
+  tracking_number: string; 
+  tracking_url: string;
+  shipped_at?: string; 
+}
+
+interface PrintifyOrderData {
+  status: string;
+  shipments?: PrintifyShipment[];
+}
+
+interface PrintifyOrderResource {
+  id: string;
+  data: PrintifyOrderData;
+}
+
+interface PrintifyOrderEvent {
+  type: string;
+  resource?: PrintifyOrderResource;
+}
+
+interface CartItem {
+  id?: string; 
+  productTitle?: string;
+  variantTitle?: string;
+  quantity: number;
+  price: number; // Price per item in the cart, should align with order_items.unit_price
+  imageUrl?: string; 
+}
+
+// Helper to format currency
 const formatCurrency = (amount: number | null, currency: string = 'USD') => {
     if (amount === null || amount === undefined) return 'N/A';
     return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount / 100);
 };
 
-// Helper for status badge (same as in order history)
+// Helper for status badge
 const getStatusBadgeVariant = (status: string | null): "default" | "secondary" | "destructive" | "outline" => {
-    // ... (same implementation)
      switch (status?.toLowerCase()) {
       case 'completed': 
-      case 'delivered': return 'default'; // Treat delivered as completed
+      case 'delivered': return 'default';
       case 'pending_payment':
       case 'pending':
       case 'on-hold':
@@ -47,7 +83,7 @@ export default function OrderDetailPage() {
     const orderId = params.orderId as string;
 
     const [order, setOrder] = useState<Order | null>(null);
-    const [printifyOrder, setPrintifyOrder] = useState<PrintifyOrder | null>(null);
+    const [printifyOrder, setPrintifyOrder] = useState<PrintifyOrderEvent | PrintifyOrderData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -62,21 +98,20 @@ export default function OrderDetailPage() {
             setLoading(true);
             setError(null);
             try {
-                const fetchedOrder = await getOrderByIdForUser(orderId);
+                const fetchedOrder = await getOrderByIdForUser(orderId) as Order | null; // Assert type here
                 if (!fetchedOrder) {
                     throw new Error('Order not found or access denied.');
                 }
                 setOrder(fetchedOrder);
 
-                // Use type assertion temporarily due to type gen issues
-                const currentOrder = fetchedOrder as any;
-                if (currentOrder.printify_order_id) {
-                    const printifyStatus = await getPrintifyOrderStatus(currentOrder.printify_order_id);
-                    setPrintifyOrder(printifyStatus);
+                if (fetchedOrder.printify_order_id) { // Now checks optional property
+                    const printifyStatus = await getPrintifyOrderStatus(fetchedOrder.printify_order_id);
+                    setPrintifyOrder(printifyStatus as PrintifyOrderEvent | PrintifyOrderData);
                 }
 
-            } catch (err: any) {
-                setError(err.message || 'Failed to load order details.');
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : 'Failed to load order details.';
+                setError(errorMessage);
                 console.error("Error fetching order details:", err);
             } finally {
                 setLoading(false);
@@ -86,13 +121,10 @@ export default function OrderDetailPage() {
         fetchOrderDetails();
     }, [orderId]);
 
-    // Safely parse items JSONB
     const orderItems: CartItem[] = useMemo(() => {
-        const currentOrder = order as any; // Temporary cast
-        if (!currentOrder?.items) return [];
+        if (!order?.items) return []; // Access optional items
         try {
-            // Assuming items is already an array/object, no need to parse if using JSONB type
-            return Array.isArray(currentOrder.items) ? currentOrder.items : [];
+            return Array.isArray(order.items) ? order.items : [];
         } catch (e) {
             console.error("Failed to process order items:", e);
             return [];
@@ -123,16 +155,11 @@ export default function OrderDetailPage() {
     }
 
     if (!order) {
-        // Should be caught by error state usually
         return <p>Order not found.</p>;
     }
 
-    // Cast order to any temporarily for property access
-    const currentOrder = order as any;
-
-    // Display Logic
-    const displayStatus = printifyOrder?.status || currentOrder.status || 'unknown';
-    const shippingAddress = currentOrder.shipping_address as PrintifyAddress | null;
+    const displayStatus = (printifyOrder as PrintifyOrderEvent)?.resource?.data?.status || (printifyOrder as PrintifyOrderData)?.status || order.status || 'unknown';
+    const shippingAddress = order.shipping_address as PrintifyAddress | null;
 
     return (
         <div className="container mx-auto py-8 px-4 md:px-6">
@@ -144,11 +171,10 @@ export default function OrderDetailPage() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
-                {/* Left Column: Items & Summary */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
                         <CardHeader>
-                             <CardTitle>Order #{currentOrder.id.substring(0,8)}...</CardTitle>
+                             <CardTitle>Order #{order.id.substring(0,8)}...</CardTitle>
                              <CardDescription>
                                 Placed on {order.created_at ? format(new Date(order.created_at), 'PPP') : 'N/A'}
                              </CardDescription>
@@ -159,15 +185,13 @@ export default function OrderDetailPage() {
                                 {orderItems.map((item, index) => (
                                     <li key={item.id || index} className="flex justify-between items-start gap-4 text-sm">
                                         <div className="flex items-center gap-3">
-                                            {/* Add item image if available in item.metadata or fetchable */}
-                                            {/* <img src={item.imageUrl || 'placeholder.png'} alt={item.productTitle} className="w-12 h-12 object-cover rounded"/> */} 
                                             <div>
                                                 <p className="font-medium">{item.productTitle || 'Product'}</p>
                                                 <p className="text-xs text-muted-foreground">{item.variantTitle || 'Variant'}</p>
                                             </div>
                                         </div>
                                         <span>x {item.quantity}</span>
-                                        <span>{formatCurrency(item.price * item.quantity)}</span>
+                                        <span>{formatCurrency(item.price * item.quantity, order.currency || 'USD')}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -175,20 +199,18 @@ export default function OrderDetailPage() {
                              <div className="space-y-1 text-sm">
                                  <div className="flex justify-between">
                                      <span>Subtotal</span>
-                                     <span>{formatCurrency(currentOrder.amount)}</span> 
-                                     {/* Note: order.amount might include shipping already, adjust if needed */}
+                                     {/* Use total_amount from the Order type, which should be in cents */}
+                                     <span>{formatCurrency(order.total_amount, order.currency || 'USD')}</span> 
                                  </div>
-                                 {/* Display Shipping cost if available separately */} 
                                  <div className="flex justify-between font-bold text-base">
                                      <span>Total</span>
-                                     <span>{formatCurrency(currentOrder.amount)}</span>
+                                     <span>{formatCurrency(order.total_amount, order.currency || 'USD')}</span>
                                  </div>
                              </div>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Right Column: Status & Address */}
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
@@ -200,11 +222,10 @@ export default function OrderDetailPage() {
                             <Badge variant={getStatusBadgeVariant(displayStatus)} className="text-sm capitalize">
                                 {displayStatus.replace('_', ' ')}
                             </Badge>
-                            {/* Optionally show Printify status details */} 
-                            {printifyOrder?.shipments?.length > 0 && (
+                            {(printifyOrder as PrintifyOrderEvent)?.resource?.data?.shipments?.length ?? 0 > 0 ? (
                                 <div className="mt-4 text-sm space-y-1">
                                     <p className="font-medium flex items-center gap-1"><Truck className="h-4 w-4"/> Tracking:</p>
-                                    {printifyOrder.shipments.map((shipment: any, idx: number) => (
+                                    {(printifyOrder as PrintifyOrderEvent).resource!.data.shipments!.map((shipment: PrintifyShipment, idx: number) => (
                                         <a 
                                             key={idx} 
                                             href={shipment.tracking_url} 
@@ -216,7 +237,22 @@ export default function OrderDetailPage() {
                                         </a>
                                     ))}
                                 </div>
-                            )}
+                            ) : ((printifyOrder as PrintifyOrderData)?.shipments?.length ?? 0) > 0 ? (
+                                <div className="mt-4 text-sm space-y-1">
+                                    <p className="font-medium flex items-center gap-1"><Truck className="h-4 w-4"/> Tracking:</p>
+                                    {(printifyOrder as PrintifyOrderData).shipments!.map((shipment: PrintifyShipment, idx: number) => (
+                                        <a 
+                                            key={idx} 
+                                            href={shipment.tracking_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:underline block truncate"
+                                        >
+                                            {shipment.tracking_number} ({shipment.carrier})
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : null}
                         </CardContent>
                     </Card>
                     <Card>

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
 import { 
   withErrorHandler, 
   validationError, 
@@ -29,10 +28,10 @@ export async function GET(req: NextRequest) {
     const errorType = url.searchParams.get('error');
     
     // Create Supabase client
-    const supabase = createServerClient();
+    // const supabase = createServerClient(); // Not used in this part of the switch
     
     // Get the current user from session
-    const { data: { session } } = await supabase.auth.getSession();
+    // const { data: { session } } = await supabase.auth.getSession(); // session is unused
     
     // Example: Throw different types of errors based on query parameter
     switch (errorType) {

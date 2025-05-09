@@ -24,9 +24,10 @@ export async function checkIsPet(file: File): Promise<DetectPetResult> {
     
     // Parse and return the response
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error checking pet status:', error);
-    throw error;
+    if (error instanceof Error) throw error;
+    throw new Error(String(error));
   }
 }
 
@@ -53,9 +54,10 @@ export async function checkIsPetFromBase64(base64Data: string): Promise<DetectPe
     
     // Parse and return the response
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error checking pet status from base64:', error);
-    throw error;
+    if (error instanceof Error) throw error;
+    throw new Error(String(error));
   }
 }
 

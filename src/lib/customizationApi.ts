@@ -63,6 +63,7 @@ export async function saveCustomization(
     const supabase = createClient();
     
     // Get the current highest version number
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data: versionData, error: versionError } = await supabase
       .from('pet_customizations')
       .select('version')

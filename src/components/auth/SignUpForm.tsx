@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/lib/supabase'; // Corrected path
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from "lucide-react"
 
@@ -35,7 +33,6 @@ export function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(formSchema),

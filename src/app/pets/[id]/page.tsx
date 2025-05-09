@@ -2,35 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { Pet, PetWithPortraits } from "@/types/pet";
-import { getPetById, getPetWithPortraits, deletePet, updatePetPrimaryImage } from "@/lib/petApi";
-import { AlertCircle, Edit, Trash2, Image as ImageIcon, ArrowLeft, Check, MoreHorizontal } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Pet } from "@/types/pet";
+import { getPetById, deletePet } from "@/lib/petApi";
+import { AlertCircle, Trash2, Loader2, Pencil, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PetPhotoUpload } from "@/components/pets/PetPhotoUpload";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Loader2, Pencil, ChevronLeft } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -44,12 +24,6 @@ const getPetIcon = (species: string | null) => {
     return null; 
 };
 
-interface PetDetailsPageProps {
-  params: {
-    id: string;
-  };
-}
-
 export default function PetDetailsPage() {
   const params = useParams();
   const petId = params.id as string;
@@ -61,8 +35,6 @@ export default function PetDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [settingPrimary, setSettingPrimary] = useState(false);
 
   useEffect(() => {
     if (petId && user?.id) { // Only fetch if we have ID and user
@@ -76,8 +48,9 @@ export default function PetDetailsPage() {
             throw new Error('Pet not found or access denied.');
           }
           setPet(petData);
-        } catch (err: any) {
-          setError(err.message || 'Failed to load pet details.');
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : 'Failed to load pet details.';
+          setError(errorMessage);
           console.error("Error fetching pet:", err);
         } finally {
           setLoading(false);
@@ -106,40 +79,11 @@ export default function PetDetailsPage() {
         description: `${pet.name || 'The pet'} has been removed.`,
       });
       router.push('/pets'); // Redirect to overview page
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Delete failed';
       console.error("Delete failed:", err);
-      toast({ title: "Delete Failed", description: err.message, variant: "destructive" });
+      toast({ title: "Delete Failed", description: errorMessage, variant: "destructive" });
       setIsDeleting(false);
-    }
-    // No need to set isDeleting false on success due to redirect
-  };
-
-  const handlePhotoUpload = async (url: string) => {
-    try {
-      setDialogOpen(false);
-      await getPetWithPortraits(petId).then(data => {
-        setPet(data);
-      });
-    } catch (err: any) {
-      console.error("Error refreshing pet data:", err);
-      setError("Photo uploaded, but failed to refresh. Please reload the page.");
-    }
-  };
-
-  const handleSetPrimaryPhoto = async (imageUrl: string) => {
-    if (!pet) return;
-    
-    try {
-      setSettingPrimary(true);
-      await updatePetPrimaryImage(pet.id, imageUrl);
-      // Refresh pet data
-      const updatedPet = await getPetWithPortraits(petId);
-      setPet(updatedPet);
-    } catch (err: any) {
-      console.error("Error setting primary photo:", err);
-      setError("Failed to set primary photo");
-    } finally {
-      setSettingPrimary(false);
     }
   };
 
@@ -196,11 +140,9 @@ export default function PetDetailsPage() {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the profile for 
-                  <strong>{pet.name || 'this pet'}</strong> and remove its association with any generated portraits.
-                  Portraits themselves will not be deleted automatically.
-                </AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the profile for 
+                <strong>{pet.name || 'this pet'}</strong> and remove its association with any generated portraits.
+                Portraits themselves will not be deleted automatically.
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>

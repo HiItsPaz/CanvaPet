@@ -66,27 +66,46 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json(result);
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Portrait generation error:', error);
     
-    // Handle rate limiting errors
-    if (error.isRateLimited) {
+    // Type guard for custom error properties
+    const hasCustomErrorProps = (err: unknown): err is { isRateLimited?: boolean; isCircuitOpen?: boolean; message?: string; retryAfter?: number } => {
+      return typeof err === 'object' && err !== null;
+    };
+
+    if (hasCustomErrorProps(error)) {
+      // Handle rate limiting errors
+      if (error.isRateLimited) {
+        return NextResponse.json(
+          { error: error.message, retryAfter: error.retryAfter },
+          { status: 429 }
+        );
+      }
+      
+      // Handle circuit breaker errors
+      if (error.isCircuitOpen) {
+        return NextResponse.json(
+          { error: error.message, retryAfter: error.retryAfter },
+          { status: 503 }
+        );
+      }
+      // For other errors that match the custom props structure but aren't specifically handled above
       return NextResponse.json(
-        { error: error.message, retryAfter: error.retryAfter },
-        { status: 429 }
+        { error: error.message || 'An unexpected error occurred' },
+        { status: 500 }
+      );
+    } else if (error instanceof Error) {
+      // Handle standard JavaScript errors
+      return NextResponse.json(
+        { error: error.message || 'An unexpected error occurred' },
+        { status: 500 }
       );
     }
     
-    // Handle circuit breaker errors
-    if (error.isCircuitOpen) {
-      return NextResponse.json(
-        { error: error.message, retryAfter: error.retryAfter },
-        { status: 503 }
-      );
-    }
-    
+    // Fallback for errors that don't match expected structures
     return NextResponse.json(
-      { error: error.message || 'An unexpected error occurred' },
+      { error: 'An unexpected error occurred' },
       { status: 500 }
     );
   }

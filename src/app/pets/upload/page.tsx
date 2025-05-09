@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Check, Info } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Image from 'next/image';
 
 // Define a more specific type for metadata
 type PhotoMetadata = {
@@ -82,11 +83,15 @@ export default function PetPhotoUploadPage() {
                   </div>
                   
                   <div className="mt-4">
-                    <img 
-                      src={uploadedUrl} 
-                      alt="Uploaded pet" 
-                      className="w-full max-h-80 object-contain rounded-md border"
-                    />
+                    {uploadedUrl && metadata?.width && metadata?.height && (
+                      <Image 
+                        src={uploadedUrl} 
+                        alt="Uploaded pet" 
+                        width={metadata.width}
+                        height={metadata.height}
+                        className="w-full max-h-80 object-contain rounded-md border"
+                      />
+                    )}
                   </div>
                   
                   {metadata && (

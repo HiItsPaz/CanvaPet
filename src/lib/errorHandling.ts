@@ -44,7 +44,7 @@ export interface AppError {
   message: string;
   code?: string;
   status?: number;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   retryAfter?: number;
 }
 
@@ -72,7 +72,7 @@ const errorStatusMap: Record<ErrorType, number> = {
 export function createError(
   type: ErrorType,
   message: string,
-  details?: Record<string, any>,
+  details?: Record<string, unknown>,
   code?: string,
   retryAfter?: number
 ): AppError {
@@ -89,40 +89,59 @@ export function createError(
 /**
  * Convert any error (including thrown objects and unknown errors) to AppError
  */
-export function normalizeError(error: any): AppError {
+export function normalizeError(error: unknown): AppError {
   // Return if already an AppError
-  if (error.type && Object.values(ErrorType).includes(error.type)) {
-    return error as AppError;
+  // Type guard for AppError
+  const isAppError = (e: unknown): e is AppError => {
+    if (e && typeof e === 'object' && 'type' in e) {
+      return Object.values(ErrorType).includes((e as { type: ErrorType }).type);
+    }
+    return false;
+  };
+
+  if (isAppError(error)) {
+    return error;
   }
   
   // Handle common API error patterns
-  if (error.isRateLimited) {
+  // Assuming error is an object for these checks. Add specific type guards if needed.
+  const customError = error as { 
+    isRateLimited?: boolean; 
+    message?: string; 
+    code?: string; 
+    retryAfter?: number; 
+    isCircuitOpen?: boolean; 
+    details?: Record<string, unknown>;
+    startsWith?: (prefix: string) => boolean; // For error.code.startsWith
+  } | null;
+
+  if (customError?.isRateLimited) {
     return createError(
       ErrorType.RATE_LIMITED,
-      error.message || 'Rate limit exceeded. Please try again later.',
+      customError.message || 'Rate limit exceeded. Please try again later.',
       {},
-      error.code || 'rate_limited',
-      error.retryAfter
+      customError.code || 'rate_limited',
+      customError.retryAfter
     );
   }
   
-  if (error.isCircuitOpen) {
+  if (customError?.isCircuitOpen) {
     return createError(
       ErrorType.CIRCUIT_OPEN,
-      error.message || 'Service temporarily unavailable due to multiple failures.',
+      customError.message || 'Service temporarily unavailable due to multiple failures.',
       {},
-      error.code || 'circuit_open',
-      error.retryAfter
+      customError.code || 'circuit_open',
+      customError.retryAfter
     );
   }
   
   // Handle database errors
-  if (error.code?.startsWith && error.code?.startsWith('PGRST')) {
+  if (customError?.code?.startsWith && customError.code.startsWith('PGRST')) {
     return createError(
       ErrorType.DATABASE,
-      error.message || 'Database operation failed',
-      error.details || {},
-      error.code
+      customError.message || 'Database operation failed',
+      customError.details || {},
+      customError.code
     );
   }
   
@@ -149,22 +168,35 @@ export function normalizeError(error: any): AppError {
     return createError(
       ErrorType.UNKNOWN,
       error,
-      {}
+      undefined // Explicitly pass undefined for details
     );
   }
   
   // Default for any other errors
+  let errorMessage = 'An unexpected error occurred';
+  let errorDetails: Record<string, unknown> | undefined = undefined;
+
+  if (typeof error === 'object' && error !== null) {
+    errorMessage = (error as { message?: string }).message || errorMessage;
+    // Pass the error object itself as details if it's an object
+    // We need to ensure it conforms to Record<string, unknown>
+    // A simple cast might be too loose, but for now, let's assume it is.
+    // Or, be more selective: errorDetails = { originalError: error }; 
+    // For simplicity, let's pass it if it's an object. `createError` expects Record<string, unknown> or undefined.
+    errorDetails = error as Record<string, unknown>; 
+  }
+
   return createError(
     ErrorType.UNKNOWN,
-    error?.message || 'An unexpected error occurred',
-    error || {}
+    errorMessage,
+    errorDetails
   );
 }
 
 /**
  * Standard error logging
  */
-export function logError(error: AppError, context?: Record<string, any>): void {
+export function logError(error: AppError, context?: Record<string, unknown>): void {
   const logLevel = error.status && error.status >= 500 ? 'error' : 'warn';
   const logData = {
     error_type: error.type,
@@ -184,12 +216,12 @@ export function logError(error: AppError, context?: Record<string, any>): void {
 /**
  * Convert AppError to NextResponse for API routes
  */
-export function errorResponse(error: AppError | any, additionalData?: Record<string, any>): NextResponse {
-  const appError = error.type ? error as AppError : normalizeError(error);
+export function errorResponse(error: AppError | unknown, additionalData?: Record<string, unknown>): NextResponse {
+  const appError = (error as AppError).type ? error as AppError : normalizeError(error);
   
   logError(appError);
   
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     error: appError.message,
     type: appError.type,
     code: appError.code,
@@ -218,7 +250,7 @@ export function errorResponse(error: AppError | any, additionalData?: Record<str
  */
 export function withErrorHandler<T>(
   handler: () => Promise<T>,
-  errorTransform?: (error: any) => AppError
+  errorTransform?: (error: unknown) => AppError
 ): Promise<T | NextResponse> {
   return handler().catch((error) => {
     const appError = errorTransform ? errorTransform(error) : normalizeError(error);
@@ -227,7 +259,7 @@ export function withErrorHandler<T>(
 }
 
 // Helper for validation errors
-export function validationError(message: string, details?: Record<string, any>): AppError {
+export function validationError(message: string, details?: Record<string, unknown>): AppError {
   return createError(
     ErrorType.VALIDATION,
     message,

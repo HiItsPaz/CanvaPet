@@ -86,8 +86,7 @@ export async function generatePreview(
  */
 export async function saveCustomization(
   petId: string,
-  parameters: CustomizationParameters,
-  previewId?: string
+  parameters: CustomizationParameters
 ): Promise<void> {
   try {
     // Get the preview URL (in a real implementation this would come from the preview service)

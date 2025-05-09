@@ -9,10 +9,10 @@ export interface PaymentParameters {
   amount: number;          // Amount in smallest currency unit (e.g., cents)
   currency: string;        // ISO currency code (e.g., 'USD')
   description?: string;    // Optional description for the payment
-  metadata?: Record<string, any>; // Additional metadata
+  metadata?: Record<string, unknown>; // Changed any to unknown
   orderId: string;         // Internal order ID from our system
   userId: string;          // User initiating the payment
-  [key: string]: any;      // Allow for provider-specific parameters
+  [key: string]: unknown;      // Changed any to unknown
 }
 
 // Represents a payment intent or a similar concept from a payment provider
@@ -22,7 +22,7 @@ export interface PaymentIntent {
   status: 'requires_payment_method' | 'requires_confirmation' | 'processing' | 'succeeded' | 'failed' | 'canceled';
   amount: number;
   currency: string;
-  [key: string]: any; 
+  [key: string]: unknown; // Changed any to unknown
 }
 
 // Result of a payment confirmation
@@ -43,7 +43,7 @@ export interface RefundParameters {
   paymentIntentId: string;   // The ID of the payment to refund
   amount?: number;           // Amount to refund (optional, defaults to full amount)
   reason?: string;           // Reason for the refund
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>; // Changed any to unknown
 }
 
 // Result of a refund operation
@@ -64,7 +64,7 @@ export interface PaymentService {
   createPaymentIntent(params: PaymentParameters): Promise<PaymentIntent>;
   
   // Confirms a payment (e.g., after user enters card details)
-  confirmPayment(paymentIntentId: string, paymentMethodDetails?: any): Promise<PaymentConfirmationResult>;
+  confirmPayment(paymentIntentId: string, paymentMethodDetails?: Record<string, unknown>): Promise<PaymentConfirmationResult>; // Changed any to Record<string, unknown>
   
   // Processes a refund
   processRefund(params: RefundParameters): Promise<RefundResult>;
@@ -73,5 +73,5 @@ export interface PaymentService {
   getPaymentStatus(paymentIntentId: string): Promise<PaymentIntent>;
   
   // Handles webhook events from the payment provider (implementation will be provider-specific)
-  handleWebhook(payload: any, signature?: string): Promise<void>;
+  handleWebhook(payload: Record<string, unknown>, signature?: string): Promise<void>; // Changed any to Record<string, unknown>
 } 

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { deletePet } from "@/lib/petApi";
-import { useRouter } from "next/navigation";
 
 interface PetCardProps {
   pet: Pet;
@@ -23,7 +22,6 @@ interface PetCardProps {
 }
 
 export function PetCard({ pet, onDelete }: PetCardProps) {
-  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

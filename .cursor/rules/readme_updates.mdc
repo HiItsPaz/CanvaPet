@@ -3,3 +3,38 @@ description:
 globs:
 alwaysApply: false
 ---
+# README Update Guidelines
+
+## Update After Task Completion
+
+- **Always update the README when a task is completed**
+  - Document what was implemented
+  - Highlight key features and components
+  - Include brief technical details when relevant
+
+## README Structure
+
+- **Project Header** - Keep the title and add a short description
+- **Features** - List main features implemented so far
+- **Components** - Document implemented UI components
+- **Technical Stack** - List technologies used
+- **Implementation Progress** - Track completed tasks and upcoming work
+
+## Update Format
+
+```markdown
+## Recent Updates
+
+### Task X.Y: Task Name (YYYY-MM-DD)
+- Implemented [feature]
+- Created [component] for [purpose]
+- Added [technical detail]
+```
+
+## Best Practices
+
+- **Keep Updates Concise** - Focus on what was implemented, not how
+- **Use Markdown Properly** - Organize with headers, lists, and code blocks
+- **Include Screenshots When Relevant** - For UI components (store in `/public/screenshots`)
+- **Maintain Chronological Order** - Most recent updates at the top
+- **Cross-Reference Tasks** - Reference task IDs from Task Master

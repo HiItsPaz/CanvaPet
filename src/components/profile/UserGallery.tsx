@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Imports currently not used but reserved for future implementation of filtering, tagging, and command UI features
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { getUserGalleryPortraits, GalleryQueryParameters, toggleFavoritePortrait } from '@/lib/ai/openai'; // Using any[] for now

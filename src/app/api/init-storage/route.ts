@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createRouteHandlerClient, SupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { initializeStorage, BUCKET_NAMES } from '@/lib/storageUtils';
 import { cookies } from 'next/headers';

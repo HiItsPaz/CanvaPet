@@ -2,7 +2,7 @@
 
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { Profile } from '@/types/profile';
 import { getProfile } from '@/lib/profile';
 
@@ -37,12 +37,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setProfileLoading(false);
   };
 
-  // Function to manually refresh the profile data
-  const refreshProfile = async () => {
+  // Function to manually refresh the profile data - wrapped in useCallback 
+  const refreshProfile = useCallback(async () => {
     if (user?.id) {
       await fetchProfile(user.id);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     const getInitialSession = async () => {
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [refreshProfile]);
 
   const signOut = async () => {
     setLoading(true);

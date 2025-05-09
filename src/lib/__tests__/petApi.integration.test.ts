@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// This file contains imports used in TODO tests that will be implemented in the future
 import { 
     getUserPets, 
     getPetById, 

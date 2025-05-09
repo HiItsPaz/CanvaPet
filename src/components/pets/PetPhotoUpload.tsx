@@ -2,22 +2,26 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  ACCEPTED_FILE_TYPES, 
   MAX_FILE_SIZE, 
-  validateFile, 
-  compressImage,
-  extractMetadata
+  validateFile
 } from '@/lib/imageUtils';
 import { checkIsPet } from '@/lib/petUtils';
 import { SupabaseFileUploader } from './SupabaseFileUploader';
 import { BUCKET_NAMES } from '@/lib/storageUtils';
 
+// Define a type for pet detection results
+interface PetDetectionResult {
+  isPet: boolean;
+  confidence: number;
+  animalType?: string;
+  [key: string]: unknown;
+}
+
 interface PetPhotoUploadProps {
-  onUploadComplete?: (url: string, metadata?: Record<string, any>) => void;
+  onUploadComplete?: (url: string, metadata?: Record<string, unknown>) => void;
   onUploadError?: (error: string) => void;
   requirePetDetection?: boolean;
 }
@@ -30,7 +34,7 @@ export function PetPhotoUpload({
   const { user } = useAuth();
   const [file, setFile] = useState<File | null>(null);
   const [isDetectingPet, setIsDetectingPet] = useState(false);
-  const [petDetectionResult, setPetDetectionResult] = useState<any | null>(null);
+  const [petDetectionResult, setPetDetectionResult] = useState<PetDetectionResult | null>(null);
   const [petDetectionError, setPetDetectionError] = useState<string | null>(null);
   const [isReadyForUpload, setIsReadyForUpload] = useState(false);
 
@@ -63,7 +67,8 @@ export function PetPhotoUpload({
       if (requirePetDetection) {
         try {
           setIsDetectingPet(true);
-          const result = await checkIsPet(file);
+          // Type assertion via unknown to bypass type checking for incompatible types
+          const result = await checkIsPet(file) as unknown as PetDetectionResult;
           setPetDetectionResult(result);
           
           // Determine if file is ready for upload based on pet detection
@@ -73,9 +78,10 @@ export function PetPhotoUpload({
           if (!result.isPet) {
             setPetDetectionError("No pet detected in this image. Please upload a photo of your pet.");
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error('Pet detection error:', err);
-          setPetDetectionError(`Pet detection failed: ${err.message}`);
+          const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+          setPetDetectionError(`Pet detection failed: ${errorMessage}`);
           // Don't block upload if detection fails, allow proceeding
           setIsReadyForUpload(true);
         } finally {
@@ -104,7 +110,7 @@ export function PetPhotoUpload({
   });
 
   // Handle upload completion
-  const handleUploadComplete = useCallback((url: string, metadata: Record<string, any>) => {
+  const handleUploadComplete = useCallback((url: string, metadata: Record<string, unknown>) => {
     // Add pet detection result to the metadata if available
     const completeMetadata = {
       ...metadata,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPortrait } from '@/lib/ai/openai'; // Function to fetch original portrait data
 import { createPortraitRevision, PortraitParameters } from '@/lib/ai/openai'; // Revision function
@@ -21,8 +21,14 @@ interface RevisionFormProps {
   userId: string;
 }
 
-// Placeholder type for portrait data - replace with actual type if available
-type PortraitData = any; 
+// Define a more specific type instead of any
+interface PortraitData {
+  id: string;
+  user_id: string;
+  pet_id: string;
+  customization_params?: Record<string, unknown>;
+  [key: string]: unknown;
+}
 
 export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) {
   const [originalPortrait, setOriginalPortrait] = useState<PortraitData | null>(null);
@@ -44,11 +50,17 @@ export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) 
         if (!data || data.user_id !== userId) {
           throw new Error("Original portrait not found or access denied.");
         }
-        setOriginalPortrait(data);
-        // Initialize form with original params
-        setCurrentParams(data.customization_params || {});
-      } catch (err: any) {
-        setError(err.message || 'Failed to load original portrait data.');
+        
+        // Cast the data to our PortraitData type
+        setOriginalPortrait(data as unknown as PortraitData);
+        
+        // Initialize form with original params, handling null/undefined case
+        if (data.customization_params) {
+          setCurrentParams(data.customization_params as Partial<PortraitParameters>);
+        }
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load original portrait data.';
+        setError(errorMessage);
         console.error("Fetch original error:", err);
       } finally {
         setLoading(false);
@@ -60,7 +72,7 @@ export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) 
     }
   }, [originalPortraitId, userId]);
 
-  const handleParamChange = (key: keyof PortraitParameters, value: any) => {
+  const handleParamChange = (key: keyof PortraitParameters, value: string | number | boolean) => {
     setCurrentParams(prev => ({ ...prev, [key]: value }));
   };
 
@@ -86,9 +98,10 @@ export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) 
       // Optionally redirect to gallery or revision history page
       router.push('/profile/gallery'); 
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit revision request.');
-      toast({ title: "Submission Error", description: err.message || 'Failed to submit revision.', variant: "destructive" });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit revision request.';
+      setError(errorMessage);
+      toast({ title: "Submission Error", description: errorMessage, variant: "destructive" });
       console.error("Submit revision error:", err);
     } finally {
       setIsSubmitting(false);
@@ -126,14 +139,14 @@ export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) 
              <Label htmlFor="artStyle">Art Style</Label>
              <Input 
                  id="artStyle" 
-                 value={currentParams.artStyle || ''} 
+                 value={currentParams.artStyle?.toString() || ''} 
                  onChange={(e) => handleParamChange('artStyle', e.target.value)} 
              />
          </div>
          <div className="space-y-2">
              <Label htmlFor="background">Background Type</Label>
               <Select 
-                value={currentParams.background || ''} 
+                value={currentParams.background?.toString() || ''} 
                 onValueChange={(value) => handleParamChange('background', value)}
               >
                 <SelectTrigger id="background">
@@ -154,7 +167,7 @@ export function RevisionForm({ originalPortraitId, userId }: RevisionFormProps) 
                 min={0}
                 max={100}
                 step={1}
-                value={[currentParams.styleIntensity || 0]}
+                value={[typeof currentParams.styleIntensity === 'number' ? currentParams.styleIntensity : 0]}
                 onValueChange={(value) => handleParamChange('styleIntensity', value[0])}
              />
          </div>

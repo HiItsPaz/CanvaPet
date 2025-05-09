@@ -30,7 +30,7 @@ export interface PrintifyPrintProvider {
 export interface PrintifyBlueprintDetails extends PrintifyBlueprint {
     print_provider_ids: number[];
     variants: PrintifyVariant[];
-    print_areas: Record<string, any>; // Detailed print area info
+    print_areas: Record<string, unknown>; // Changed any to unknown
     // Add more fields
 }
 
@@ -119,9 +119,10 @@ async function makePrintifyRequest<T>(endpoint: string, options: RequestInit = {
 
         return await response.json() as T;
 
-    } catch (error: any) {
+    } catch (error: unknown) { // Changed any to unknown
         console.error(`Error during Printify API request to ${endpoint}:`, error);
-        throw new Error(`Printify API request failed: ${error.message}`);
+        const message = error instanceof Error ? error.message : 'Unknown API error';
+        throw new Error(`Printify API request failed: ${message}`);
     }
 }
 

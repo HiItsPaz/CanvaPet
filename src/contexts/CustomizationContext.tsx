@@ -3,7 +3,6 @@
 import { 
   createContext, 
   useContext, 
-  useState, 
   useCallback, 
   ReactNode,
   useReducer
@@ -160,6 +159,7 @@ const CustomizationContext = createContext<CustomizationContextType | undefined>
 // --- Provider Component ---
 interface CustomizationProviderProps {
   children: ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   petId: string;
   initialParameters?: CustomizationParameters;
   initialStyles?: Style[];
@@ -171,6 +171,7 @@ interface CustomizationProviderProps {
 
 export function CustomizationProvider({
   children,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   petId,
   initialParameters,
   initialStyles = [],

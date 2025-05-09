@@ -101,15 +101,26 @@ export async function uploadFileWithMetadata(
     ...metadata,
   };
   
+  // Convert all metadata values to strings for Supabase
+  const stringifiedMetadata: Record<string, string> = {};
+  for (const key in fullMetadata) {
+    if (Object.prototype.hasOwnProperty.call(fullMetadata, key)) {
+      const typedKey = key as keyof FileMetadata;
+      const value = fullMetadata[typedKey];
+      if (value !== undefined && value !== null) {
+        stringifiedMetadata[typedKey] = typeof value === 'string' ? value : JSON.stringify(value);
+      }
+    }
+  }
+
   // Upload file with metadata
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucketName)
     .upload(filePath, file, {
       cacheControl: '3600', // 1 hour cache
       upsert: true, // Overwrite if exists
       contentType: file.type,
-      duplex: 'half',
-      metadata: fullMetadata as any,
+      metadata: stringifiedMetadata, // Use stringified metadata
     });
   
   if (error) {

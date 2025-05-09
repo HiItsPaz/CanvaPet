@@ -7,12 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { createPet, updatePet } from "@/lib/petApi";
 import { useAuth } from "@/contexts/AuthContext";
-import { PetPhotoUpload } from "@/components/pets/PetPhotoUpload";
-import { AlertCircle, Loader2, Trash2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, Trash2 } from "lucide-react";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -218,7 +215,7 @@ export function PetForm({ pet, isEdit = false, onSuccess }: PetFormProps) {
             <FormField
               control={form.control}
               name="original_image_url"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Pet Photos</FormLabel>
                   <FormDescription>

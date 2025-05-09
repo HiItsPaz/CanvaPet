@@ -5,6 +5,36 @@ alwaysApply: false
 ---
 # Supabase Development Best Practices
 
+## Local Development Approach
+
+- **Always Use Service Role for Local Development**
+  - **IMPORTANT:** For local development, always use the service role key to bypass RLS policies
+  - Set up separate development scripts that use admin client for reliable testing
+  - Add a clear indicator when running in development mode
+  ```javascript
+  // ✅ DO: Create a development-specific admin client
+  // scripts/admin-client.js
+  const adminSupabase = createClient(supabaseUrl, serviceRoleKey);
+  
+  // Use in your development pages/components with a clear indicator
+  const isDev = process.env.NODE_ENV === 'development';
+  const client = isDev ? adminSupabase : supabase;
+  ```
+
+- **Create and Use Test User Account**
+  - Set up a dedicated test user for local development
+  - Create test data owned by this user
+  - Document test user credentials in team documentation (not in public repos)
+  ```javascript
+  // ✅ DO: Set up script to create test user
+  // scripts/setup-test-user.js
+  const { data, error } = await supabase.auth.signUp({
+    email: 'test@example.com',
+    password: 'testpassword123'
+  });
+  console.log('Created test user with ID:', data.user.id);
+  ```
+
 ## Authentication & Security
 
 - **Environment Variables**
@@ -74,6 +104,30 @@ alwaysApply: false
   
   -- ❌ DON'T: Use uncasted auth.uid() with string operations
   USING (auth.uid() = (storage.foldername(name))[1]); -- Type mismatch
+  ```
+
+## Switching Between Development and Production
+
+- **Environment-based Client Selection**
+  - Use environment variables to conditionally use admin client or regular client
+  - Create dedicated development components/helpers
+  ```typescript
+  // ✅ DO: Create conditional client based on environment
+  export function getSupabaseClient() {
+    if (process.env.NODE_ENV === 'development' && process.env.BYPASS_RLS === 'true') {
+      return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+        process.env.SUPABASE_SERVICE_KEY as string
+      );
+    }
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
+    );
+  }
+  
+  // ❌ DON'T: Mix development and production strategies
+  // This causes unpredictable behavior
   ```
 
 ## Database Schema & Queries
@@ -162,3 +216,193 @@ alwaysApply: false
 ---
 
 These best practices ensure consistent, secure, and maintainable Supabase integration throughout the CanvaPet project.
+
+# Supabase Database Rules
+
+## **Database Structure and Navigation**
+- **Follow Established Entity Relationships**
+  - Reference [erd.md](mdc:scripts/erd.md) for the definitive entity model
+  - Respect the defined table relationships when making queries
+  - Main entities: profiles, pets, portraits, styles, merchandise, orders
+
+- **Table Naming Conventions**
+  - Use singular nouns for table names (e.g., `pet` not `pets`)
+  - Junction tables should combine both entity names with underscore (e.g., `portrait_customization_options_applied`)
+  - Audit and statistical tables should have descriptive prefixes (e.g., `audit_logs`, `pet_statistics`)
+
+## **Row Level Security (RLS) Patterns**
+- **Required for All Tables**
+  - Always enable RLS with `ALTER TABLE public.table_name ENABLE ROW LEVEL SECURITY;`
+  - Create appropriate policies for each operation (SELECT, INSERT, UPDATE, DELETE)
+  ```sql
+  -- ✅ DO: Create specific policies for each operation
+  CREATE POLICY "Users can view their own pets" 
+      ON public.pets FOR SELECT 
+      USING (auth.uid() = user_id);
+  
+  -- ❌ DON'T: Use overly permissive policies
+  CREATE POLICY "Allow all operations to authenticated users"
+      ON public.table_name
+      USING (auth.role() = 'authenticated');
+  ```
+
+- **Common Policy Patterns**
+  - **Owner Access Pattern**: `auth.uid() = user_id`
+  - **Public Data Pattern**: `is_public = TRUE`
+  - **Junction Table Pattern**: Check through parent table with subquery
+  ```sql
+  -- ✅ DO: Secure junction tables based on parent ownership
+  CREATE POLICY "Users can view options applied to their portraits" 
+      ON public.portrait_customization_options_applied FOR SELECT 
+      USING (EXISTS (
+          SELECT 1 FROM portraits 
+          WHERE portraits.id = portrait_id 
+          AND (portraits.user_id = auth.uid() OR portraits.is_public = TRUE)
+      ));
+  ```
+
+## **Schema Migrations**
+- **Use Migration Files for All Schema Changes**
+  - Never modify schema directly in production
+  - Follow the naming convention: `YYYYMMDDHHMMSS_descriptive_name.sql`
+  - Include both "up" and "down" (rollback) operations
+
+- **Migration Safety Principles**
+  - Make additive changes only (add columns, tables, or constraints)
+  - Use explicit transactions (`BEGIN; ... COMMIT;`) for atomic operations
+  - Implement zero-downtime migration patterns for production changes
+  ```sql
+  -- ✅ DO: Use safe column rename strategy
+  -- Step 1: Add new column
+  ALTER TABLE public.table_name ADD COLUMN new_column_name TEXT;
+  
+  -- Step 2: Copy data
+  UPDATE public.table_name SET new_column_name = old_column_name;
+  
+  -- Step 3: Create synchronization trigger
+  CREATE TRIGGER sync_columns
+  BEFORE INSERT OR UPDATE ON public.table_name
+  FOR EACH ROW EXECUTE FUNCTION sync_column_values();
+  
+  -- Step 4: Mark old column as deprecated in comment
+  COMMENT ON COLUMN public.table_name.old_column_name IS 'DEPRECATED: Use new_column_name instead';
+  ```
+
+- **Testing Migrations**
+  - Always test migrations in a development branch before applying to production
+  - Use `scripts/test_migration.sh` to validate migration scripts
+  - Verify both forward and rollback operations work as expected
+
+## **Triggers and Audit Logging**
+- **Use Standard Trigger Naming**
+  - Format: `trg_<table>_<action>` (e.g., `trg_portraits_audit`)
+  - Document trigger purpose with descriptive comments
+
+- **Audit Log Integration**
+  - All data modifications to critical tables should be logged to `audit_logs`
+  - Use the standard audit logging function
+  ```sql
+  -- ✅ DO: Log changes to important tables
+  CREATE TRIGGER trg_table_audit
+  AFTER INSERT OR UPDATE OR DELETE ON public.table_name
+  FOR EACH ROW EXECUTE FUNCTION public.fn_audit_log();
+  ```
+
+- **Validation Triggers**
+  - Implement validation triggers for business rule enforcement
+  - Return clear error messages on validation failures
+  ```sql
+  -- ✅ DO: Create validation functions with explicit error messages
+  IF NEW.age_years IS NOT NULL AND (NEW.age_years < 0 OR NEW.age_years > 30) THEN
+      RAISE EXCEPTION 'Pet age must be between 0 and 30 years';
+  END IF;
+  ```
+
+## **Query Optimization**
+- **Use Appropriate Indexes**
+  - Create indexes for common query patterns (filtering, sorting, joining)
+  - Use partial indexes for specific conditions
+  ```sql
+  -- ✅ DO: Create targeted indexes
+  CREATE INDEX idx_portraits_user_id ON public.portraits (user_id);
+  
+  -- ✅ DO: Use partial indexes for specific conditions
+  CREATE INDEX idx_portraits_public 
+  ON public.portraits (created_at DESC) 
+  WHERE is_public = TRUE;
+  ```
+
+- **Query Performance Guidelines**
+  - Use `EXPLAIN ANALYZE` to evaluate query performance
+  - Avoid selecting unnecessary columns (prefer specific columns over `SELECT *`)
+  - Limit result sets with appropriate `LIMIT` and `OFFSET`
+  - Use `EXISTS` instead of `IN` for subqueries when checking existence
+
+## **Testing and Validation**
+- **Comprehensive Tests**
+  - Use test queries in `supabase/test-queries/` directory as examples
+  - Create tests for RLS policies, triggers, and complex queries
+  - Verify constraints and validations work as expected
+
+- **Test Data Creation**
+  - Create isolated test data that won't interfere with production data
+  - Use clear naming patterns (e.g., prefix with "Test") for test data
+  - Clean up test data after tests complete
+
+## **Edge Function Integration**
+- **Database Interactions from Edge Functions**
+  - Use parameterized queries to prevent SQL injection
+  ```typescript
+  // ✅ DO: Use parameterized queries
+  const { data, error } = await supabase
+    .from('portraits')
+    .select('*')
+    .eq('user_id', userId);
+  
+  // ❌ DON'T: Concatenate values into SQL strings
+  const query = `SELECT * FROM portraits WHERE user_id = '${userId}'`;
+  ```
+  
+- **Permission Context**
+  - Always set correct auth context in edge functions:
+  ```typescript
+  // ✅ DO: Set auth context for RLS to work properly
+  supabase.auth.setAuth(userToken);
+  ```
+
+## **TypeScript Integration**
+- **Use Generated Types**
+  - Run `supabase gen types typescript --local` to generate types from the database schema
+  - Import generated types in API calls and data manipulation functions
+  ```typescript
+  // ✅ DO: Use strongly-typed database interfaces
+  import { Database } from '@/types/supabase';
+  type Portrait = Database['public']['Tables']['portraits']['Row'];
+  ```
+
+- **Extend Types When Needed**
+  - Create extended types for complex queries or joined data
+  ```typescript
+  // ✅ DO: Extend base types for joined queries
+  type PortraitWithPet = Database['public']['Tables']['portraits']['Row'] & {
+    pet: Database['public']['Tables']['pets']['Row']
+  };
+  ```
+
+## **Database Scaling Considerations**
+- **Use Connection Pooling**
+  - Enable connection pooling for high-traffic applications
+  - Configure appropriate pool size and timeout settings
+
+- **Monitor Database Performance**
+  - Set up alerts for slow queries and high resource usage
+  - Regularly review and optimize frequently executed queries
+
+## **Data Security**
+- **Never Store Sensitive Data Unencrypted**
+  - Encrypt sensitive data before storage
+  - Use Supabase Vault for API keys and secrets
+
+- **Implement Least Privilege Access**
+  - Create specific database roles with minimal permissions
+  - Use the most restrictive RLS policies possible

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
-import { CheckCircle2, Terminal, Upload, User, X } from 'lucide-react';
+import { CheckCircle2, Terminal, Upload, X } from 'lucide-react';
 import { uploadProfileImage } from '@/lib/profile';
 import { useAuth } from '@/contexts/AuthContext';
 import { Profile, AvatarFile } from '@/types/profile';

@@ -13,10 +13,9 @@ import { NumericInputControl } from "./_subcomponents/NumericInputControl";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, Palette, Wand2, ToyBrick, Settings2, Undo2, Redo2 } from "lucide-react";
-import { CustomizationParameters } from "@/types/customization";
 
 interface CustomizationInterfaceWithContextProps {
   petName?: string;
@@ -55,7 +54,6 @@ export function CustomizationInterfaceWithContext({
     selectBackground,
     toggleAccessory,
     adjustStyleIntensity,
-    updateParameter,
     generatePreview,
     saveCustomization,
     undo,
@@ -75,15 +73,6 @@ export function CustomizationInterfaceWithContext({
 
   const dismissGuidance = () => setShowGuidance(false);
   
-  // Handler for generic parameter updates if not covered by specific setters
-  // This is useful if we add more parameters directly to the CustomizationParameters type
-  const handleGenericParamChange = <K extends keyof CustomizationParameters>(
-    key: K,
-    value: CustomizationParameters[K]
-  ) => {
-    updateParameter(key, value);
-  };
-
   // Example specific handlers - in a real scenario, these might call updateParameter with appropriate keys
   const handleExampleToggleChange = (checked: boolean) => {
     setExampleToggleState(checked);
@@ -109,7 +98,7 @@ export function CustomizationInterfaceWithContext({
           <AlertTitle className="text-blue-700 dark:text-blue-300">Customization Guide</AlertTitle>
           <AlertDescription className="mt-2 text-blue-600 dark:text-blue-300/90">
             <p className="mb-2">
-              Welcome to the Pet Customizer! Here's how to create a unique portrait for {petName}:
+              Welcome to the Pet Customizer! Here&apos;s how to create a unique portrait for {petName}:
             </p>
             <ol className="list-decimal list-inside space-y-1 text-sm">
               <li><strong>Style:</strong> Pick an artistic style (e.g., Cartoon, Watercolor).</li>
@@ -125,7 +114,7 @@ export function CustomizationInterfaceWithContext({
               onClick={dismissGuidance} 
               className="mt-3 bg-white dark:bg-blue-800 dark:hover:bg-blue-700 dark:text-blue-200"
             >
-              Got it, let's start!
+              Got it, let&apos;s start!
             </Button>
           </AlertDescription>
         </Alert>

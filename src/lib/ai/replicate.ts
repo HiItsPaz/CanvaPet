@@ -74,7 +74,7 @@ const jobStates: Record<string, JobState> = {};
 
 // Helper function to fetch and merge JSONB data (could be shared with openai.ts)
 // For simplicity, duplicated here. Consider moving to a shared DB utils file.
-async function mergeImageVersions(id: string, newVersions: Record<string, string>, tableName: 'portraits' | 'pets'): Promise<Record<string, any>> {
+async function mergeImageVersions(id: string, newVersions: Record<string, string>, tableName: 'portraits' | 'pets'): Promise<Record<string, unknown>> {
   const { data, error } = await supabase
     .from(tableName)
     .select('image_versions') // Assuming pets table also gets image_versions
@@ -151,17 +151,19 @@ export async function upscaleImage(params: UpscalingParameters): Promise<Upscali
       status: 'pending',
       estimatedCompletionTime: 120 // seconds, approximate time for upscaling
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Image upscaling initiation failed:', error);
     
     // If this is an expected error type, throw it directly
-    if (error.code && (error.isRateLimited || error.isCircuitOpen)) {
-      throw error;
+    const customError = error as UpscalingError;
+    if (customError.code && (customError.isRateLimited || customError.isCircuitOpen)) {
+      throw customError;
     }
     
     // Otherwise, throw a generic error
+    const message = error instanceof Error ? error.message : 'Unknown error';
     throw {
-      message: `Failed to initiate image upscaling: ${error.message}`,
+      message: `Failed to initiate image upscaling: ${message}`,
       code: 'upscaling_failed'
     };
   }
@@ -235,7 +237,7 @@ async function processImageUpscaling(
     let baseStoragePath = `unknown/${params.userId}`;
     let targetTable: 'portraits' | 'pets' | null = null;
     let targetId: string | null = null;
-    let versionKey = `upscaled_clarity_${params.scaleFactor || 2}x`;
+    const versionKey = `upscaled_clarity_${params.scaleFactor || 2}x`;
 
     if (params.portraitId) {
         baseStoragePath = `portraits/${params.portraitId}`;
@@ -295,7 +297,7 @@ async function processImageUpscaling(
     // 9. Record success for circuit breaker
     recordOutcome('replicate', true);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Image upscaling processing failed for job ${jobId}:`, error);
     recordOutcome('replicate', false);
     if (jobStates[jobId]) {

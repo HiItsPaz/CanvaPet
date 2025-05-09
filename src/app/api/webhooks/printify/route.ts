@@ -44,6 +44,13 @@ async function verifyPrintifyWebhookSignature(
     return true;
 }
 
+interface PrintifyShipmentDetails {
+  carrier?: string;
+  tracking_number?: string;
+  tracking_url?: string;
+  shipped_at?: string; 
+}
+
 export async function POST(req: NextRequest) {
     // 1. Verify Signature
     if (!PRINTIFY_WEBHOOK_SECRET) {
@@ -104,7 +111,7 @@ export async function POST(req: NextRequest) {
                 }
                 
                 // Prepare data to update our internal order
-                const updateData: { status?: string; shipment_details?: any } = {};
+                const updateData: { status?: string; shipment_details?: PrintifyShipmentDetails } = {};
                 if (orderStatus) {
                     // Map Printify status to our internal status if needed
                     updateData.status = orderStatus;

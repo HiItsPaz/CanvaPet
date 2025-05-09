@@ -18,14 +18,16 @@ export function createServerClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options });
-          } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (_error) {
             // This will throw in middleware, but we can ignore it
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options });
-          } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (_error) {
             // This will throw in middleware, but we can ignore it
           }
         },

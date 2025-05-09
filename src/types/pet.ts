@@ -1,5 +1,3 @@
-import { Database } from './database.types';
-
 export interface Pet {
   id: string;
   user_id: string;
