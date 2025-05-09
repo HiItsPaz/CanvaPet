@@ -1,38 +1,137 @@
-name: Node.js CI
+name: CanvaPet CI
 
-on:
+on: 
   push:
-    branches: [ "main" ]
+    branches: [ main ] # Or your primary branch
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ] 
 
 jobs:
-  build:
+  lint-build:
+    name: Lint & Build Check
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x] # Test on multiple Node.js versions
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm' # Enable caching for npm dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Use the Node.js version from your project
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm ci # Use npm ci for cleaner installs in CI
+      - name: Install dependencies
+        run: npm ci # Use ci for faster, deterministic installs
 
-    - name: Run linter
-      run: npm run lint
+      - name: Run ESLint
+        run: npm run lint # Assuming you have a lint script in package.json
+        
+      - name: Build Project
+        run: npm run build
+        env:
+          # Add any build-time environment variables here if needed
+          # Required for Next.js build if they are used during build time
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} 
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Add other NEXT_PUBLIC_ vars if build fails without them
+          # Do NOT add secret keys here
+          
+  unit-tests:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    needs: lint-build # Run after lint/build succeeds
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Run build
-      run: npm run build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    # Placeholder for tests - uncomment and configure when tests are added
-    # - name: Run tests
-    #   run: npm test 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set environment variables
+        env:
+          URL_TEST: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL_TEST }}
+          URL_MAIN: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          ANON_KEY_TEST: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY_TEST }}
+          ANON_KEY_MAIN: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          # Use shell's default value mechanism: ${VAR:-DEFAULT_IF_VAR_EMPTY_OR_UNSET}
+          # This assumes secrets result in an empty string if not set in GitHub.
+          FINAL_URL="${URL_TEST:-$URL_MAIN}"
+          FINAL_ANON_KEY="${ANON_KEY_TEST:-$ANON_KEY_MAIN}"
+
+          echo "NEXT_PUBLIC_SUPABASE_URL=$FINAL_URL" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$FINAL_ANON_KEY" >> $GITHUB_ENV
+
+      - name: Run Jest Tests
+        run: npm test -- --coverage # Assuming 'npm test' runs jest, add coverage flag
+        env:
+           # Using the environment variables set in the previous step
+           NEXT_PUBLIC_SUPABASE_URL: ${{ env.NEXT_PUBLIC_SUPABASE_URL }}
+           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+           # Add other env vars needed by tests
+           
+      # Optional: Upload coverage report
+      # - name: Upload coverage reports to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: lint-build # Run after lint/build succeeds
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build Project for Cypress
+        run: npm run build
+        env:
+          # Set environment variables needed for the build AND for Cypress tests
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} 
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Add other NEXT_PUBLIC_ vars
+
+      - name: Run Cypress Tests
+        # Uses official Cypress action: https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start # Command to start the built application
+          wait-on: 'http://localhost:3000' # Wait for the app to be ready
+          # browser: chrome # Optional: specify browser
+          # record: true # Optional: Record to Cypress Dashboard
+        env:
+          # Environment variables needed by the Cypress tests themselves
+          CYPRESS_TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          CYPRESS_TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          # Add other CYPRESS_ variables if needed
+          # CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }} # If recording to dashboard
+          
+      # Optional: Upload test artifacts (screenshots, videos)
+      # - uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: cypress-artifacts
+      #     path: cypress/screenshots
+      #     retention-days: 7
+      # - uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: cypress-artifacts
+      #     path: cypress/videos
+      #     retention-days: 7 
