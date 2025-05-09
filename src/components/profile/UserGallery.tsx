@@ -27,8 +27,26 @@ import { getPortraitTags, setPortraitTags } from '@/lib/ai/openai';
 import { getUserPets, setPetProfileImage } from '@/lib/petApi'; // Correct function name
 import { useRouter } from 'next/navigation'; // Import useRouter
 
-// Assuming GalleryPortrait type definition issue is resolved, using any for now
-type GalleryPortrait = any; 
+// Replace the 'any' type definition with a more specific interface
+interface GalleryPortrait {
+  id: string;
+  user_id: string;
+  pet_id?: string;
+  created_at?: string | null;
+  status?: string;
+  is_favorited?: boolean;
+  image_versions?: {
+    thumbnail_512?: string;
+    generated_dalle3?: string;
+    original?: string;
+    upscaled_clarity_2x?: string;
+    upscaled_clarity_4x?: string;
+    [key: string]: string | undefined;
+  };
+  customization_params?: Record<string, unknown>;
+  tags?: string[];
+  [key: string]: unknown;
+}
 
 // Type for Pet (assuming from petApi or types)
 type Pet = { id: string; name: string | null; /* other fields */ };
@@ -51,8 +69,9 @@ function TagEditor({ portraitId, userId, initialTags }: { portraitId: string, us
       try {
         const updatedTags = await setPortraitTags(portraitId, userId, [...tags, newTag]);
         setTags(updatedTags);
-      } catch (error: any) { 
-        toast({ title: "Error adding tag", description: error.message, variant: "destructive" });
+      } catch (error: unknown) { 
+        const message = error instanceof Error ? error.message : "Could not add tag";
+        toast({ title: "Error adding tag", description: message, variant: "destructive" });
       }
       setIsLoading(false);
     }
@@ -64,8 +83,9 @@ function TagEditor({ portraitId, userId, initialTags }: { portraitId: string, us
     try {
       const updatedTags = await setPortraitTags(portraitId, userId, tags.filter(t => t !== tagToRemove));
       setTags(updatedTags);
-    } catch (error: any) {
-       toast({ title: "Error removing tag", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+       const message = error instanceof Error ? error.message : "Could not remove tag";
+       toast({ title: "Error removing tag", description: message, variant: "destructive" });
     }
     setIsLoading(false);
   };
@@ -187,8 +207,9 @@ export function UserGallery({ userId }: UserGalleryProps) {
       }
       setCurrentPage(page);
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to load portraits.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load portraits.';
+      setError(message);
       console.error('Error fetching portraits:', err);
       setHasMore(false); // Stop trying to load more on error
     } finally {
@@ -244,11 +265,12 @@ export function UserGallery({ userId }: UserGalleryProps) {
         title: "Portrait Deleted",
         description: "The portrait has been successfully deleted.",
       });
-    } catch (error: any) {      
+    } catch (error: unknown) {      
+      const message = error instanceof Error ? error.message : "Could not delete the portrait.";
       console.error('Delete failed:', error);
       toast({
         title: "Delete Failed",
-        description: error.message || "Could not delete the portrait.",
+        description: message,
         variant: "destructive",
       });
     }
@@ -319,7 +341,7 @@ export function UserGallery({ userId }: UserGalleryProps) {
         toast({
              title: currentIsFavorited ? "Removed from Favorites" : "Added to Favorites",
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Failed to toggle favorite:", error);
         // Revert optimistic update on error
         setPortraits(prev => 
@@ -354,11 +376,12 @@ export function UserGallery({ userId }: UserGalleryProps) {
 
       try {
         await setPetProfileImage(petId, imageUrl);
-        toast({ title: "Profile Picture Updated!", description: `${portrait.pets?.name || 'Pet'}'s profile picture has been set.` });
+        toast({ title: "Profile Picture Updated!", description: `${portrait.pets?.name || 'Pet'}&apos;s profile picture has been set.` });
         // Optionally, re-fetch pets or update local pet state if displaying profile pics elsewhere
-      } catch (error: any) {
+      } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "Could not set profile picture.";
           console.error("Failed to set profile picture:", error);
-          toast({ title: "Update Failed", description: error.message, variant: "destructive" });
+          toast({ title: "Update Failed", description: message, variant: "destructive" });
       }
   };
 
@@ -572,7 +595,7 @@ export function UserGallery({ userId }: UserGalleryProps) {
               </Button>
           )}
           {!loading && !loadingMore && !hasMore && portraits.length > 0 && (
-              <p className="text-muted-foreground">You've reached the end.</p>
+              <p className="text-muted-foreground">You&apos;ve reached the end.</p>
           )}
       </div>
     </div>

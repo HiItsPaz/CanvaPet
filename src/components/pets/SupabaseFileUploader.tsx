@@ -168,13 +168,14 @@ export function SupabaseFileUploader({
         fileType: file.type
       });
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error uploading file:', err);
       
       // Attempt retry if under max retries
       if (retryCount < maxRetries) {
         setRetryCount(prev => prev + 1);
-        setError(`Upload failed: ${err.message}. Retrying (${retryCount + 1}/${maxRetries})...`);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Upload failed: ${errorMessage}. Retrying (${retryCount + 1}/${maxRetries})...`);
         
         // Wait a moment before retrying
         setTimeout(() => {
@@ -184,9 +185,9 @@ export function SupabaseFileUploader({
       } else {
         // Max retries reached
         setUploading(false);
-        const errorMsg = `Upload failed after ${maxRetries} attempts: ${err.message}`;
-        setError(errorMsg);
-        onUploadError?.(errorMsg);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Upload failed after ${maxRetries} attempts: ${errorMessage}`);
+        onUploadError?.(errorMessage);
       }
     }
   }, [file, user, bucketName, folderPath, retryCount, maxRetries, onUploadComplete, onUploadError, additionalMetadata]);

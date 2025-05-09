@@ -45,29 +45,23 @@ export interface GalleryQueryParameters {
   userId: string;
   sortBy?: 'newest' | 'oldest';
   filterBy?: 'all' | 'purchased' | 'unpurchased' | 'completed' | 'pending' | 'failed' | 'favorited'; 
-  filterTags?: string[]; // Add tags filter
-  filterPetId?: string; // <-- Add pet filter
+  filterTags?: string[];
+  filterPetId?: string;
   limit?: number;
   offset?: number;
 }
 
-// Type for the data structure RETURNED BY the gallery query
-// Using any for now to bypass persistent type generation issues
-type GalleryPortrait = Record<string, any>; // Fallback type
-
-// Update Portrait type if necessary (assuming it's defined in this file or imported)
-// It should include fields selected below, especially `pets ( name )`
-type PortraitWithPetName = Database['public']['Tables']['portraits']['Row'] & {
-    pets: {
-        name: string | null;
-    } | null;
-};
+// Using a more specific type if possible, or keep Record<string, unknown> if truly dynamic
+type GalleryPortraitType = Partial<Database['public']['Tables']['portraits']['Row']> & {
+  pets?: { name: string | null; species?: string | null; breed?: string | null } | null; 
+  // Add other expected fields from the select query in getUserGalleryPortraits
+  image_versions?: Record<string, string | undefined | null> | null;
+  is_favorited?: boolean;
+  tags?: string[] | null;
+}; 
 
 // Type for a revision (adjust based on actual generated type)
 type PortraitRevision = Database['public']['Tables']['portrait_revisions']['Row'];
-
-// Type definition (Ensure Database type is updated)
-type Portrait = Database['public']['Tables']['portraits']['Row'];
 
 /**
  * Initialize the OpenAI client with proper configuration
@@ -94,7 +88,7 @@ const getOpenAIClient = (): OpenAI => {
 /**
  * Construct a detailed prompt for the pet portrait based on parameters
  */
-export function constructPrompt(parameters: PortraitParameters, petImageUrl: string): string {
+export function constructPrompt(parameters: PortraitParameters): string {
   // Basic prompt structure
   let prompt = `Create a ${parameters.artStyle} style portrait of this ${parameters.orientation} pet.`;
   
@@ -215,17 +209,19 @@ export async function generatePortrait(parameters: PortraitParameters): Promise<
       status: 'pending',
       estimatedCompletionTime: 60 // seconds, approximate time for generation
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Portrait generation initiation failed:', error);
     
     // If this is an expected error type, throw it directly
-    if (error.code && (error.isRateLimited || error.isCircuitOpen)) {
-      throw error;
+    const customError = error as PortraitGenerationError;
+    if (customError.code && (customError.isRateLimited || customError.isCircuitOpen)) {
+      throw customError;
     }
     
     // Otherwise, throw a generic error
+    const message = error instanceof Error ? error.message : 'Unknown error';
     throw {
-      message: `Failed to initiate portrait generation: ${error.message}`,
+      message: `Failed to initiate portrait generation: ${message}`,
       code: 'generation_failed'
     };
   }
@@ -240,13 +236,13 @@ async function processPortraitGeneration(
   parameters: PortraitParameters,
   petImageUrl: string
 ): Promise<void> {
-  let finalStatus: 'completed' | 'failed' = 'failed'; // Assume failure initially
-  let updatePayload: Record<string, any> = {};
+  let finalStatus: 'completed' | 'failed' = 'failed';
+  let updatePayload: Partial<Database['public']['Tables']['portraits']['Row']> & { processing_error?: string } = {};
 
   try {
     await updatePortraitStatus(portraitId, 'processing');
     
-    const prompt = constructPrompt(parameters, petImageUrl);
+    const prompt = constructPrompt(parameters);
     const openai = getOpenAIClient();
     const startTime = Date.now();
 
@@ -310,14 +306,15 @@ async function processPortraitGeneration(
 
     recordOutcome('openai', true);
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Portrait generation processing failed:', error);
     
     // Record failure for circuit breaker
     recordOutcome('openai', false);
     
     // Update portrait record with error
-    updatePayload = { processing_error: error.message };
+    const message = error instanceof Error ? error.message : 'Unknown processing error';
+    updatePayload = { processing_error: message };
     finalStatus = 'failed';
     
   } finally {
@@ -326,8 +323,8 @@ async function processPortraitGeneration(
   }
 }
 
-// Helper function to fetch and merge JSONB data (less ideal than DB functions/triggers)
-async function mergeImageVersions(portraitId: string, newVersions: Record<string, string>): Promise<Record<string, any>> {
+// Helper function to fetch and merge JSONB data
+async function mergeImageVersions(portraitId: string, newVersions: Record<string, string>): Promise<Record<string, unknown>> {
   const { data, error } = await supabase
     .from('portraits')
     .select('image_versions')
@@ -336,11 +333,10 @@ async function mergeImageVersions(portraitId: string, newVersions: Record<string
 
   if (error) {
     console.error(`Error fetching existing image versions for ${portraitId}:`, error);
-    // Return only new versions if fetch fails, or handle differently
     return newVersions;
   }
 
-  const existingVersions = data?.image_versions || {};
+  const existingVersions = (data?.image_versions as Record<string, unknown>) || {};
   return { ...existingVersions, ...newVersions };
 }
 
@@ -350,10 +346,10 @@ async function mergeImageVersions(portraitId: string, newVersions: Record<string
 async function updatePortraitStatus(
   portraitId: string,
   status: 'pending' | 'processing' | 'completed' | 'failed',
-  additionalData: Record<string, any> = {}
+  additionalData: Partial<Database['public']['Tables']['portraits']['Row']> & { processing_error?: string } = {}
 ): Promise<void> {
   try {
-    const updateObject: Record<string, any> = {
+    const updateObject: Partial<Database['public']['Tables']['portraits']['Row']> & { processing_error?: string } = {
         status,
         updated_at: new Date().toISOString(),
         ...additionalData,
@@ -375,7 +371,7 @@ async function updatePortraitStatus(
 /**
  * Get a portrait by ID
  */
-export async function getPortrait(portraitId: string): Promise<any> {
+export async function getPortrait(portraitId: string): Promise<Database['public']['Tables']['portraits']['Row'] | null> {
   const { data, error } = await supabase
     .from('portraits')
     .select('*')
@@ -392,7 +388,7 @@ export async function getPortrait(portraitId: string): Promise<any> {
 /**
  * Get all portraits for a specific pet
  */
-export async function getPetPortraits(petId: string): Promise<any[]> {
+export async function getPetPortraits(petId: string): Promise<Database['public']['Tables']['portraits']['Row'][]> {
   const { data, error } = await supabase
     .from('portraits')
     .select('*')
@@ -409,7 +405,7 @@ export async function getPetPortraits(petId: string): Promise<any[]> {
 /**
  * Get all portraits for a specific user
  */
-export async function getUserPortraits(userId: string): Promise<any[]> {
+export async function getUserPortraits(userId: string): Promise<GalleryPortraitType[]> {
   const { data, error } = await supabase
     .from('portraits')
     .select('*, pets(name, species, breed)')
@@ -428,7 +424,7 @@ export async function getUserPortraits(userId: string): Promise<any[]> {
  */
 export async function getUserGalleryPortraits(
     params: GalleryQueryParameters
-): Promise<any[]> {
+): Promise<GalleryPortraitType[]> {
   const { userId, sortBy = 'newest', filterBy = 'all', filterTags, filterPetId, limit = 20, offset = 0 } = params;
 
   let query = supabase
@@ -611,23 +607,22 @@ async function processRevisionGeneration(
   inputImageUrl: string
 ): Promise<void> {
   let finalStatus: 'completed' | 'failed' = 'failed';
-  let updatePayload: Record<string, any> = {};
+  let updatePayload: Partial<PortraitRevision> & { processing_error?: string } = {};
 
   try {
     await updateRevisionStatus(revisionId, 'processing');
 
-    const prompt = constructPrompt(parameters, inputImageUrl); 
+    const prompt = constructPrompt(parameters);
     const openai = getOpenAIClient(); 
     const startTime = Date.now();
 
-    // Pass the correct parameters to the API call
     const response = await openai.images.generate({ 
         model: "dall-e-3",
         prompt: prompt,
         n: 1,
         size: parameters.orientation === 'portrait' ? "1024x1792" : "1792x1024",
-        quality: "standard", // or parameters.quality if added
-        style: "natural", // or parameters.style if added
+        quality: "standard",
+        style: "natural",
         response_format: "url"
     }); 
     
@@ -653,15 +648,16 @@ async function processRevisionGeneration(
     updatePayload = {
       status: finalStatus,
       generation_time_seconds: generationTime,
-      image_versions: newVersionData, 
+      image_versions: newVersionData as Record<string, string>,
       updated_at: new Date().toISOString()
     };
     recordOutcome('openai', true);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Revision generation processing failed for ${revisionId}:`, error);
     recordOutcome('openai', false);
-    updatePayload = { processing_error: error.message }; 
+    const message = error instanceof Error ? error.message : 'Unknown revision processing error';
+    updatePayload = { processing_error: message }; 
 
   } finally {
     await updateRevisionStatus(revisionId, finalStatus, updatePayload);
@@ -672,10 +668,10 @@ async function processRevisionGeneration(
 async function updateRevisionStatus(
   revisionId: string,
   status: 'pending' | 'processing' | 'completed' | 'failed',
-  additionalData: Record<string, any> = {}
+  additionalData: Partial<PortraitRevision> & { processing_error?: string } = {}
 ): Promise<void> {
   try {
-    const updateObject = {
+    const updateObject: Partial<PortraitRevision> & { processing_error?: string } = {
         status,
         updated_at: new Date().toISOString(),
         ...additionalData,

@@ -22,8 +22,9 @@ export function MerchBrowser() {
                 const data = await getPrintifyBlueprints();
                 // Add basic filtering if needed (e.g., only show apparel)
                 setBlueprints(data || []); 
-            } catch (err: any) {
-                setError(err.message || 'Failed to load products.');
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : 'Failed to load products.';
+                setError(errorMessage);
                 console.error("Error fetching blueprints:", err);
             } finally {
                 setLoading(false);

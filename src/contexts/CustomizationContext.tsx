@@ -33,7 +33,7 @@ interface CustomizationState {
 // --- Action Definitions ---
 type Action =
   | { type: 'SET_PARAMETERS'; payload: CustomizationParameters }
-  | { type: 'UPDATE_PARAMETER'; payload: { key: keyof CustomizationParameters; value: any } }
+  | { type: 'UPDATE_PARAMETER'; payload: { key: keyof CustomizationParameters; value: CustomizationParameters[keyof CustomizationParameters] } }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'SET_AVAILABLE_STYLES'; payload: Style[] }

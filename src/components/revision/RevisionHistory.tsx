@@ -15,8 +15,28 @@ interface RevisionHistoryProps {
   userId: string;
 }
 
-type PortraitData = any; // Placeholder
-type RevisionData = any; // Placeholder
+interface PortraitData {
+  id: string;
+  user_id: string;
+  image_versions?: {
+    generated_dalle3?: string;
+    thumbnail_512?: string;
+    original?: string;
+    [key: string]: string | undefined;
+  };
+  created_at?: string | null;
+  customization_params?: Record<string, unknown>;
+  generated_image_url?: string | null;
+  generation_time_seconds?: number | null;
+  image_url?: string | null;
+  status?: string;
+  [key: string]: unknown;
+}
+
+interface RevisionData extends PortraitData {
+  // Add any revision-specific fields here
+  parent_id?: string;
+}
 
 // Helper to get a displayable image URL from portrait or revision data
 const getRevisionImageUrl = (data: PortraitData | RevisionData): string | null => {
@@ -47,17 +67,18 @@ export function RevisionHistory({ originalPortraitId, userId }: RevisionHistoryP
                     throw new Error("Original portrait not found or access denied.");
                 }
                 
-                setOriginal(originalData);
+                setOriginal(originalData as unknown as PortraitData);
                 setRevisions(revisionsData || []);
                 
                 // Set initial comparison state (e.g., original vs latest revision)
-                setCompareItem1(originalData);
+                setCompareItem1(originalData as unknown as PortraitData);
                 if (revisionsData?.length > 0) {
-                    setCompareItem2(revisionsData[revisionsData.length - 1]);
+                    setCompareItem2(revisionsData[revisionsData.length - 1] as unknown as RevisionData);
                 }
 
-            } catch (err: any) {
-                setError(err.message || 'Failed to load revision history.');
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : 'Failed to load revision history.';
+                setError(errorMessage);
                 console.error("Fetch revision history error:", err);
             } finally {
                 setLoading(false);
@@ -85,7 +106,7 @@ export function RevisionHistory({ originalPortraitId, userId }: RevisionHistoryP
     const imageUrl1 = compareItem1 ? getRevisionImageUrl(compareItem1) : null;
     const imageUrl2 = compareItem2 ? getRevisionImageUrl(compareItem2) : null;
 
-    const getVersionLabel = (version: any, index: number): string => {
+    const getVersionLabel = (version: PortraitData | RevisionData, index: number): string => {
         if (index === 0) return "Original";
         return `Revision ${index} (${version.id.substring(0, 4)}...)`;
     };

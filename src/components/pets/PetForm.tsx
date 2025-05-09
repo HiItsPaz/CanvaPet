@@ -104,9 +104,9 @@ export function PetForm({ pet, isEdit = false, onSuccess }: PetFormProps) {
         age_years: values.age_years ?? null,
         original_image_url: originalImageUrl
       };
-      if (payload.breed === '') delete (payload as any).breed;
-      if (payload.original_image_url === null) delete (payload as any).original_image_url;
-      if (payload.age_years === null) delete (payload as any).age_years;
+      if (payload.breed === '') delete (payload as Partial<PetInsert>).breed;
+      if (payload.original_image_url === null) delete (payload as Partial<PetInsert>).original_image_url;
+      if (payload.age_years === null) delete (payload as Partial<PetInsert>).age_years;
 
       let savedPet: Pet;
       if (isEdit && pet) {
@@ -123,9 +123,10 @@ export function PetForm({ pet, isEdit = false, onSuccess }: PetFormProps) {
         router.push(isEdit ? `/pets/${savedPet.id}` : '/pets');
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to save pet:", error);
-      toast({ title: "Error Saving Pet", description: error.message, variant: "destructive" });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error saving pet';
+      toast({ title: "Error Saving Pet", description: errorMessage, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
