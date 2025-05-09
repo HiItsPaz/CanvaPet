@@ -18,14 +18,104 @@
   body {
     @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
   }
-}
-
-@layer components {
-  .btn-primary {
-    @apply px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors;
+  :root {
+    /* Brand colors - Light mode */
+    /* Primary blue (#4A7CFF) as HSL: 222deg 100% 65% */
+    /* Coral (#FF7D54) as HSL: 15deg 100% 66% */
+    /* Yellow (#FFD166) as HSL: 41deg 100% 70% */
+    
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    
+    /* Primary - Blue */
+    --primary: 222 100% 65%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary - Coral */
+    --secondary: 15 100% 66%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Accent - Yellow */
+    --accent: 41 100% 70%;
+    --accent-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222 100% 65%;
+    --radius: 0.5rem;
   }
   
-  .btn-secondary {
-    @apply px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+  .dark {
+    /* Brand colors - Dark mode */
+    /* Primary blue (#4A7CFF) as HSL: 222deg 100% 65% */
+    /* Coral (#FF7D54) as HSL: 15deg 100% 66% */
+    /* Yellow (#FFD166) as HSL: 41deg 100% 70% */
+    
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    
+    /* Primary - Blue (same color, but darker background) */
+    --primary: 222 100% 65%;
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary - Coral (same color, but darker background) */
+    --secondary: 15 100% 66%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Accent - Yellow (same color, but darker background) */
+    --accent: 41 100% 70%;
+    --accent-foreground: 210 40% 98%;
+    
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 222 100% 65%;
+  }
+}
+
+/* Color Vision Deficiency Simulation Filters */
+.filter-protanopia {
+  filter: url('#protanopia-filter');
+}
+
+.filter-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+.filter-tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+/* SVG Filters for Color Vision Deficiency Simulation */
+@layer components {
+  .vision-deficiency-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
