@@ -1151,3 +1151,87 @@ Infrastructure as Code: Terraform (if needed)
 * Human developers focus on business logic, reviewing AI-generated code and enforcing code-quality standards
 * Continuous learning: implementation notes appended to Task-Master subtasks to improve future AI context
 * "Prompt PRs" – commit messages include the natural-language prompt that generated the code for full traceability 
+
+## Project Overview
+CanvaPet is a web application that transforms pet photos into artistic portraits and allows users to order merchandise featuring their pet portraits. The application needs a complete redesign according to the design specifications in Design.md.
+
+## Key Features
+
+### Visual Design System
+- Implement brand identity with logo and color palette
+- Apply typography hierarchy using Montserrat, Open Sans, and Caveat fonts
+- Create core UI components including button system, form controls, card components
+- Design responsive layouts for mobile, tablet, and desktop
+
+### Pages to Implement
+1. Home/Landing Page
+   - Hero section with showcase and CTAs
+   - How It Works section
+   - Gallery showcase
+   - Testimonials
+   - Pricing section
+   - FAQ accordion
+
+2. Pet Upload & Creation
+   - Step indicator
+   - Upload area with guidelines
+   - Preview & crop functionality
+
+3. Pet Customization Interface
+   - Style selection
+   - Customization controls
+   - Background selection
+   - Advanced controls
+
+4. Processing & Preview Screen
+   - Loading state with animation
+   - Preview display
+   - Action panel
+
+5. User Gallery/Dashboard
+   - Gallery grid with filtering
+   - List/grid toggle
+   - Pet profile cards
+
+6. Merchandise Store
+   - Category navigation
+   - Product grid
+   - Product detail view
+   - Pet image placement interface
+
+7. Checkout Process
+   - Cart review
+   - Checkout form
+   - Order confirmation
+
+8. Portrait Revision Interface
+   - Current portrait display
+   - Adjustment controls
+   - Version comparison
+
+### Components
+- Navigation components
+- Authentication components
+- Pet components
+- Customization components
+- Merchandise components
+- Payment components
+
+### User Flows
+- Implement new user flow
+- Implement returning user flow
+- Implement merchandise creation flow
+- Implement revision flow
+
+### Technical Requirements
+- Responsive design for mobile, tablet, and desktop
+- WCAG 2.1 AA accessibility compliance
+- Animations and transitions
+- Appropriate microcopy and messaging
+
+## Success Criteria
+- All pages and components match the design specifications
+- User flows are intuitive and work as described
+- Site is responsive across device sizes
+- Accessibility requirements are met
+- Performance is optimized 

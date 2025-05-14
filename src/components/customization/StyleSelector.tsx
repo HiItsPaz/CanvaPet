@@ -1,8 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Style } from "@/types/customization";
-import { StyleCard } from "./_subcomponents/StyleCard";
-// import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Removed for now
+import { StyleGrid } from "./_subcomponents/StyleGrid";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Search, Filter, X } from "lucide-react";
+import { useThumbnails } from "@/hooks/useThumbnails";
+import { LoadingAnimation } from "@/components/ui/loading-animation";
+import { DUMMY_STYLES } from "./DummyStyleData";
+import { useSelectionHistory } from "@/hooks/useSelectionHistory";
+import { SelectionHistoryDisplay } from "./_subcomponents/SelectionHistoryDisplay";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface StyleSelectorProps {
   availableStyles: Style[];
@@ -11,93 +21,252 @@ interface StyleSelectorProps {
   loading?: boolean;
 }
 
-// Dummy data for now - this will come from props/API later
-const DUMMY_STYLES: Style[] = [
-  {
-    id: "realistic",
-    name: "Realistic",
-    description: "A true-to-life representation of your pet.",
-    thumbnailUrl: "/placeholders/style-realistic.jpg",
-  },
-  {
-    id: "cartoon",
-    name: "Cartoon Fun",
-    description: "A playful, animated version of your furry friend.",
-    thumbnailUrl: "/placeholders/style-cartoon.jpg",
-  },
-  {
-    id: "watercolor",
-    name: "Watercolor Dreams",
-    description: "Soft, flowing colors create an artistic impression.",
-    thumbnailUrl: "/placeholders/style-watercolor.jpg",
-  },
-  {
-    id: "oil-painting",
-    name: "Oil Painting Classic",
-    description: "A timeless, textured oil painting look.",
-    thumbnailUrl: "/placeholders/style-oil.jpg",
-  },
-  {
-    id: "pop-art",
-    name: "Pop Art Power",
-    description: "Bold colors and iconic pop-art flair.",
-    thumbnailUrl: "/placeholders/style-popart.jpg",
-  },
-  {
-    id: "pencil-sketch",
-    name: "Pencil Sketch",
-    description: "A detailed and artistic pencil drawing.",
-    thumbnailUrl: "/placeholders/style-sketch.jpg",
-  },
-  {
-    id: "fantasy-art",
-    name: "Fantasy Realm",
-    description: "Transform your pet into a mythical creature.",
-    thumbnailUrl: "/placeholders/style-fantasy.jpg",
-  },
-];
+// Extract unique tags from styles for filtering
+const extractUniqueCategories = (styles: Style[]): string[] => {
+  const categories = new Set<string>();
+  styles.forEach(style => {
+    if (style.tags) {
+      style.tags.forEach(tag => categories.add(tag));
+    }
+  });
+  return Array.from(categories).sort();
+};
 
 export function StyleSelector({
-  availableStyles = DUMMY_STYLES, // Use dummy data as default for now
+  availableStyles = DUMMY_STYLES,
   selectedStyleId,
   onStyleSelect,
   loading = false,
 }: StyleSelectorProps) {
-  if (loading) {
-    return (
-      <div className="space-y-3">
-        <div className="h-6 w-1/3 bg-muted rounded animate-pulse"></div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="aspect-[4/3] bg-muted rounded-lg animate-pulse"></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  // Use our thumbnail processing hook
+  const { styles, isLoading } = useThumbnails(availableStyles, {
+    size: "medium",
+    cacheKey: "style-selector"
+  });
 
-  if (!availableStyles || availableStyles.length === 0) {
-    return (
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Select Style</h3>
-        <p className="text-sm text-muted-foreground">No styles available at the moment.</p>
-      </div>
+  // Use selection history hook
+  const selectedStyle = styles.find(style => style.id === selectedStyleId) || null;
+  const {
+    history,
+    recentlyViewed,
+    getPopularItems,
+    select,
+    view,
+    clearHistory,
+    hasSelection
+  } = useSelectionHistory<Style>({
+    initialSelection: selectedStyle,
+    persistKey: "style-history",
+    onSelectionChange: (style) => {
+      if (style) {
+        onStyleSelect(style.id);
+      }
+    }
+  });
+
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Get popular items
+  const popularItems = getPopularItems(10);
+  
+  // Get categories for filtering
+  const categories = extractUniqueCategories(styles);
+  
+  // Handle style selection
+  const handleStyleSelect = (styleId: string) => {
+    const selectedStyle = styles.find(style => style.id === styleId);
+    if (selectedStyle) {
+      select(selectedStyle);
+    }
+  };
+  
+  // Handle style viewing (doesn't select, just records in "recently viewed")
+  const handleStyleView = (style: Style) => {
+    view(style);
+  };
+  
+  // Filter styles based on search and categories
+  const filteredStyles = styles.filter(style => {
+    // Filter by search query
+    const matchesSearch = searchQuery === "" || 
+      style.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (style.description?.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    // Filter by categories
+    const matchesCategories = selectedCategories.length === 0 || 
+      style.tags?.some(tag => selectedCategories.includes(tag));
+    
+    return matchesSearch && matchesCategories;
+  });
+  
+  // Toggle a category filter
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
     );
-  }
+  };
+  
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setSearchQuery("");
+  };
+  
+  // Sync with external selection
+  useEffect(() => {
+    if (selectedStyleId) {
+      const style = styles.find(s => s.id === selectedStyleId);
+      if (style && (!hasSelection || style.id !== history[0]?.id)) {
+        select(style);
+      }
+    }
+  }, [selectedStyleId, styles, hasSelection, history, select]);
 
   return (
-    <div className="space-y-3">
-      <h3 className="text-lg font-semibold">Select Style</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {availableStyles.map((style) => (
-            <StyleCard
-              key={style.id}
-              style={style}
-              isSelected={selectedStyleId === style.id}
-              onSelect={onStyleSelect}
+    <div className="space-y-6">
+      {/* Selection History Display */}
+      {hasSelection && (
+        <SelectionHistoryDisplay
+          history={history}
+          recentlyViewed={recentlyViewed}
+          popularItems={popularItems}
+          currentSelection={selectedStyle}
+          onSelect={select}
+          onClearHistory={clearHistory}
+          className="pt-1 pb-2"
+        />
+      )}
+      
+      {/* Search and filter controls */}
+      <div className="space-y-3">
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search styles..."
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-        ))}
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1.5 h-7 w-7 opacity-70 hover:opacity-100"
+                onClick={() => setSearchQuery("")}
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+          <Button
+            variant={showFilters || selectedCategories.length > 0 ? "default" : "outline"}
+            size="icon"
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              "h-10 w-10",
+              selectedCategories.length > 0 && "bg-primary text-primary-foreground"
+            )}
+          >
+            <Filter className="h-4 w-4" />
+            {selectedCategories.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary-foreground text-[10px] font-semibold text-primary">
+                {selectedCategories.length}
+              </span>
+            )}
+          </Button>
+        </div>
+        
+        {/* Category filter tags */}
+        {showFilters && (
+          <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-wrap gap-1.5 pb-1">
+              {categories.map(category => (
+                <Badge
+                  key={category}
+                  variant={selectedCategories.includes(category) ? "default" : "outline"}
+                  className="cursor-pointer text-xs capitalize"
+                  onClick={() => toggleCategory(category)}
+                >
+                  {category}
+                </Badge>
+              ))}
+              
+              {selectedCategories.length > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="cursor-pointer text-xs"
+                  onClick={clearFilters}
+                >
+                  Clear all
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+      
+      {/* Loading state */}
+      {(loading || isLoading) ? (
+        <div className="flex justify-center py-12">
+          <LoadingAnimation
+            variant="spinner"
+            size="lg"
+            text="Loading styles..."
+          />
+        </div>
+      ) : (
+        <>
+          {/* Results count when filtered */}
+          {(searchQuery || selectedCategories.length > 0) && (
+            <div className="text-sm text-muted-foreground">
+              Showing {filteredStyles.length} of {styles.length} styles
+              {searchQuery && <span> matching &ldquo;{searchQuery}&rdquo;</span>}
+              {selectedCategories.length > 0 && (
+                <span>
+                  {" "}
+                  in{" "}
+                  {selectedCategories.map((c, i) => (
+                    <span key={c}>
+                      {i > 0 && i < selectedCategories.length - 1 && ", "}
+                      {i > 0 && i === selectedCategories.length - 1 && " and "}
+                      <span className="font-medium capitalize">{c}</span>
+                    </span>
+                  ))}
+                </span>
+              )}
+            </div>
+          )}
+          
+          {/* Style grid */}
+          <StyleGrid
+            styles={filteredStyles}
+            selectedStyleId={selectedStyleId}
+            onStyleSelect={handleStyleSelect}
+            highlightedCategories={selectedCategories}
+          />
+          
+          {/* No results message */}
+          {filteredStyles.length === 0 && (
+            <div className="py-8 text-center">
+              <p className="text-muted-foreground">No styles found matching your criteria.</p>
+              <Button
+                variant="link"
+                onClick={clearFilters}
+                className="mt-2"
+              >
+                Clear all filters
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 } 

@@ -1,0 +1,40 @@
+---
+description: Core development standards and clean code principles
+globs: ["**/*.{ts,tsx,js,jsx}"]
+alwaysApply: true
+---
+# Core Development Standards
+
+## Code Style & Readability
+- Follow the project's formatter/linter; if none, default to:
+  - 2-space indentation, 80-120 col max line length, trailing newline
+  - Descriptive PascalCase for types/classes, camelCase for variables/functions
+- Prefer expressive names over comments; comments should **explain *why***, not *what*
+
+## Structural Principles
+- One function ↔ one responsibility
+- Keep functions ≤ 40 lines; extract helpers when logic branches multiply
+- Favor composition and pure functions; avoid global mutable state
+
+## Efficiency Without Sacrificing Clarity
+- Write for readability first; optimize only after a profiler reveals a bottleneck
+- When optimizing, annotate **why** the change is needed and its big-O impact
+
+## Robustness & Testing
+- Validate inputs at module boundaries; fail fast with clear error messages
+- Generate or update unit tests when you create/modify code; aim ≥ 70% coverage
+
+## Documentation & DX
+- Auto-generate docstrings / JSDoc / type hints as you code
+- Update README or in-code usage examples when APIs change
+
+## Process with AI Assistance
+- Before generating code, outline the approach in comments ("PLAN:" block)
+- After generation, run the formatter & linter, then explain any deviations
+- If the user asks a question, answer briefly **before** showing code
+
+## Review & Refactor Cadence
+- Suggest incremental refactors when complexity > 15 cyclomatic or file > 400 LOC
+- Surface TODO/FIXME comments to the user once per session
+
+See @roo-rules.md for guidelines on maintaining these rules.

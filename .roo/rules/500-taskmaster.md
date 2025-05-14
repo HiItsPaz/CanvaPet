@@ -1,0 +1,83 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# TaskMaster Reference
+
+## MCP Tools & CLI Commands
+
+### Initialization & Setup
+
+#### Initialize Project
+- **MCP Tool:** `initialize_project`
+- **CLI:** `task-master init [options]`
+- Creates necessary project structure
+
+#### Parse PRD
+- **MCP Tool:** `parse_prd`
+- **CLI:** `task-master parse-prd [file] [options]`
+- Generates initial tasks from requirements
+
+### Task Management
+
+#### Get Tasks
+- **MCP Tool:** `get_tasks`
+- **CLI:** `task-master list [options]`
+- Lists tasks with optional filtering
+
+#### Get Next Task
+- **MCP Tool:** `next_task`
+- **CLI:** `task-master next [options]`
+- Shows next available task to work on
+
+#### Get Task Details
+- **MCP Tool:** `get_task`
+- **CLI:** `task-master show [id] [options]`
+- Displays details for a specific task
+
+### Task Creation & Modification
+
+#### Add Task
+- **MCP Tool:** `add_task`
+- **CLI:** `task-master add-task [options]`
+- Creates a new task with AI assistance
+
+#### Add Subtask
+- **MCP Tool:** `add_subtask`
+- **CLI:** `task-master add-subtask [options]`
+- Adds a subtask to a parent task
+
+#### Update Tasks
+- **MCP Tool:** `update`
+- **CLI:** `task-master update [options]`
+- Updates multiple upcoming tasks
+
+#### Update Task
+- **MCP Tool:** `update_task`
+- **CLI:** `task-master update-task [options]`
+- Updates a specific task
+
+#### Update Subtask
+- **MCP Tool:** `update_subtask`
+- **CLI:** `task-master update-subtask [options]`
+- Appends notes to a subtask
+
+#### Set Task Status
+- **MCP Tool:** `set_task_status`
+- **CLI:** `task-master set-status [options]`
+- Updates task status
+
+### Task Breakdown
+
+#### Expand Task
+- **MCP Tool:** `expand_task`
+- **CLI:** `task-master expand [options]`
+- Breaks down a task into subtasks
+
+#### Expand All Tasks
+- **MCP Tool:** `expand_all`
+- **CLI:** `task-master expand --all [options]`
+- Expands multiple pending tasks
+
+See [200-workflow.md](mdc:.roo/rules/200-workflow.md) for workflow guidelines using these commands.

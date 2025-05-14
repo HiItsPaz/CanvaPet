@@ -26,7 +26,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 // This is a Server Component that will be rendered on the server
-export default async function CustomizePetPage({ params }: { params: { id: string } }) {
+export default async function CustomizePetPage({ 
+  params 
+}: { 
+  params: { id: string } 
+}) {
   try {
     // Fetch pet data
     const pet = await getPetById(params.id);

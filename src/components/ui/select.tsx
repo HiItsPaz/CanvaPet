@@ -6,6 +6,12 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+// Add accessibility description for screen readers
+const accessibilityDescription = {
+  open: "Press Enter to open the dropdown, then use arrow keys to navigate options. Press Enter to select an option, or Escape to close without selecting.",
+  closed: "Press Enter or Space to open the dropdown menu."
+};
+
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;
@@ -14,23 +20,85 @@ const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+    ariaLabel?: string;
+  }
+>(({ className, children, ariaLabel, ...props }, ref) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  
+  // Update state based on select open/close
+  const handleStateChange = (open: boolean) => {
+    setIsOpen(open);
+  };
+  
+  return (
+    <>
+      {/* Hidden description for screen readers */}
+      <span id={`select-instructions-${props.id || Math.random().toString(36).substr(2, 9)}`} className="sr-only">
+        {isOpen ? accessibilityDescription.open : accessibilityDescription.closed}
+      </span>
+      
+      <SelectPrimitive.Trigger
+        ref={ref}
+        className={cn(
+          "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+          "data-[state=open]:ring-2 data-[state=open]:ring-ring data-[state=open]:ring-offset-2", // Visual feedback when open
+          className
+        )}
+        aria-label={ariaLabel}
+        aria-describedby={`select-instructions-${props.id || Math.random().toString(36).substr(2, 9)}`}
+        onPointerDown={(e) => {
+          // Ensure dropdown can be opened by screen reader click events
+          if (e.pointerType === 'mouse') {
+            e.preventDefault();
+          }
+        }}
+        {...props}
+      >
+        {children}
+        <SelectPrimitive.Icon asChild>
+          <ChevronDown className="h-4 w-4 opacity-50 transition-transform" aria-hidden="true" />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+      
+      {/* Context provider to track dropdown state */}
+      <SelectStateProvider isOpen={isOpen} onOpenChange={handleStateChange} />
+    </>
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
+
+// Context to track select state
+const SelectStateContext = React.createContext<{
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}>({
+  isOpen: false,
+  setIsOpen: () => {},
+});
+
+// Provider component
+const SelectStateProvider: React.FC<{
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}> = ({ isOpen, onOpenChange }) => {
+  React.useEffect(() => {
+    // Listen for Radix UI select open/close events
+    const handleOpenChange = (event: CustomEvent<{ open: boolean }>) => {
+      if (event.detail) {
+        onOpenChange(event.detail.open);
+      }
+    };
+    
+    document.addEventListener('selectOpenChange' as any, handleOpenChange);
+    
+    return () => {
+      document.removeEventListener('selectOpenChange' as any, handleOpenChange);
+    };
+  }, [onOpenChange]);
+  
+  return null;
+};
 
 const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
@@ -44,7 +112,8 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <ChevronUp className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">Scroll up</span>
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -61,11 +130,15 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">Scroll down</span>
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName;
+
+// Type for the Radix Select events
+type SelectContentEvent = React.FocusEvent<HTMLDivElement>;
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
@@ -81,6 +154,41 @@ const SelectContent = React.forwardRef<
         className
       )}
       position={position}
+      onCloseAutoFocus={(event) => {
+        // Ensure focus returns to trigger on close
+        if (props.onCloseAutoFocus) {
+          props.onCloseAutoFocus(event);
+        }
+        // Dispatch custom event for state tracking
+        document.dispatchEvent(
+          new CustomEvent('selectOpenChange', { 
+            detail: { open: false } 
+          })
+        );
+      }}
+      // React to opening events
+      onEscapeKeyDown={(event) => {
+        if (props.onEscapeKeyDown) {
+          props.onEscapeKeyDown(event);
+        }
+        // Notify that the select is closing
+        document.dispatchEvent(
+          new CustomEvent('selectOpenChange', { 
+            detail: { open: false } 
+          })
+        );
+      }}
+      // Track when the select content appears
+      onPointerDownOutside={(event) => {
+        if (props.onPointerDownOutside) {
+          props.onPointerDownOutside(event);
+        }
+        document.dispatchEvent(
+          new CustomEvent('selectOpenChange', { 
+            detail: { open: false } 
+          })
+        );
+      }}
       {...props}
     >
       <SelectScrollUpButton />
@@ -113,23 +221,32 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & {
+    itemDescription?: string;
+  }
+>(({ className, children, itemDescription, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground", // Highlight for keyboard navigation
+      "data-[state=checked]:font-medium data-[state=checked]:bg-accent/20", // Visual indicator of selection
       className
     )}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check className="h-4 w-4" aria-hidden="true" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    
+    {/* Optional description for complex items */}
+    {itemDescription && (
+      <span className="sr-only">{itemDescription}</span>
+    )}
   </SelectPrimitive.Item>
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;

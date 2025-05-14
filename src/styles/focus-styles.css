@@ -1,0 +1,58 @@
+/**
+ * Global focus styles that meet WCAG 2.1 AA contrast requirements
+ * These provide a consistent, accessible focus indicator across the application
+ */
+
+/* Global focus styles */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(var(--primary) / 0.2);
+  transition: outline-offset 0.1s ease;
+}
+
+/* Focus styles specific for interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsla(var(--primary) / 0.2);
+  border-radius: 0.25rem;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: 3px;
+  }
+}
+
+/* Focus without keyboard navigation (for pointer devices only) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Skip-link focus styles */
+.skip-link:focus-visible {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 0 0 0.375rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+/* For custom dialog focus trap */
+.focus-trap:focus {
+  outline: none;
+} 

@@ -117,7 +117,7 @@ export default function OrderHistoryPage() {
                     <TableCell>
                       <Badge variant={getStatusBadgeVariant(order.status)}>{(order.status || 'unknown').replace('_', ' ')}</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{formatCurrency(order.amount, order.currency)}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(order.total_amount, order.currency)}</TableCell>
                      <TableCell>
                        <Link href={`/profile/orders/${order.id}`} passHref>
                           <Button variant="outline" size="sm">View Details</Button>

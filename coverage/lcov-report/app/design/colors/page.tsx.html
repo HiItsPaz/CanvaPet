@@ -1,0 +1,931 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for app/design/colors/page.tsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">app/design/colors</a> page.tsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/283</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/283</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import Link from 'next/link';</span></span></span>
+<span class="cstat-no" title="statement not covered" >import { </span>
+<span class="cstat-no" title="statement not covered" >  H1, </span>
+<span class="cstat-no" title="statement not covered" >  H2, </span>
+<span class="cstat-no" title="statement not covered" >  H3,</span>
+<span class="cstat-no" title="statement not covered" >  P,</span>
+<span class="cstat-no" title="statement not covered" >  Lead,</span>
+<span class="cstat-no" title="statement not covered" >  Container,</span>
+<span class="cstat-no" title="statement not covered" >  Button</span>
+<span class="cstat-no" title="statement not covered" >} from '@/components/ui';</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export const metadata = {</span>
+<span class="cstat-no" title="statement not covered" >  title: 'Color System - CanvaPet Design',</span>
+<span class="cstat-no" title="statement not covered" >  description: 'Color palette and usage guidelines for the CanvaPet design system',</span>
+<span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export default function ColorsPage() {</span>
+<span class="cstat-no" title="statement not covered" >  const brandColorSections = [</span>
+<span class="cstat-no" title="statement not covered" >    {</span>
+<span class="cstat-no" title="statement not covered" >      name: "Primary (Blue)",</span>
+<span class="cstat-no" title="statement not covered" >      baseColor: "#4A7CFF",</span>
+<span class="cstat-no" title="statement not covered" >      description: "Our primary blue represents trust, technology, and reliability. Use for primary actions, highlights, and key interactive elements.",</span>
+<span class="cstat-no" title="statement not covered" >      colorScale: [</span>
+<span class="cstat-no" title="statement not covered" >        { name: "50", hex: "#f0f6ff" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "100", hex: "#e0edff" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "200", hex: "#c1dbff" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "300", hex: "#92bfff" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "400", hex: "#699eff" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "500", hex: "#4A7CFF" }, // Base color</span>
+<span class="cstat-no" title="statement not covered" >        { name: "600", hex: "#3a62cc" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "700", hex: "#2d4da3" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "800", hex: "#25407f" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "900", hex: "#1f3463" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "950", hex: "#0f1b37" },</span>
+<span class="cstat-no" title="statement not covered" >      ],</span>
+<span class="cstat-no" title="statement not covered" >      cssVar: "--primary"</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
+<span class="cstat-no" title="statement not covered" >    {</span>
+<span class="cstat-no" title="statement not covered" >      name: "Secondary (Coral)",</span>
+<span class="cstat-no" title="statement not covered" >      baseColor: "#FF7D54",</span>
+<span class="cstat-no" title="statement not covered" >      description: "Our secondary coral represents warmth, joy, and creativity. Use for secondary actions, highlights, and supporting elements.",</span>
+<span class="cstat-no" title="statement not covered" >      colorScale: [</span>
+<span class="cstat-no" title="statement not covered" >        { name: "50", hex: "#fff4f0" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "100", hex: "#ffe9df" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "200", hex: "#ffd3bf" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "300", hex: "#ffb599" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "400", hex: "#ff9670" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "500", hex: "#FF7D54" }, // Base color</span>
+<span class="cstat-no" title="statement not covered" >        { name: "600", hex: "#cc6443" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "700", hex: "#a34e36" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "800", hex: "#7f3d2a" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "900", hex: "#663123" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "950", hex: "#331811" },</span>
+<span class="cstat-no" title="statement not covered" >      ],</span>
+<span class="cstat-no" title="statement not covered" >      cssVar: "--secondary"</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
+<span class="cstat-no" title="statement not covered" >    {</span>
+<span class="cstat-no" title="statement not covered" >      name: "Accent (Yellow)",</span>
+<span class="cstat-no" title="statement not covered" >      baseColor: "#FFD166",</span>
+<span class="cstat-no" title="statement not covered" >      description: "Our accent yellow represents energy, positivity, and playfulness. Use for accents, highlights, and tertiary elements.",</span>
+<span class="cstat-no" title="statement not covered" >      colorScale: [</span>
+<span class="cstat-no" title="statement not covered" >        { name: "50", hex: "#fffaeb" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "100", hex: "#fff5d6" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "200", hex: "#ffebad" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "300", hex: "#ffe085" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "400", hex: "#FFD166" }, // Base color</span>
+<span class="cstat-no" title="statement not covered" >        { name: "500", hex: "#fab317" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "600", hex: "#de8e0e" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "700", hex: "#b86b10" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "800", hex: "#925415" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "900", hex: "#784516" },</span>
+<span class="cstat-no" title="statement not covered" >        { name: "950", hex: "#432508" },</span>
+<span class="cstat-no" title="statement not covered" >      ],</span>
+<span class="cstat-no" title="statement not covered" >      cssVar: "--accent"</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  ];</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  const neutralColors = [</span>
+<span class="cstat-no" title="statement not covered" >    { name: "White", hex: "#FFFFFF", cssVar: "white" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 50", hex: "#F9F9F9", cssVar: "gray-50" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 100", hex: "#EEEEEE", cssVar: "gray-100" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 200", hex: "#E2E2E2", cssVar: "gray-200" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 300", hex: "#D0D0D0", cssVar: "gray-300" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 400", hex: "#AEAEAE", cssVar: "gray-400" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 500", hex: "#8C8C8C", cssVar: "gray-500" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 600", hex: "#666666", cssVar: "gray-600" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 700", hex: "#444444", cssVar: "gray-700" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 800", hex: "#2A2A2A", cssVar: "gray-800" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Gray 900", hex: "#1A1A1A", cssVar: "gray-900" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Black", hex: "#000000", cssVar: "black" },</span>
+<span class="cstat-no" title="statement not covered" >  ];</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  const semanticColors = [</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Success", hex: "#10B981", cssVar: "green-500" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Warning", hex: "#FBBF24", cssVar: "yellow-400" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Error", hex: "#EF4444", cssVar: "red-500" },</span>
+<span class="cstat-no" title="statement not covered" >    { name: "Info", hex: "#3B82F6", cssVar: "blue-500" },</span>
+<span class="cstat-no" title="statement not covered" >  ];</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  return (</span>
+<span class="cstat-no" title="statement not covered" >    &lt;Container className="py-12"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="max-w-4xl mx-auto"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;Link href="/design" className="inline-flex items-center text-sm text-primary hover:underline mb-6"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/svg&gt;</span>
+<span class="cstat-no" title="statement not covered" >          Back to Design System</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/Link&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;H1 className="mb-4"&gt;Color System&lt;/H1&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;Lead className="mb-12"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          Our color system is designed to create a consistent, accessible, and visually appealing experience.</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/Lead&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="mb-16"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;H2 className="mb-6"&gt;Brand Colors&lt;/H2&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;P className="mb-8"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Our brand colors define the visual identity of CanvaPet. They should be used consistently across all interfaces.</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/P&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="space-y-12"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            {brandColorSections.map((section, index) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div key={index}&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;H3 className="mb-4 flex items-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;span className="w-6 h-6 rounded-full mr-2" style={{ backgroundColor: section.baseColor }}&gt;&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  {section.name}</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/H3&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;P className="mb-6"&gt;{section.description}&lt;/P&gt;</span>
+<span class="cstat-no" title="statement not covered" >                </span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-11 gap-2 mb-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  {section.colorScale.map((color, i) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;div key={i} className="flex flex-col"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                      &lt;div </span>
+<span class="cstat-no" title="statement not covered" >                        className="h-20 rounded-md mb-1 border border-gray-200 dark:border-gray-700 transition-colors duration-300" </span>
+<span class="cstat-no" title="statement not covered" >                        style={{ backgroundColor: color.hex }}</span>
+<span class="cstat-no" title="statement not covered" >                      &gt;&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                      &lt;div className="text-xs"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                        &lt;div className="font-medium"&gt;{color.name}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                        &lt;div className="text-gray-500 dark:text-gray-400"&gt;{color.hex}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                      &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  ))}</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                </span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md mb-6 mt-2"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;code className="text-sm"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    CSS Variable: &lt;span className="text-primary"&gt;{section.cssVar}&lt;/span&gt;&lt;br/&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    Tailwind: &lt;span className="text-primary"&gt;bg-{section.cssVar.replace('--', '')}-500&lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;/code&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            ))}</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="mb-16"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;H2 className="mb-6"&gt;Neutral Colors&lt;/H2&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;P className="mb-8"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Neutral colors are used for text, backgrounds, borders, and other UI elements where brand colors would be too dominant.</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/P&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            {neutralColors.map((color, i) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div key={i} className="flex flex-col"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div </span>
+<span class="cstat-no" title="statement not covered" >                  className="h-20 rounded-md mb-1 border border-gray-200 dark:border-gray-700 transition-colors duration-300" </span>
+<span class="cstat-no" title="statement not covered" >                  style={{ backgroundColor: color.hex }}</span>
+<span class="cstat-no" title="statement not covered" >                &gt;&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="text-xs"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="font-medium"&gt;{color.name}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="text-gray-500 dark:text-gray-400"&gt;{color.hex}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="text-gray-500 dark:text-gray-400"&gt;bg-{color.cssVar}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            ))}</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="mb-16"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;H2 className="mb-6"&gt;Semantic Colors&lt;/H2&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;P className="mb-8"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Semantic colors convey meaning and should be used consistently to establish patterns that users can recognize.</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/P&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            {semanticColors.map((color, i) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div key={i} className="flex flex-col p-4 rounded-lg border border-gray-200 dark:border-gray-700"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="flex items-center mb-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div </span>
+<span class="cstat-no" title="statement not covered" >                    className="w-6 h-6 rounded-full mr-2" </span>
+<span class="cstat-no" title="statement not covered" >                    style={{ backgroundColor: color.hex }}</span>
+<span class="cstat-no" title="statement not covered" >                  &gt;&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="font-medium"&gt;{color.name}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="text-xs mb-2"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div&gt;{color.hex}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div&gt;bg-{color.cssVar}&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="mt-auto pt-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;Button </span>
+<span class="cstat-no" title="statement not covered" >                    size="sm" </span>
+<span class="cstat-no" title="statement not covered" >                    className="w-full" </span>
+<span class="cstat-no" title="statement not covered" >                    style={{ backgroundColor: color.hex }}</span>
+<span class="cstat-no" title="statement not covered" >                  &gt;</span>
+<span class="cstat-no" title="statement not covered" >                    {color.name} Button</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;/Button&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            ))}</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="mb-16"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;H2 className="mb-6"&gt;Color Usage Guidelines&lt;/H2&gt;</span>
+<span class="cstat-no" title="statement not covered" >          </span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;h3 className="font-medium text-lg mb-3"&gt;✅ Do&lt;/h3&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;ul className="space-y-2 list-disc list-inside text-sm"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use primary color for main actions and focus elements&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use secondary colors for supporting actions&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use accent colors sparingly for emphasis&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Ensure sufficient contrast for text legibility&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Follow consistent color patterns across the interface&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use semantic colors according to their intended meaning&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            </span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;h3 className="font-medium text-lg mb-3"&gt;❌ Don't&lt;/h3&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;ul className="space-y-2 list-disc list-inside text-sm"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use too many colors in a single interface&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Create new colors outside the defined palette&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use semantic colors for non-semantic purposes&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use colors that don't provide sufficient contrast&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Rely solely on color to convey meaning (for accessibility)&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;li&gt;Use bright/saturated colors for large background areas&lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          </span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;H3 className="mb-3"&gt;Accessibility Considerations&lt;/H3&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;P className="mb-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              All color combinations used for text must meet WCAG 2.1 AA standards, with a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text.</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/P&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="grid grid-cols-1 sm:grid-cols-2 gap-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="flex items-center p-3 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold mr-3"&gt;Aa&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="font-medium"&gt;Primary on White&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="text-xs text-gray-500"&gt;Contrast: 4.5:1 ✅&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;div className="flex items-center p-3 bg-primary rounded border border-gray-200 dark:border-gray-700"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="w-12 h-12 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center text-primary font-bold mr-3"&gt;Aa&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="text-white"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="font-medium"&gt;White on Primary&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;div className="text-xs text-primary-50"&gt;Contrast: 4.5:1 ✅&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        </span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-800"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Link href="/design" className="text-primary hover:underline inline-flex items-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/svg&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Back to Design System</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/Link&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Link href="/design/typography" className="text-primary hover:underline inline-flex items-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Typography</span>
+<span class="cstat-no" title="statement not covered" >            &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 ml-1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/svg&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/Link&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;/Container&gt;</span>
+<span class="cstat-no" title="statement not covered" >  );</span>
+<span class="cstat-no" title="statement not covered" >} </span></pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-05-11T16:56:46.987Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -1,9 +1,12 @@
+export type StyleCategory = "portrait" | "cartoon" | "artistic" | "fantasy" | "retro" | string;
+
 export interface Style {
   id: string;
   name: string;
-  description: string;
-  thumbnailUrl: string; // URL to a small preview image of the style
-  tags?: string[]; // e.g., ["cartoon", "colorful", "fun"]
+  description?: string;
+  thumbnailUrl?: string;
+  blurhash?: string;
+  tags?: string[];
   // Potentially other style-specific parameters like default intensity, required base model, etc.
 }
 
@@ -36,4 +39,23 @@ export interface Accessory {
   thumbnailUrl: string;
   category: string; // e.g., "hats", "glasses", "collars"
   // Potentially placement data, layer order, etc.
+}
+
+export interface CustomizationSettings {
+  styleId: string | null;
+  backgroundColor: string;
+  includeFrame: boolean;
+  frameStyle?: string;
+  frameColor?: string;
+  textOverlay?: string;
+  textStyle?: string;
+  additionalOptions?: Record<string, any>;
+}
+
+export interface CustomizationPreset {
+  id: string;
+  name: string;
+  description?: string;
+  thumbnailUrl?: string;
+  settings: CustomizationSettings;
 } 

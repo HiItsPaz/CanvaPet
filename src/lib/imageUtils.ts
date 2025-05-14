@@ -201,4 +201,304 @@ export function calculateScaleFactor(originalWidth: number, originalHeight: numb
   if (requiredScale <= 2.5) return 2;
   // Add more steps if needed (e.g., 3x)
   return 4; // Max scale
+}
+
+/**
+ * Validates image dimensions after loading
+ * @param file The file to check dimensions for
+ * @returns Promise with validation result and error message if invalid
+ */
+export async function validateImageDimensions(file: File): Promise<{ valid: boolean; error?: string; dimensions?: { width: number; height: number } }> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Minimum dimensions check (100x100 pixels)
+        if (img.width < 100 || img.height < 100) {
+          resolve({
+            valid: false,
+            error: 'Image is too small. Minimum dimensions are 100x100 pixels.',
+            dimensions: { width: img.width, height: img.height }
+          });
+          return;
+        }
+        
+        // Maximum dimensions check (8000x8000 pixels)
+        if (img.width > 8000 || img.height > 8000) {
+          resolve({
+            valid: false,
+            error: 'Image is too large. Maximum dimensions are 8000x8000 pixels.',
+            dimensions: { width: img.width, height: img.height }
+          });
+          return;
+        }
+        
+        // Valid dimensions
+        resolve({
+          valid: true,
+          dimensions: { width: img.width, height: img.height }
+        });
+      };
+      
+      img.onerror = () => {
+        resolve({
+          valid: false,
+          error: 'Failed to load image. The file may be corrupted.'
+        });
+      };
+      
+      if (e.target?.result) {
+        img.src = e.target.result as string;
+      } else {
+        resolve({
+          valid: false,
+          error: 'Failed to read image file.'
+        });
+      }
+    };
+    
+    reader.onerror = () => {
+      resolve({
+        valid: false,
+        error: 'Failed to read image file.'
+      });
+    };
+    
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Checks image quality factors such as brightness and blur
+ * @param file The image file to check
+ * @returns Promise with quality assessment results
+ */
+export async function assessImageQuality(file: File): Promise<{ 
+  isAcceptable: boolean; 
+  warnings: string[];
+  tooDark?: boolean; 
+  tooBlurry?: boolean;
+  lowResolution?: boolean;
+}> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          resolve({ 
+            isAcceptable: true,  // Default to accepting if we can't analyze
+            warnings: ['Could not analyze image quality.'] 
+          });
+          return;
+        }
+        
+        // Set canvas size to image dimensions
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw image on canvas
+        ctx.drawImage(img, 0, 0);
+        
+        // Get image data for analysis
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        
+        // Initialize variables for quality checks
+        let totalBrightness = 0;
+        let pixelCount = data.length / 4;
+        
+        // Calculate average brightness
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // Luminance formula: 0.299*R + 0.587*G + 0.114*B
+          const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+          totalBrightness += brightness;
+        }
+        
+        const avgBrightness = totalBrightness / pixelCount;
+        const tooDark = avgBrightness < 40;  // Threshold for dark images
+        
+        // For blur detection, we use a simple heuristic
+        // A more accurate implementation would use edge detection algorithms
+        const lowResolution = img.width < 500 || img.height < 500;
+        
+        // Collect warnings
+        const warnings = [];
+        if (tooDark) {
+          warnings.push('The image appears to be too dark. Consider using a better lit photo for best results.');
+        }
+        
+        if (lowResolution) {
+          warnings.push('The image has relatively low resolution. For best results, use a higher resolution photo.');
+        }
+        
+        resolve({
+          isAcceptable: warnings.length === 0,
+          warnings,
+          tooDark,
+          lowResolution
+        });
+      };
+      
+      img.onerror = () => {
+        resolve({
+          isAcceptable: false,
+          warnings: ['Failed to analyze image quality. The file may be corrupted.']
+        });
+      };
+      
+      if (e.target?.result) {
+        img.src = e.target.result as string;
+      } else {
+        resolve({
+          isAcceptable: false,
+          warnings: ['Failed to read image file for quality assessment.']
+        });
+      }
+    };
+    
+    reader.onerror = () => {
+      resolve({
+        isAcceptable: false,
+        warnings: ['Failed to read image file for quality assessment.']
+      });
+    };
+    
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Enhanced validation with additional quality checks
+ * @param file The file to validate
+ * @param options Additional validation options
+ * @returns Promise with validation results and messages
+ */
+export async function validateImageWithQuality(
+  file: File, 
+  options: { 
+    checkDimensions?: boolean; 
+    checkQuality?: boolean; 
+    strictValidation?: boolean; // Add option for strict validation
+  } = { checkDimensions: true, checkQuality: true, strictValidation: false }
+): Promise<{ 
+  valid: boolean;
+  error?: string;
+  warnings: string[];
+  dimensions?: { width: number; height: number };
+  quality?: { 
+    tooDark?: boolean;
+    tooBlurry?: boolean;
+    lowResolution?: boolean; 
+  };
+}> {
+  // Start with basic validation
+  const basicValidation = validateFile(file);
+  if (!basicValidation.valid) {
+    return {
+      valid: false,
+      error: basicValidation.error,
+      warnings: []
+    };
+  }
+  
+  let dimensionsResult: { 
+    valid: boolean; 
+    error?: string; 
+    dimensions?: { width: number; height: number } 
+  } = { valid: true };
+  
+  let qualityResult: { 
+    isAcceptable: boolean; 
+    warnings: string[]; 
+    tooDark?: boolean; 
+    tooBlurry?: boolean; 
+    lowResolution?: boolean; 
+  } = { isAcceptable: true, warnings: [] };
+  
+  // Check dimensions if requested
+  if (options.checkDimensions) {
+    dimensionsResult = await validateImageDimensions(file);
+    if (!dimensionsResult.valid) {
+      return {
+        valid: false,
+        error: dimensionsResult.error,
+        warnings: [],
+        dimensions: dimensionsResult.dimensions
+      };
+    }
+  }
+  
+  // Check quality if requested
+  if (options.checkQuality) {
+    qualityResult = await assessImageQuality(file);
+    
+    // In strict validation mode, fail if quality issues are found
+    if (options.strictValidation && !qualityResult.isAcceptable) {
+      return {
+        valid: false,
+        error: "Image quality does not meet requirements",
+        warnings: qualityResult.warnings,
+        dimensions: dimensionsResult.dimensions,
+        quality: {
+          tooDark: qualityResult.tooDark,
+          tooBlurry: qualityResult.tooBlurry,
+          lowResolution: qualityResult.lowResolution
+        }
+      };
+    }
+  }
+  
+  return {
+    valid: true,
+    warnings: qualityResult.warnings,
+    dimensions: dimensionsResult.dimensions,
+    quality: {
+      tooDark: qualityResult.tooDark,
+      tooBlurry: qualityResult.tooBlurry,
+      lowResolution: qualityResult.lowResolution
+    }
+  };
+}
+
+/**
+ * Helper function to get display-friendly warnings based on validation results
+ * @param validation The validation result object
+ * @returns Array of human-readable warning messages
+ */
+export function getReadableValidationWarnings(validation: { 
+  valid: boolean;
+  quality?: { 
+    tooDark?: boolean;
+    tooBlurry?: boolean;
+    lowResolution?: boolean; 
+  };
+}): string[] {
+  const warnings: string[] = [];
+  
+  if (!validation.valid) {
+    return warnings; // Return empty array for invalid images
+  }
+  
+  if (validation.quality?.tooDark) {
+    warnings.push("The image appears too dark. This may affect the quality of the generated portrait.");
+  }
+  
+  if (validation.quality?.tooBlurry) {
+    warnings.push("The image appears blurry. Clear images produce better results.");
+  }
+  
+  if (validation.quality?.lowResolution) {
+    warnings.push("The image has low resolution. Higher resolution images produce better results.");
+  }
+  
+  return warnings;
 } 

@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
+// import { headers } from 'next/headers'; // Remove this import as we'll use req.headers directly
 import { createClient } from '@supabase/supabase-js'; // Use standard client for service role potentially
 import crypto from 'crypto';
 
 // IMPORTANT: Use Service Role Key for backend updates from webhooks
 // Ensure these are set in your environment variables
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const PRINTIFY_WEBHOOK_SECRET = process.env.PRINTIFY_WEBHOOK_SECRET!;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy-key-for-build-process';
+const PRINTIFY_WEBHOOK_SECRET = process.env.PRINTIFY_WEBHOOK_SECRET || 'dummy-secret-for-build-process';
 
 // Initialize Supabase client with service role
-const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+// Make sure we only initialize this when needed (not during build)
+let supabaseAdmin: ReturnType<typeof createClient>;
+
+// Function to get the Supabase admin client lazily
+const getSupabaseAdmin = () => {
+  if (!supabaseAdmin) {
+    // Check for actual keys at runtime
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('SUPABASE_SERVICE_ROLE_KEY is required in runtime environment');
+    }
+    
+    supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  }
+  return supabaseAdmin;
+};
 
 /**
  * Verify the signature of the webhook request from Printify.
@@ -51,16 +65,34 @@ interface PrintifyShipmentDetails {
   shipped_at?: string; 
 }
 
+// Define the expected structure of Printify webhook events
+interface PrintifyWebhookEvent {
+  type: string;
+  resource?: {
+    id?: string;
+    data?: {
+      status?: string;
+      shipments?: Array<{
+        carrier?: string;
+        number?: string;
+        url?: string;
+        shipped_at?: string;
+      }>;
+    };
+  };
+}
+
 export async function POST(req: NextRequest) {
     // 1. Verify Signature
-    if (!PRINTIFY_WEBHOOK_SECRET) {
+    if (!process.env.PRINTIFY_WEBHOOK_SECRET) {
         console.error('Printify webhook secret is not configured.');
         return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
     }
     
     // Read raw body first for verification
     const rawBody = await req.text();
-    const signatureHeader = headers().get('x-pfy-signature'); // Check Printify docs for exact header name
+    // Use req.headers directly instead of headers() function
+    const signatureHeader = req.headers.get('x-pfy-signature'); // Check Printify docs for exact header name
 
     const isValid = await verifyPrintifyWebhookSignature(rawBody, signatureHeader, PRINTIFY_WEBHOOK_SECRET);
     if (!isValid) {
@@ -68,9 +100,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Parse Payload (now that verification is done)
-    let event;
+    let event: PrintifyWebhookEvent;
+    
     try {
-        event = JSON.parse(rawBody); // Parse the raw body we already read
+        event = JSON.parse(rawBody) as PrintifyWebhookEvent;
     } catch (error) {
         console.error('Error parsing Printify webhook payload:', error);
         return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
@@ -80,6 +113,9 @@ export async function POST(req: NextRequest) {
 
     // 3. Handle Event Type
     try {
+        // Get Supabase admin client only when we need it
+        const supabaseAdmin = getSupabaseAdmin();
+
         switch (event.type) {
             case 'order:updated':
             case 'order:shipment:created': // Handle shipment updates
@@ -110,6 +146,9 @@ export async function POST(req: NextRequest) {
                      break;
                 }
                 
+                // Explicitly type the internalOrder to have an id property
+                const typedOrder = internalOrder as { id: string };
+                
                 // Prepare data to update our internal order
                 const updateData: { status?: string; shipment_details?: PrintifyShipmentDetails } = {};
                 if (orderStatus) {
@@ -135,13 +174,13 @@ export async function POST(req: NextRequest) {
                     const { error: updateError } = await supabaseAdmin
                         .from('orders')
                         .update(updateData)
-                        .eq('id', internalOrder.id);
+                        .eq('id', typedOrder.id);
 
                     if (updateError) {
-                        console.error(`Failed to update order ${internalOrder.id} from webhook:`, updateError);
+                        console.error(`Failed to update order ${typedOrder.id} from webhook:`, updateError);
                         // Consider retry logic or alerting
                     } else {
-                         console.log(`Updated order ${internalOrder.id} status to ${updateData.status} via webhook.`);
+                         console.log(`Updated order ${typedOrder.id} status to ${updateData.status} via webhook.`);
                     }
                 }
                 break;

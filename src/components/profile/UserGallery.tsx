@@ -4,9 +4,10 @@
 // Imports currently not used but reserved for future implementation of filtering, tagging, and command UI features
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { getUserGalleryPortraits, GalleryQueryParameters, toggleFavoritePortrait } from '@/lib/ai/openai'; // Using any[] for now
+import { getUserGalleryPortraits, toggleFavoritePortrait } from '@/lib/ai/openai'; 
+import { GalleryPortrait, GalleryQueryParameters } from '@/types/gallery';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Download, Share, Star, Edit, Trash, AlertCircle, List, LayoutGrid, Loader2, Image as ImageIcon } from 'lucide-react';
+import { MoreHorizontal, Download, Share, Star, Edit, Trash, AlertCircle, List, LayoutGrid, Loader2, Image as ImageIcon, Maximize, Minimize, Grid } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast";
@@ -28,27 +29,10 @@ import { Tag, Tags, X as XIcon } from 'lucide-react';
 import { getPortraitTags, setPortraitTags } from '@/lib/ai/openai';
 import { getUserPets, setPetProfileImage } from '@/lib/petApi'; // Correct function name
 import { useRouter } from 'next/navigation'; // Import useRouter
+import { GalleryGrid } from './GalleryGrid'; // Import our new component
 
-// Replace the 'any' type definition with a more specific interface
-interface GalleryPortrait {
-  id: string;
-  user_id: string;
-  pet_id?: string;
-  created_at?: string | null;
-  status?: string;
-  is_favorited?: boolean;
-  image_versions?: {
-    thumbnail_512?: string;
-    generated_dalle3?: string;
-    original?: string;
-    upscaled_clarity_2x?: string;
-    upscaled_clarity_4x?: string;
-    [key: string]: string | undefined;
-  };
-  customization_params?: Record<string, unknown>;
-  tags?: string[];
-  [key: string]: unknown;
-}
+// Type for grid density control
+type GridDensity = 'compact' | 'normal' | 'comfortable';
 
 // Type for Pet (assuming from petApi or types)
 type Pet = { id: string; name: string | null; /* other fields */ };
@@ -149,6 +133,7 @@ export function UserGallery({ userId }: UserGalleryProps) {
   const [loadingPets, setLoadingPets] = useState(true); 
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [gridDensity, setGridDensity] = useState<GridDensity>('normal');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest');
   const [filterBy, setFilterBy] = useState<string>('all');
   const [filterPetId, setFilterPetId] = useState<string>('all'); // State for pet filter
@@ -199,7 +184,7 @@ export function UserGallery({ userId }: UserGalleryProps) {
       };
       const data = await getUserGalleryPortraits(params);
       
-      const newPortraits = data.slice(0, limit); // Get the actual page data
+      const newPortraits = data.slice(0, limit) as GalleryPortrait[]; // Get the actual page data
       setHasMore(data.length > limit); // Check if more exist
 
       if (loadMore) {
@@ -278,113 +263,132 @@ export function UserGallery({ userId }: UserGalleryProps) {
     }
   };
 
-  // Placeholder actions - implement later in subtasks
   const handleDownload = (url: string | null, id: string) => {
     if (!url) {
-      toast({ title: "Download Unavailable", description: "High-resolution image not available.", variant: "destructive" });
+      toast({
+        title: "Download Failed",
+        description: "No high-resolution image available for download.",
+        variant: "destructive",
+      });
       return;
     }
-    // Use browser download mechanism
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `canvapet_portrait_${id}.png`; // Suggest filename
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast({ title: "Download Started" });
+
+    // Create an anchor and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pet-portrait-${id}.jpg`; // Default filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    toast({
+      title: "Download Started",
+      description: "Your image is being downloaded.",
+    });
   };
 
   const handleShare = async (id: string, url: string | null) => {
-    const shareUrl = `${window.location.origin}/portrait/${id}`; // Link to a potential detail page
-    const text = `Check out this AI pet portrait I created!`;
-    
-    if (!url) { // Fallback if no image URL for preview
-        url = '/placeholder.png'; 
+    if (!url) {
+      toast({
+        title: "Share Failed",
+        description: "No image available to share.",
+        variant: "destructive",
+      });
+      return;
     }
 
+    // Check if Web Share API is available
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'My CanvaPet Portrait',
-          text: text,
-          url: shareUrl,
-          // files: Can attempt to share file directly if API supports it and image is fetched
+          title: 'My Pet Portrait',
+          text: 'Check out this portrait of my pet!',
+          url: window.location.origin + `/portraits/${id}`, // Use the portrait specific page if available
         });
-        toast({ title: "Shared successfully!" });
-      } catch (error) {
-        console.error('Error sharing:', error);
-        toast({ title: "Sharing failed", description: (error as Error).message, variant: "destructive" });
-      }
-    } else {
-      // Fallback: Copy link to clipboard
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        toast({ title: "Link Copied!", description: "Portrait link copied to clipboard." });
+        return;
       } catch (err) {
-        console.error('Failed to copy link:', err);
-        toast({ title: "Copy Failed", description: "Could not copy link to clipboard.", variant: "destructive" });
+        console.error('Share failed:', err);
+        // Fall back to clipboard
       }
+    }
+
+    // Fallback if Web Share API fails or isn't available
+    try {
+      await navigator.clipboard.writeText(window.location.origin + `/portraits/${id}`);
+      toast({
+        title: "Link Copied",
+        description: "Portrait link copied to clipboard.",
+      });
+    } catch (err) {
+      console.error('Clipboard copy failed:', err);
+      toast({
+        title: "Share Failed",
+        description: "Could not copy link. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleRequestRevision = (id: string) => {
-    // Navigate to the revision page for this portrait
-    router.push(`/portraits/${id}/revise`); 
+    router.push(`/portraits/${id}/revise`);
   };
 
   const handleToggleFavorite = async (portraitId: string, currentIsFavorited: boolean) => {
-    // Optimistic UI update
-    setPortraits(prev => 
-        prev.map(p => p.id === portraitId ? { ...p, is_favorited: !p.is_favorited } : p)
-    );
-
     try {
-        await toggleFavoritePortrait(portraitId, userId, currentIsFavorited);
-        toast({
-             title: currentIsFavorited ? "Removed from Favorites" : "Added to Favorites",
-        });
+      // The toggleFavoritePortrait function does the negation internally
+      const result = await toggleFavoritePortrait(portraitId, userId, currentIsFavorited);
+      
+      // Update local state with the result returned from the function
+      setPortraits(prev => 
+        prev.map(p => 
+          p.id === portraitId 
+            ? { ...p, is_favorited: result.is_favorited } 
+            : p
+        )
+      );
+      
+      toast({
+        title: currentIsFavorited ? "Removed from Favorites" : "Added to Favorites",
+        description: currentIsFavorited 
+          ? "Portrait removed from your favorites." 
+          : "Portrait added to your favorites!",
+      });
     } catch (error: unknown) {
-        console.error("Failed to toggle favorite:", error);
-        // Revert optimistic update on error
-        setPortraits(prev => 
-            prev.map(p => p.id === portraitId ? { ...p, is_favorited: currentIsFavorited } : p)
-        );
-        toast({
-            title: "Error",
-            description: "Could not update favorite status.",
-            variant: "destructive"
-        });
+      const message = error instanceof Error ? error.message : "Could not update favorite status.";
+      console.error('Favorite toggle failed:', error);
+      toast({
+        title: "Action Failed",
+        description: message,
+        variant: "destructive",
+      });
     }
   };
 
   const handleSetProfilePic = async (portrait: GalleryPortrait) => {
-      // Use the best available generated or upscaled image, or fallback to original if needed
-      const imageUrl = 
-        portrait.image_versions?.upscaled_clarity_4x ||
-        portrait.image_versions?.upscaled_clarity_2x ||
-        portrait.image_versions?.generated_dalle3 ||
-        portrait.image_versions?.original; // Fallback to original if others fail
-        
-      const petId = portrait.pets?.id; // Get petId from the portrait data
+    if (!portrait.pets?.id) {
+      toast({
+        title: "Action Failed",
+        description: "This portrait is not associated with a pet.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-      if (!imageUrl) {
-          toast({ title: "Error", description: "No suitable image found for profile picture.", variant: "destructive" });
-          return;
-      }
-      if (!petId) {
-           toast({ title: "Error", description: "Could not identify the pet for this portrait.", variant: "destructive" });
-          return;
-      }
-
-      try {
-        await setPetProfileImage(petId, imageUrl);
-        toast({ title: "Profile Picture Updated!", description: `${portrait.pets?.name || 'Pet'}&apos;s profile picture has been set.` });
-        // Optionally, re-fetch pets or update local pet state if displaying profile pics elsewhere
-      } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : "Could not set profile picture.";
-          console.error("Failed to set profile picture:", error);
-          toast({ title: "Update Failed", description: message, variant: "destructive" });
-      }
+    try {
+      await setPetProfileImage(portrait.pets.id, getDisplayImage(portrait));
+      toast({
+        title: "Profile Picture Updated",
+        description: `Profile picture updated for ${portrait.pets.name || 'your pet'}.`,
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Could not update profile picture.";
+      console.error('Profile pic update failed:', error);
+      toast({
+        title: "Action Failed",
+        description: message,
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading && portraits.length === 0) {
@@ -455,6 +459,35 @@ export function UserGallery({ userId }: UserGalleryProps) {
             </SelectContent>
           </Select>
 
+          {/* Grid Density Control */}
+          {viewMode === 'grid' && (
+            <Select value={gridDensity} onValueChange={(v) => setGridDensity(v as GridDensity)}>
+              <SelectTrigger className="w-[150px]">
+                <Grid className="h-4 w-4 mr-2" /> <SelectValue placeholder="Grid Density" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">
+                  <div className="flex items-center">
+                    <Minimize className="h-4 w-4 mr-2" />
+                    <span>Compact</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="normal">
+                  <div className="flex items-center">
+                    <Grid className="h-4 w-4 mr-2" />
+                    <span>Normal</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="comfortable">
+                  <div className="flex items-center">
+                    <Maximize className="h-4 w-4 mr-2" />
+                    <span>Comfortable</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+
           {/* View Mode Toggle */}
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'grid' | 'list')}>
              <TabsList>
@@ -465,140 +498,57 @@ export function UserGallery({ userId }: UserGalleryProps) {
         </div>
       </div>
 
-      {loading && (
-          <div className="text-center py-4">
-             <Loader2 className="h-6 w-6 animate-spin inline-block" />
-          </div>
-      )} 
+      {error && (
+        <div className="flex flex-col items-center justify-center min-h-[300px] text-destructive">
+          <AlertCircle className="h-8 w-8 mb-2" />
+          <p>Error loading gallery:</p>
+          <p className="text-sm">{error}</p>
+          <Button onClick={() => fetchPortraits(1)} variant="destructive" className="mt-4">
+            Try Again
+          </Button>
+        </div>
+      )}
 
-      {!loading && portraits.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">No portraits found matching your filters.</p>
-             <div className="text-center mt-4">
-              <Link href="/pets/new" passHref>
-                <Button>Create a Portrait</Button>
-              </Link>
+      {!error && (
+        <>
+          {viewMode === 'grid' ? (
+            <GalleryGrid
+              portraits={portraits}
+              isLoading={loading}
+              onFavorite={handleToggleFavorite}
+              onDownload={handleDownload}
+              onShare={handleShare}
+              onRequestRevision={handleRequestRevision}
+              onSetProfilePic={handleSetProfilePic}
+              onDelete={handleDelete}
+              density={gridDensity}
+            />
+          ) : (
+            <div className="space-y-4">
+              <p>List view not implemented yet.</p>
             </div>
-          </CardContent>
-        </Card>
-      ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {portraits.map(portrait => {
-            const isFavorited = !!portrait.is_favorited;
-            const currentTags = (portrait.tags as string[] | null) || [];
-            // Determine if revision is possible (e.g., based on purchase status or revision count)
-            // This logic needs refinement based on actual business rules for revisions
-            const canRevise = portrait.is_purchased; // Simple example: only purchased can be revised
-            
-            return (
-              <Card key={portrait.id} className="overflow-hidden group relative">
-                {/* Add Favorite button overlay */}
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className={`absolute top-2 right-2 z-10 h-8 w-8 p-1 rounded-full bg-black/30 text-white hover:bg-black/50 transition-all ${isFavorited ? 'text-yellow-400' : 'opacity-50 group-hover:opacity-100'}`}
-                  onClick={() => handleToggleFavorite(portrait.id, isFavorited)}
-                  aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
-                >
-                  <Star className={`h-5 w-5 ${isFavorited ? 'fill-current' : ''}`} />
-                </Button>
-
-                <CardContent className="p-0">
-                  <Image 
-                    src={getDisplayImage(portrait)}
-                    alt={`Portrait for pet ${portrait.pets?.name || 'Unknown'}`}
-                    width={512} // Provide appropriate dimensions
-                    height={512}
-                    className="aspect-square object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                    unoptimized // If using external URLs like Supabase storage directly
-                  />
-                </CardContent>
-                <CardFooter className="p-3 bg-gradient-to-t from-black/60 via-black/30 to-transparent absolute bottom-0 left-0 right-0 text-white transition-opacity duration-300 opacity-0 group-hover:opacity-100 flex justify-between items-center">
-                  <div>
-                    <p className="font-semibold text-sm truncate">{portrait.pets?.name || 'Untitled'}</p>
-                    <p className="text-xs opacity-80">
-                      {portrait.created_at ? formatDistanceToNow(new Date(portrait.created_at), { addSuffix: true }) : 'Unknown date'}
-                    </p>
-                    <Badge variant={portrait.status === 'completed' ? 'default' : portrait.status === 'failed' ? 'destructive' : 'secondary'} className="mt-1 text-xs px-1.5 py-0.5 h-auto">{portrait.status}</Badge>
-                    {/* Display Tags (simple version) */}
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {currentTags.slice(0, 2).map(tag => (
-                        <Badge key={tag} variant="outline" className="text-xs px-1.5 py-0.5 h-auto bg-black/20 border-white/30 text-white/80">{tag}</Badge>
-                      ))}
-                      {currentTags.length > 2 && <Badge variant="outline" className="text-xs px-1.5 py-0.5 h-auto bg-black/20 border-white/30 text-white/80">+{currentTags.length - 2}</Badge>}
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleToggleFavorite(portrait.id, isFavorited)}>
-                         <Star className={`h-4 w-4 mr-2 ${isFavorited ? 'fill-yellow-400 text-yellow-500' : ''}`} /> {isFavorited ? 'Unfavorite' : 'Favorite'}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDownload(getDownloadUrl(portrait), portrait.id)} disabled={!getDownloadUrl(portrait)}>
-                        <Download className="h-4 w-4 mr-2" /> Download
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleShare(portrait.id, getDisplayImage(portrait))}>
-                        <Share className="h-4 w-4 mr-2" /> Share
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                         onClick={() => handleRequestRevision(portrait.id)} 
-                         disabled={!canRevise} // Disable based on revision eligibility
-                      >
-                        <Edit className="h-4 w-4 mr-2" /> Request Revision
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleSetProfilePic(portrait)} disabled={!portrait.pets?.id}>
-                          <ImageIcon className="h-4 w-4 mr-2" /> Set as Pet Profile Pic
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(portrait.id)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-                        <Trash className="h-4 w-4 mr-2" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </CardFooter>
-                {(portrait.status === 'pending' || portrait.status === 'processing') && 
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <Loader2 className="h-6 w-6 animate-spin text-white"/>
-                  </div>
-                }
-                {portrait.status === 'failed' && 
-                  <div className="absolute inset-0 bg-red-900/70 flex flex-col items-center justify-center text-white p-2">
-                      <AlertCircle className="h-6 w-6 mb-1"/>
-                      <span className="text-xs text-center">Generation Failed</span>
-                  </div>
-                }
-              </Card>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="space-y-4">
-            <p>List view not implemented yet.</p>
-        </div>
+          )}
+        </>
       )}
 
       {/* Load More Button */} 
       <div className="mt-8 text-center">
-          {hasMore && (
-              <Button 
-                  onClick={loadMorePortraits} 
-                  disabled={loadingMore}
-                  variant="outline"
-              >
-                  {loadingMore ? (
-                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading...</>
-                  ) : (
-                      'Load More'
-                  )}
-              </Button>
-          )}
-          {!loading && !loadingMore && !hasMore && portraits.length > 0 && (
-              <p className="text-muted-foreground">You&apos;ve reached the end.</p>
-          )}
+        {hasMore && (
+          <Button 
+            onClick={loadMorePortraits} 
+            disabled={loadingMore}
+            variant="outline"
+          >
+            {loadingMore ? (
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading...</>
+            ) : (
+              'Load More'
+            )}
+          </Button>
+        )}
+        {!loading && !loadingMore && !hasMore && portraits.length > 0 && (
+          <p className="text-muted-foreground">You&apos;ve reached the end.</p>
+        )}
       </div>
     </div>
   );

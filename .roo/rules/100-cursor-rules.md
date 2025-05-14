@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Roo Code MDC Rules Guidelines
+
+## Required Rule Structure
+```markdown
+---
+description: Clear, one-line description of what the rule enforces
+globs: ["path/to/files/*.ext", "other/path/**/*"]
+alwaysApply: boolean
+---
+
+# Main Title
+
+## Section Headings
+- Key points as bullet lists
+- Include both good and bad examples
+```
+
+## File References
+- Use `[filename](mdc:path/to/file)` to reference files
+- Example: [core.md](mdc:.roo/rules/000-core.md) for rule references
+- Example: [schema.prisma](mdc:prisma/schema.prisma) for code references
+
+## Code Examples
+- Use language-specific code blocks
+```typescript
+// ✅ DO: Show good examples
+const goodExample = true;
+
+// ❌ DON'T: Show anti-patterns
+const badExample = false;
+```
+
+## Rule Content Guidelines
+- Start with high-level overview
+- Include specific, actionable requirements
+- Show examples of correct implementation
+- Reference existing code when possible
+- Keep rules DRY by referencing other rules
+
+## Rule Maintenance
+- Update rules when new patterns emerge
+- Add examples from actual codebase
+- Remove outdated patterns
+- Cross-reference related rules
+
+## Best Practices
+- Use bullet points for clarity
+- Keep descriptions concise
+- Include both DO and DON'T examples
+- Reference actual code over theoretical examples
+- Use consistent formatting across rules
+
+## Rule Numbering System
+- Use numeric prefixes to control loading order:
+  - 000-099: Core principles and standards
+  - 100-199: Meta rules and guidelines
+  - 200-599: Project-specific rules
+  - 600-799: Environment and deployment rules
+  - 800-999: Documentation rules
+
+See [self-improve.md](mdc:.roo/rules/300-self-improve.md) for guidelines on evolving these rules over time.

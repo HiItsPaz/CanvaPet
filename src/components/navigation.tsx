@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -14,29 +14,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User, Settings, HelpCircle, ShoppingCart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useKeyboardShortcutsContext } from "@/contexts/KeyboardShortcutsContext";
+import { GLOBAL_SHORTCUTS, NAVIGATION_SHORTCUTS, ShortcutConfig } from "@/lib/keyboardShortcuts";
+import { KeyboardShortcutHint } from "./ui/keyboard-shortcut-hint";
+import { CartPreview } from "./ui/cart-preview";
+import { CartIcon } from "./ui/cart-icon";
 
 interface NavItem {
   label: string;
   href: string;
+  shortcutKey?: string;
   children?: NavItem[];
 }
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "My Pets", href: "/pets", children: [
+  { label: "Home", href: "/", shortcutKey: "g h" },
+  { label: "My Pets", href: "/pets", shortcutKey: "g p", children: [
     { label: "My Pets", href: "/pets" },
     { label: "Upload Pet", href: "/pets/upload" }
   ]},
-  { label: "Gallery", href: "/gallery" },
-  { label: "Create Portrait", href: "/create" },
+  { label: "Gallery", href: "/profile/gallery", shortcutKey: "g g" },
+  { label: "Create Portrait", href: "/portraits/generate" },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, profile, loading, signOut } = useAuth();
+  const { openShortcutsHelp, setScope } = useKeyboardShortcutsContext();
+
+  // Set navigation scope when component mounts
+  useEffect(() => {
+    setScope('navigation');
+    
+    // Return to global scope when component unmounts
+    return () => setScope('global');
+  }, [setScope]);
 
   // Format user's initials for avatar fallback
   const getInitials = () => {
@@ -47,6 +62,26 @@ export function Navigation() {
       return user.email.charAt(0).toUpperCase();
     }
     return '?';
+  };
+
+  // Find keyboard shortcut for a navigation item
+  const getShortcutForNav = (href: string): ShortcutConfig => {
+    const shortcut = NAVIGATION_SHORTCUTS.find(shortcut => {
+      switch (shortcut.action) {
+        case 'navigate-home':
+          return href === '/';
+        case 'navigate-pets':
+          return href === '/pets';
+        case 'navigate-gallery':
+          return href === '/profile/gallery';
+        case 'navigate-profile':
+          return href === '/profile';
+        default:
+          return false;
+      }
+    });
+    
+    return shortcut || NAVIGATION_SHORTCUTS[0];
   };
 
   return (
@@ -83,6 +118,16 @@ export function Navigation() {
                       >
                         <path d="m6 9 6 6 6-6"></path>
                       </svg>
+                      
+                      {/* Add keyboard shortcut hint if available */}
+                      {item.shortcutKey && (
+                        <span className="hidden lg:inline-block ml-2">
+                          <KeyboardShortcutHint 
+                            shortcut={getShortcutForNav(item.href)} 
+                            inline 
+                          />
+                        </span>
+                      )}
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-40">
@@ -102,19 +147,54 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center ${
                     pathname === item.href
                       ? "bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-400"
                       : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                   }`}
                 >
                   {item.label}
+                  
+                  {/* Add keyboard shortcut hint if available */}
+                  {item.shortcutKey && (
+                    <span className="hidden lg:inline-block ml-2">
+                      <KeyboardShortcutHint 
+                        shortcut={getShortcutForNav(item.href)} 
+                        inline 
+                      />
+                    </span>
+                  )}
                 </Link>
               )
             ))}
           </nav>
         </div>
         <div className="flex items-center space-x-4">
+          {/* Keyboard Shortcuts Help Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={openShortcutsHelp}
+            aria-label="Keyboard shortcuts"
+            className="relative hidden md:flex"
+          >
+            <HelpCircle className="h-5 w-5" />
+            <span className="sr-only">Keyboard Shortcuts</span>
+            
+            {/* Add keyboard shortcut hint */}
+            <span className="absolute -bottom-5 right-0">
+              <KeyboardShortcutHint
+                shortcut={GLOBAL_SHORTCUTS.find(s => s.action === 'toggle-help') || GLOBAL_SHORTCUTS[0]}
+                tooltip
+              />
+            </span>
+          </Button>
+          
+          {/* Cart Preview */}
+          <div className="hidden md:block">
+            <CartPreview type="popover" />
+          </div>
+          
           <ThemeToggle />
           <div className="hidden md:block">
             {loading ? (
@@ -142,9 +222,15 @@ export function Navigation() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/profile" className="cursor-pointer flex w-full items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
+                    <Link href="/profile" className="cursor-pointer flex w-full items-center justify-between">
+                      <span className="flex items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                      </span>
+                      <KeyboardShortcutHint 
+                        shortcut={NAVIGATION_SHORTCUTS.find(s => s.action === 'navigate-profile') || NAVIGATION_SHORTCUTS[0]} 
+                        inline 
+                      />
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -174,17 +260,18 @@ export function Navigation() {
               </div>
             )}
           </div>
-          <button 
-            className="md:hidden text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+          <Link href="/checkout" className="md:hidden">
+            <CartIcon size="sm" />
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
-            {isMobileMenuOpen ? (
-              <XIcon className="h-6 w-6" />
-            ) : (
-              <MenuIcon className="h-6 w-6" />
-            )}
-          </button>
+            {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
+          </Button>
         </div>
       </div>
 
@@ -218,6 +305,7 @@ export function Navigation() {
                 </button>
               </div>
               
+              {/* Mobile Navigation Items */}
               <nav className="flex flex-col space-y-2">
                 {navItems.map((item) => (
                   item.children ? (
@@ -261,69 +349,92 @@ export function Navigation() {
                     </Link>
                   )
                 ))}
+                
+                {/* Cart Link in Mobile Menu */}
+                <Link
+                  href="/checkout"
+                  className="px-4 py-2 text-base font-medium rounded-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <ShoppingCart className="mr-2 h-5 w-5" />
+                  Shopping Cart
+                </Link>
+                
+                {/* Add keyboard shortcuts help button in mobile menu */}
+                <button
+                  className="px-4 py-2 text-base font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 w-full text-left flex items-center"
+                  onClick={() => {
+                    openShortcutsHelp();
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <HelpCircle className="h-5 w-5 mr-2" />
+                  Keyboard Shortcuts
+                </button>
               </nav>
               
               <div className="pt-6 border-t border-gray-200 dark:border-gray-800">
                 {loading ? (
                   <Skeleton className="h-10 w-full mb-4" />
                 ) : user ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3 p-2 rounded-md bg-gray-50 dark:bg-gray-800">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.display_name || "User"} />
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {getInitials()}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{profile?.display_name || user.email}</span>
+                      <div>
+                        <p className="text-sm font-medium">{profile?.display_name || user.email}</p>
                         {profile?.display_name && (
-                          <span className="text-xs text-muted-foreground">{user.email}</span>
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
                         )}
                       </div>
                     </div>
-                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full mb-2" size="sm">
-                        <User className="mr-2 h-4 w-4" />
+                    <div className="flex flex-col space-y-2">
+                      <Link
+                        href="/profile"
+                        className="px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4 mr-2" />
                         Profile
-                      </Button>
-                    </Link>
-                    <Button 
-                      variant="destructive" 
-                      className="w-full" 
-                      size="sm"
-                      onClick={() => {
-                        signOut();
-                        setIsMobileMenuOpen(false);
-                      }}
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                    </Button>
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="px-4 py-2 text-sm font-medium rounded-md transition-colors text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="px-4 py-2 text-sm font-medium rounded-md transition-colors text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-800 flex items-center text-left"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign out
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <>
-                    <Button 
-                      className="w-full mb-2" 
-                      variant="default"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      asChild
-                    >
-                      <Link href="/auth/signin">Sign In</Link>
+                  <div className="flex flex-col space-y-2">
+                    <Button size="sm" variant="outline" asChild className="w-full">
+                      <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                        Sign Up
+                      </Link>
                     </Button>
-                    <Button 
-                      className="w-full mb-4" 
-                      variant="outline"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      asChild
-                    >
-                      <Link href="/auth/signup">Sign Up</Link>
+                    <Button size="sm" variant="default" asChild className="w-full">
+                      <Link href="/auth/signin" onClick={() => setIsMobileMenuOpen(false)}>
+                        Sign In
+                      </Link>
                     </Button>
-                  </>
+                  </div>
                 )}
-                <div className="flex justify-center mt-4">
-                  <ThemeToggle />
-                </div>
               </div>
             </div>
           </div>
@@ -336,16 +447,20 @@ export function Navigation() {
 function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
       {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        fillRule="evenodd"
-        d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z"
-        clipRule="evenodd"
-      />
+      <line x1="4" x2="20" y1="12" y2="12" />
+      <line x1="4" x2="20" y1="6" y2="6" />
+      <line x1="4" x2="20" y1="18" y2="18" />
     </svg>
   );
 }
@@ -353,16 +468,19 @@ function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
       {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        fillRule="evenodd"
-        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
-        clipRule="evenodd"
-      />
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 } 

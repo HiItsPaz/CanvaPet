@@ -1,5 +1,6 @@
-import { createClientComponentClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+"use client";
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/database.types';
 
 // Bucket name constants
@@ -22,57 +23,31 @@ export interface FileMetadata {
     isPet: boolean;
     confidence: number;
     animalType?: string;
+    boundingBox?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
   };
   tags?: string[];
-}
-
-/**
- * Initialize storage buckets and policies
- * This should be called during app initialization or via a migration
- */
-export async function initializeStorage() {
-  // This function must be called server-side only
-  const supabase = createServerComponentClient<Database>({ cookies });
-  
-  // Create pet photos bucket if it doesn't exist
-  const { data: bucketData, error: bucketError } = await supabase.storage.getBucket(BUCKET_NAMES.PET_PHOTOS);
-  
-  if (!bucketData && !bucketError) {
-    // Create pet photos bucket
-    const { error } = await supabase.storage.createBucket(BUCKET_NAMES.PET_PHOTOS, {
-      public: false, // Private by default
-      fileSizeLimit: 10485760, // 10MB limit
-      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'], 
-    });
-    
-    if (error) {
-      console.error('Error creating pet photos bucket:', error);
-      throw error;
-    }
-    
-    console.log(`Created ${BUCKET_NAMES.PET_PHOTOS} bucket`);
-  }
-  
-  // Create avatars bucket if it doesn't exist
-  const { data: avatarBucketData, error: avatarBucketError } = await supabase.storage.getBucket(BUCKET_NAMES.USER_AVATARS);
-  
-  if (!avatarBucketData && !avatarBucketError) {
-    // Create avatars bucket
-    const { error } = await supabase.storage.createBucket(BUCKET_NAMES.USER_AVATARS, {
-      public: true, // Public for avatar access
-      fileSizeLimit: 5242880, // 5MB limit
-      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
-    });
-    
-    if (error) {
-      console.error('Error creating avatars bucket:', error);
-      throw error;
-    }
-    
-    console.log(`Created ${BUCKET_NAMES.USER_AVATARS} bucket`);
-  }
-  
-  return { message: 'Storage buckets initialized successfully' };
+  validationWarnings?: string[];
+  dimensions?: { 
+    width: number; 
+    height: number; 
+  };
+  quality?: { 
+    tooDark?: boolean;
+    tooBlurry?: boolean;
+    lowResolution?: boolean;
+    score?: number; // Overall quality score 0-100
+  };
+  validationStatus?: 'passed' | 'warning' | 'failed';
+  processingHistory?: {
+    cropped?: boolean;
+    enhanced?: boolean;
+    timestamp: string;
+  }[];
 }
 
 /**
@@ -229,7 +204,7 @@ export async function listFiles(
     .list(folderPath, {
       limit: options?.limit || 100,
       offset: options?.offset || 0,
-      sortBy: options?.sortBy,
+      sortBy: options?.sortBy
     });
   
   if (error) {
@@ -241,9 +216,44 @@ export async function listFiles(
 }
 
 /**
- * Delete a file from storage
+ * Update metadata for a file
  * @param bucketName Bucket name
- * @param filePath Path within the bucket or array of paths
+ * @param filePath Path within the bucket
+ * @param metadata Metadata to update
+ */
+export async function updateFileMetadata(
+  bucketName: string,
+  filePath: string,
+  metadata: Partial<FileMetadata>
+): Promise<void> {
+  const supabase = createClientComponentClient<Database>();
+  
+  // Approach: Re-upload the file with updated metadata
+  // First, download the file
+  const fileData = await downloadFile(bucketName, filePath);
+  
+  // Convert fileData to File object
+  const file = new File([fileData], filePath.split('/').pop() || 'file', {
+    type: fileData.type,
+  });
+  
+  // Get existing metadata
+  const existingMetadata = await getFileMetadata(bucketName, filePath);
+  
+  // Merge existing and new metadata
+  const updatedMetadata = {
+    ...existingMetadata,
+    ...metadata,
+  };
+  
+  // Re-upload with updated metadata
+  await uploadFileWithMetadata(bucketName, filePath, file, updatedMetadata);
+}
+
+/**
+ * Delete file(s) from storage
+ * @param bucketName Bucket name
+ * @param filePath Path(s) within the bucket
  */
 export async function deleteFiles(bucketName: string, filePath: string | string[]): Promise<void> {
   const supabase = createClientComponentClient<Database>();

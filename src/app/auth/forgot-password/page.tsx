@@ -1,18 +1,17 @@
+'use client';
+
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
-import { Suspense } from 'react';
+import { AnimatedAuthContainer } from '@/components/auth/AnimatedAuthContainer';
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <h1 className="mb-8 text-center text-3xl font-bold">Reset Password</h1>
-        <p className="mb-6 text-center text-muted-foreground">
-          Enter your email address and we&apos;ll send you a link to reset your password.
-        </p>
-        <Suspense fallback={<div>Loading form...</div>}>
-          <ForgotPasswordForm />
-        </Suspense>
-      </div>
-    </div>
+    <main className="container flex min-h-[calc(100vh-64px)] flex-col items-center justify-center py-10">
+      <AnimatedAuthContainer 
+        title="Reset Password" 
+        description="Enter your email address and we'll send you a link to reset your password"
+      >
+        <ForgotPasswordForm />
+      </AnimatedAuthContainer>
+    </main>
   );
 } 

@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from "@/components/ui/badge";
+import { SliderControl } from "@/components/customization/_subcomponents/SliderControl";
+import { StyleSelector } from "@/components/customization/StyleSelector";
+import { BackgroundSelector } from "@/components/customization/BackgroundSelector";
+import { AccessorySelector } from "@/components/customization/AccessorySelector";
+import { BackgroundOption, BackgroundType } from "@/types/customization";
+import { Accessory, Style } from "@/types/customization";
 
 interface RevisionHistoryProps {
   originalPortraitId: string;
@@ -52,6 +58,29 @@ export function RevisionHistory({ originalPortraitId, userId }: RevisionHistoryP
     // State for comparison
     const [compareItem1, setCompareItem1] = useState<PortraitData | RevisionData | null>(null);
     const [compareItem2, setCompareItem2] = useState<RevisionData | null>(null);
+    // New: State for comparison mode
+    const [compareMode, setCompareMode] = useState<'slider' | 'side-by-side' | 'pixel-diff'>('slider');
+    // Example: local state for all main parameters (in real app, use context or backend)
+    const [styleId, setStyleId] = useState<string | null>(null);
+    const [background, setBackground] = useState<{ type: BackgroundType; value: string } | null>(null);
+    const [accessories, setAccessories] = useState<string[]>([]);
+    const [styleIntensity, setStyleIntensity] = useState(50);
+    // Example: available options (in real app, fetch from backend or context)
+    const availableStyles: Style[] = [
+      { id: 'cartoon', name: 'Cartoon' },
+      { id: 'watercolor', name: 'Watercolor' },
+      { id: 'oil', name: 'Oil Painting' },
+    ];
+    const availableAccessories: Accessory[] = [
+      { id: 'hat', name: 'Hat', thumbnailUrl: '', category: 'hats' },
+      { id: 'glasses', name: 'Glasses', thumbnailUrl: '', category: 'glasses' },
+      { id: 'bowtie', name: 'Bowtie', thumbnailUrl: '', category: 'collars' },
+    ];
+    const availableBackgrounds: BackgroundOption[] = [
+      { id: 'solid', name: 'Solid Color', type: 'color', value: '#FFFFFF' },
+      { id: 'nature', name: 'Nature', type: 'scene', value: 'nature-scene' },
+      { id: 'abstract', name: 'Abstract', type: 'pattern', value: 'abstract-pattern' },
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -68,7 +97,7 @@ export function RevisionHistory({ originalPortraitId, userId }: RevisionHistoryP
                 }
                 
                 setOriginal(originalData as unknown as PortraitData);
-                setRevisions(revisionsData || []);
+                setRevisions((revisionsData || []) as unknown as RevisionData[]);
                 
                 // Set initial comparison state (e.g., original vs latest revision)
                 setCompareItem1(originalData as unknown as PortraitData);
@@ -119,18 +148,81 @@ export function RevisionHistory({ originalPortraitId, userId }: RevisionHistoryP
                     <CardTitle>Compare Versions</CardTitle>
                 </CardHeader>
                 <CardContent>
+                    {/* Mode Toggle UI */}
+                    <div className="flex gap-2 mb-4 justify-center">
+                        <Button
+                            size="sm"
+                            variant={compareMode === 'slider' ? 'default' : 'outline'}
+                            aria-pressed={compareMode === 'slider'}
+                            onClick={() => setCompareMode('slider')}
+                        >
+                            Slider
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant={compareMode === 'side-by-side' ? 'default' : 'outline'}
+                            aria-pressed={compareMode === 'side-by-side'}
+                            onClick={() => setCompareMode('side-by-side')}
+                        >
+                            Side-by-Side
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant={compareMode === 'pixel-diff' ? 'default' : 'outline'}
+                            aria-pressed={compareMode === 'pixel-diff'}
+                            onClick={() => setCompareMode('pixel-diff')}
+                        >
+                            Pixel Diff
+                        </Button>
+                    </div>
                     {imageUrl1 && imageUrl2 ? (
                         <RevisionComparer 
                             imageUrl1={imageUrl1}
                             label1={compareItem1 ? getVersionLabel(compareItem1, allVersions.indexOf(compareItem1)) : 'Version 1'}
                             imageUrl2={imageUrl2}
                             label2={compareItem2 ? getVersionLabel(compareItem2, allVersions.indexOf(compareItem2)) : 'Version 2'}
+                            mode={compareMode}
                         />
                     ) : (
                         <div className="text-center text-muted-foreground py-8">
                             Select two versions below to compare.
                         </div>
                     )}
+                    {/* Adjustment Controls */}
+                    <div className="mt-8 space-y-6">
+                        <h3 className="text-base font-semibold mb-2">Adjust Parameters</h3>
+                        <div className="space-y-4">
+                          <StyleSelector
+                            availableStyles={availableStyles}
+                            selectedStyleId={styleId}
+                            onStyleSelect={setStyleId}
+                            loading={false}
+                          />
+                          <BackgroundSelector
+                            selectedBackground={background}
+                            onBackgroundSelect={(bg) => setBackground(bg)}
+                            loading={false}
+                            availableBackgrounds={availableBackgrounds}
+                          />
+                          <AccessorySelector
+                            availableAccessories={availableAccessories}
+                            selectedAccessoryIds={accessories}
+                            onAccessoryToggle={(id) => setAccessories((prev) => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id])}
+                            loading={false}
+                          />
+                          <SliderControl
+                            id="style-intensity-revision"
+                            label="Style Intensity"
+                            value={styleIntensity}
+                            min={0}
+                            max={100}
+                            step={1}
+                            onChange={setStyleIntensity}
+                            valueLabel={(v) => `${v}%`}
+                            helpText="Adjust how strongly the selected style is applied."
+                          />
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
 

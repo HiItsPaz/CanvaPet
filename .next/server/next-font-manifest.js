@@ -1,1 +1,1 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{},\"appUsingSizeAdjust\":false,\"pagesUsingSizeAdjust\":false}"
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/pazgruberg/Documents/GitHub/CanvaPet/src/app/layout\":[\"static/media/05f970ec0bd776d8-s.p.woff2\",\"static/media/a34f9d1faa5f3315-s.p.woff2\",\"static/media/4f05ba3a6752a328-s.p.woff2\",\"static/media/3d9ea938b6afa941-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

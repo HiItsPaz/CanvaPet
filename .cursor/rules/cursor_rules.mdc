@@ -3,11 +3,6 @@ description: Guidelines for creating and maintaining Cursor rules to ensure cons
 globs: .cursor/rules/*.mdc
 alwaysApply: true
 ---
----
-description: Clear, one-line description of what the rule enforces
-globs: path/to/files/*.ext, other/path/**/*
-alwaysApply: boolean
----
 
 - **Required Rule Structure:**
   ```markdown

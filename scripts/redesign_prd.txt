@@ -1,0 +1,125 @@
+# CanvaPet Web Application Redesign PRD
+
+## Project Overview
+This PRD outlines the requirements for restructuring, redesigning, and refactoring the CanvaPet web application based on the specifications in the Design.md file. The goal is to deliver a polished, professional webapp that meets modern design standards and user experience expectations.
+
+## Redesign Objectives
+- Create a visually cohesive application with consistent design language
+- Implement responsive layouts across all device sizes
+- Optimize performance and user experience
+- Restructure codebase for better maintainability
+- Preserve existing functionality while improving UI/UX
+
+## Design System
+### Brand Identity
+- Primary color: #4A7CFF (Blue)
+- Secondary color: #FF7D54 (Coral)
+- Accent color: #FFD166 (Yellow)
+- Neutrals: #F9F9F9 (Light Gray), #EEEEEE (Mid Gray), #666666 (Dark Gray)
+
+### Typography
+- Headings: Montserrat (Sans-serif) with specific size hierarchy
+- Body Text: Open Sans (Sans-serif) with specific size hierarchy
+- Accent Text: Caveat (Handwritten) for personal touches
+
+### Component System
+- Button system (Primary, Secondary, Tertiary) with consistent styling
+- Form controls with proper focus states and accessibility
+- Card components with consistent styling and interactions
+- Navigation components optimized for different device sizes
+- Custom pet-themed iconography
+
+## Core Pages to Redesign
+
+### 1. Landing/Home Page (Priority: High)
+- Hero section showcasing pet portraits with clear value proposition
+- How It Works section with 3-step visualization
+- Gallery showcase with rotating carousel
+- Testimonials with customer photos
+- Pricing section with feature comparison
+- FAQ accordion with expandable sections
+
+### 2. Pet Upload & Creation (Priority: High)
+- Step indicator showing progress
+- Upload area with drag & drop functionality
+- Photo guidelines with examples
+- Preview & crop functionality with controls
+
+### 3. Pet Customization Interface (Priority: High)
+- Style selection grid with preview thumbnails
+- Customization controls in categorized sidebar
+- Background selection with color picker and patterns
+- Advanced controls for detailed adjustments
+
+### 4. Processing & Preview Screen (Priority: Medium)
+- Loading state with pet-themed animation
+- Progress bar with percentage
+- Preview display with zoom capability
+- Action panel with download/share options
+
+### 5. User Gallery/Dashboard (Priority: Medium)
+- Gallery grid with filtering and sorting options
+- List/grid toggle for different views
+- Pet profile cards with quick actions
+- Empty state with CTA for first creation
+
+### 6. Merchandise Store (Priority: Medium)
+- Category navigation with visual indicators
+- Product grid with clear pricing
+- Product detail with variants
+- Pet image placement interface with interactive controls
+
+### 7. Checkout Process (Priority: Medium)
+- Cart review with edit options
+- Checkout form with appropriate sections
+- Order confirmation with next steps
+
+### 8. Portrait Revision Interface (Priority: Low)
+- Current portrait display with revision counter
+- Adjustment controls for style modifications
+- Version comparison with side-by-side view
+
+### 9. Authentication Screens (Priority: High)
+- Sign-in form with social options
+- Registration form with validation
+- Password reset flow
+- Account settings
+
+## Responsive Design Requirements
+- Mobile design (320px-767px) with single column layouts
+- Tablet design (768px-1023px) with adaptive layouts
+- Desktop design (1024px+) with optimal use of space
+
+## Animation & Transition Requirements
+- Loading state animations with pet theme
+- Page transitions with appropriate timing
+- Micro-interactions for buttons and controls
+- Customization interactions with smooth transitions
+
+## Accessibility Requirements
+- WCAG 2.1 AA compliance for all components
+- Proper color contrast for text and UI elements
+- Keyboard navigation support
+- Screen reader support with ARIA attributes
+
+## Development Priorities
+1. Core visual design system implementation
+2. Landing page and authentication screens
+3. Pet upload and customization flows
+4. User gallery and account management
+5. Merchandise store and checkout
+6. Revision interface and additional enhancements
+
+## Technical Implementation
+- Implement design tokens for consistent styling
+- Create reusable components with proper documentation
+- Optimize assets for performance
+- Implement responsive patterns with mobile-first approach
+- Use proper state management for complex interactions
+
+## Success Criteria
+- All redesigned pages match the specifications in Design.md
+- Application is responsive across all device sizes
+- All components meet accessibility requirements
+- Performance metrics meet or exceed industry standards
+- Codebase is well-structured and maintainable 

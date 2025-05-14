@@ -18,9 +18,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2, Terminal } from "lucide-react";
+import { CheckCircle, User, AlertCircle, Loader2, ScrollText, Save } from "lucide-react";
 import { updateProfile } from '@/lib/profile';
 import { Profile, ProfileFormData } from '@/types/profile';
+import { Icon } from '@/components/ui/icon';
+import { 
+  FormInputValidation, 
+  ValidationState,
+  useValidationState
+} from '@/components/ui/form-validation-icons';
 
 // Form validation schema
 const profileFormSchema = z.object({
@@ -37,6 +43,38 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // For real-time validation as user types
+  const [displayName, setDisplayName] = useState(profile?.display_name || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+
+  // Display name validation
+  const displayNameValidation = useValidationState(
+    displayName,
+    {
+      valid: (value) => value.length > 0 && value.length <= 50,
+      invalid: (value) => value.length === 0 || value.length > 50,
+    },
+    {
+      valid: 'Valid display name',
+      invalid: 'Display name must be between 1 and 50 characters',
+    }
+  );
+
+  // Bio validation
+  const bioValidation = useValidationState(
+    bio || '',
+    {
+      valid: (value) => value.length <= 300,
+      invalid: (value) => value.length > 300,
+      warning: (value) => value.length > 250 && value.length <= 300,
+    },
+    {
+      valid: 'Bio length is acceptable',
+      invalid: 'Bio exceeds 300 characters',
+      warning: 'Approaching maximum bio length',
+    }
+  );
 
   // Set up form with initial values from the profile
   const form = useForm<ProfileFormData>({
@@ -70,7 +108,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {success && (
           <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-900">
-            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <Icon icon={CheckCircle} size="sm" className="text-green-600 dark:text-green-400 mr-2" />
             <AlertTitle className="text-green-800 dark:text-green-300">Profile Updated</AlertTitle>
             <AlertDescription className="text-green-700 dark:text-green-400">
               Your profile information has been updated successfully.
@@ -80,7 +118,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
         {error && (
           <Alert variant="destructive">
-            <Terminal className="h-4 w-4" />
+            <Icon icon={AlertCircle} size="sm" className="mr-2" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -91,9 +129,29 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           name="display_name"
           render={({ field }: { field: ControllerRenderProps<ProfileFormData, 'display_name'> }) => (
             <FormItem>
-              <FormLabel>Display Name</FormLabel>
+              <FormLabel>
+                <div className="flex items-center gap-2">
+                  <Icon icon={User} size="sm" />
+                  <span>Display Name</span>
+                </div>
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <Icon icon={User} size="sm" />
+                  </span>
+                  <FormInputValidation state={displayNameValidation.state} message={displayNameValidation.message}>
+                    <Input 
+                      className="pl-10 pr-10" 
+                      placeholder="Your name" 
+                      {...field} 
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setDisplayName(e.target.value);
+                      }}
+                    />
+                  </FormInputValidation>
+                </div>
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -108,25 +166,57 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           name="bio"
           render={({ field }: { field: ControllerRenderProps<ProfileFormData, 'bio'> }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>
+                <div className="flex items-center gap-2">
+                  <Icon icon={ScrollText} size="sm" />
+                  <span>Bio</span>
+                </div>
+              </FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Tell us a bit about yourself"
-                  {...field}
-                  value={field.value || ''}
-                  className="resize-none h-24"
-                />
+                <div className="relative">
+                  <FormInputValidation state={bioValidation.state} message={bioValidation.message}>
+                    <Textarea 
+                      placeholder="Tell us a bit about yourself"
+                      {...field}
+                      value={field.value || ''}
+                      className="resize-none h-24"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setBio(e.target.value);
+                      }}
+                    />
+                  </FormInputValidation>
+                </div>
               </FormControl>
               <FormDescription>
                 A brief description about yourself (max 300 characters).
+                {bio && (
+                  <span className={bioValidation.state === 'warning' || bioValidation.state === 'invalid' ? 'text-warning' : ''}>
+                    {` ${bio.length}/300 characters`}
+                  </span>
+                )}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Saving...' : 'Save Changes'}
+        <Button 
+          type="submit" 
+          disabled={loading || displayNameValidation.state === 'invalid' || bioValidation.state === 'invalid'}
+          className="flex items-center gap-2"
+        >
+          {loading ? (
+            <>
+              <Icon icon={Loader2} size="sm" className="animate-spin" />
+              <span>Saving...</span>
+            </>
+          ) : (
+            <>
+              <Icon icon={Save} size="sm" />
+              <span>Save Changes</span>
+            </>
+          )}
         </Button>
       </form>
     </Form>

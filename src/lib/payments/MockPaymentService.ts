@@ -55,7 +55,7 @@ export class MockPaymentService implements PaymentService {
       currency: params.currency,
       orderId: params.orderId,
       userId: params.userId,
-      metadata: params.metadata,
+      metadata: params.metadata || {},
       created: Math.floor(Date.now() / 1000),
     };
 
@@ -134,7 +134,7 @@ export class MockPaymentService implements PaymentService {
          await supabase
           .from('portraits') 
           .update({ is_purchased: true })
-          .in('id', (intent.metadata?.portraitIds as string[]) || []); 
+          .in('id', ((intent.metadata || {}) as any).portraitIds || []); 
       }
 
     } catch (dbError) {
@@ -219,14 +219,14 @@ export class MockPaymentService implements PaymentService {
     return intent;
   }
 
-  async handleWebhook(payload: MockWebhookPayload): Promise<void> {
+  async handleWebhook(payload: Record<string, unknown>, signature?: string): Promise<void> {
     await delay(MOCK_API_DELAY_MS / 2);
-    console.log('[MockPaymentService] Received mock webhook:', payload);
-    // In a real scenario, verify signature and process event type
-    // For mock, we can assume it's a payment_intent.succeeded or similar
+    console.log('[MockPaymentService] Received mock webhook:', payload, signature ? `Signature: ${signature}` : 'No signature');
     
-    const eventType = payload.type;
-    const paymentIntent = payload.data?.object as PaymentIntent;
+    // Type assertion to use our expected format while maintaining interface compatibility
+    const typedPayload = payload as unknown as MockWebhookPayload;
+    const eventType = typedPayload.type;
+    const paymentIntent = typedPayload.data?.object as PaymentIntent;
 
     if (!paymentIntent || !paymentIntent.id) {
         console.warn('[MockPaymentService] Webhook received without valid payment intent data.');
@@ -250,7 +250,7 @@ export class MockPaymentService implements PaymentService {
         await supabase
           .from('portraits') 
           .update({ is_purchased: true })
-          .in('id', (internalIntent.metadata?.portraitIds as string[]) || []); 
+          .in('id', ((internalIntent.metadata || {}) as any).portraitIds || []); 
 
         mockPaymentIntents[paymentIntent.id].status = 'succeeded';
       } catch (dbError) {

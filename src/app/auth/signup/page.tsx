@@ -1,15 +1,17 @@
+'use client';
+
 import { SignUpForm } from '@/components/auth/SignUpForm';
-import { Suspense } from 'react';
+import { AnimatedAuthContainer } from '@/components/auth/AnimatedAuthContainer';
 
 export default function SignUpPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <h1 className="mb-8 text-center text-3xl font-bold">Create Account</h1>
-        <Suspense fallback={<div>Loading form...</div>}>
-          <SignUpForm />
-        </Suspense>
-      </div>
-    </div>
+    <main className="container flex min-h-[calc(100vh-64px)] flex-col items-center justify-center py-10">
+      <AnimatedAuthContainer 
+        title="Create an Account" 
+        description="Sign up to get started with CanvaPet"
+      >
+        <SignUpForm />
+      </AnimatedAuthContainer>
+    </main>
   );
 } 

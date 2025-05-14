@@ -7,11 +7,11 @@
 const getRequiredEnvVar = (key: string): string => {
     const value = process.env[key];
     if (!value) {
-      // Log clearly in development
+      // Warn in development
       if (process.env.NODE_ENV === 'development') {
-        console.error(`Missing required Printify environment variable: ${key}. Please add it to your .env.local file.`);
+        console.warn(`Missing required Printify environment variable: ${key}. Using default empty string.`);
       }
-      throw new Error(`Missing required environment variable: ${key}`);
+      return '';
     }
     return value;
 };

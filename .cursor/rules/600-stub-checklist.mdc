@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Integration Stub Future Tasks Checklist Reminder
+
+Whenever you modify `.env.local` or any configuration file (e.g., `src/**/*config.ts`) to stub or fallback environment variables, API keys, or settings:
+
+- Review and update [`docs/checklist/future-tasks.md`](mdc:../docs/checklist/future-tasks.md).
+- Ensure all generic checklist items are addressed (e.g., replace dummy keys, remove stub logic, add integration tests).
+- Remove this stub and restore strict validation for real production credentials.
+
+This rule helps track outstanding cleanup tasks and prevents forgetting to swap dummy values for real credentials before deployment.

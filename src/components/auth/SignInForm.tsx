@@ -18,7 +18,16 @@ import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { Mail, Lock, AlertCircle, LogIn, Loader2 } from "lucide-react";
+import { Icon } from '@/components/ui/icon';
+import { 
+  FormInputValidation, 
+  ValidationState,
+  useValidationState,
+  ValidationMessage
+} from '@/components/ui/form-validation-icons';
+import { SocialLogin } from './SocialLogin';
+import { AuthTransition, AuthFormTransition } from './AuthTransition';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -28,9 +37,39 @@ const formSchema = z.object({
 type SignInFormValues = z.infer<typeof formSchema>;
 
 export function SignInForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  
+  // For real-time validation as user types
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Email validation
+  const emailValidation = useValidationState(
+    email,
+    {
+      valid: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+      invalid: (value) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+    },
+    {
+      valid: 'Valid email format',
+      invalid: 'Invalid email format',
+    }
+  );
+
+  // Password validation - just check if it's not empty
+  const passwordValidation = useValidationState(
+    password,
+    {
+      valid: (value) => value.length > 0,
+      invalid: (value) => value.length === 0,
+    },
+    {
+      valid: 'Password provided',
+      invalid: 'Password is required',
+    }
+  );
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(formSchema),
@@ -64,63 +103,139 @@ export function SignInForm() {
     } else {
       // Successful login
       // Supabase client handles session. Redirect to a protected route.
-      // For now, let's assume a dashboard page, replace with your actual route
       router.push('/dashboard'); 
-      // router.refresh(); // To ensure server components re-render with new auth state if needed
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {error && (
-           <Alert variant="destructive">
-             <Terminal className="h-4 w-4" />
-             <AlertTitle>Error</AlertTitle>
-             <AlertDescription>{error}</AlertDescription>
-           </Alert>
-        )}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }: { field: ControllerRenderProps<SignInFormValues, 'email'> }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="you@example.com" {...field} autoComplete="email" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }: { field: ControllerRenderProps<SignInFormValues, 'password'> }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="********" {...field} autoComplete="current-password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="text-sm">
-          <Link href="/auth/forgot-password" className="font-medium text-primary hover:underline">
-            Forgot your password?
-          </Link>
-        </div>
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? 'Signing In...' : 'Sign In'}
-        </Button>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/signup" className="font-medium text-primary hover:underline">
-            Sign Up
-          </Link>
-        </div>
-      </form>
-    </Form>
+    <AuthFormTransition>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <AuthTransition show={!!error} type="slideUp">
+            <Alert variant="destructive" className="mb-6">
+              <Icon icon={AlertCircle} size="sm" className="mr-2" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </AuthTransition>
+
+          <div className="space-y-4">
+            {/* Email Field */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        <Icon icon={Mail} size="sm" />
+                      </span>
+                      <FormInputValidation state={emailValidation.state} message={emailValidation.message}>
+                        <Input 
+                          className="pl-10 pr-10" 
+                          placeholder="you@example.com" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setEmail(e.target.value);
+                          }}
+                        />
+                      </FormInputValidation>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <ValidationMessage 
+              state={emailValidation.state}
+              message={emailValidation.message}
+            />
+
+            {/* Password Field */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex justify-between items-center">
+                    <FormLabel>Password</FormLabel>
+                    <Link href="/auth/forgot-password" className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        <Icon icon={Lock} size="sm" />
+                      </span>
+                      <FormInputValidation state={passwordValidation.state} message={passwordValidation.message}>
+                        <Input 
+                          className="pl-10 pr-10" 
+                          type="password" 
+                          placeholder="••••••••" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setPassword(e.target.value);
+                          }}
+                        />
+                      </FormInputValidation>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <ValidationMessage 
+              state={passwordValidation.state}
+              message={passwordValidation.message}
+            />
+          </div>
+
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Icon icon={Loader2} size="sm" className="mr-2 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                <Icon icon={LogIn} size="sm" className="mr-2" />
+                Sign In
+              </>
+            )}
+          </Button>
+          
+          <div className="mt-4 text-center">
+            <p className="text-sm">
+              Don't have an account?{" "}
+              <Link href="/auth/signup" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                Sign Up
+              </Link>
+            </p>
+          </div>
+          
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+          
+          <SocialLogin />
+        </form>
+      </Form>
+    </AuthFormTransition>
   );
 } 

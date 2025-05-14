@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Local vs Production Environment Guidelines
+
+## Environment Variables
+
+- **Structure**
+  - `.env.local` for development variables (never commit)
+  - `.env.example` for documentation (safe to commit)
+  - `.env.test` for testing environment
+
+- **Variable Naming**
+  ```
+  # ✅ DO: Use clear prefixes
+  NEXT_PUBLIC_API_URL=https://api.example.com
+  SUPABASE_SERVICE_KEY=your-service-key
+  
+  # ❌ DON'T: Use generic names
+  URL=https://api.example.com
+  KEY=your-key
+  ```
+
+## Feature Flags
+
+- **Implementation**
+  ```typescript
+  // ✅ DO: Use environment-based feature flags
+  const isFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_X === 'true';
+  
+  // ❌ DON'T: Hardcode environment checks
+  const isFeatureEnabled = process.env.NODE_ENV === 'development';
+  ```
+
+## API Endpoints
+
+- **Configuration**
+  ```typescript
+  // ✅ DO: Use environment variables for API endpoints
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  
+  // ❌ DON'T: Hardcode URLs
+  const apiUrl = 'https://api.example.com';
+  ```
+
+## Testing
+
+- **Environment-Specific Tests**
+  ```typescript
+  // ✅ DO: Skip certain tests in specific environments
+  if (process.env.NODE_ENV !== 'test') {
+    // Skip this test
+  }
+  ```
+
+See [400-supabase.mdc](mdc:.cursor/rules/400-supabase.mdc) for Supabase-specific environment guidelines.

@@ -7,12 +7,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserPets } from "@/lib/petApi";
 import { Pet } from "@/types/pet";
-import { Loader2, AlertCircle, PlusCircle, Dog, Cat, Bird } from "lucide-react";
-import Link from "next/link";
+import { PlusCircle, Dog, Cat, Bird } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { ContentLoader } from "@/components/ui/content-loader";
+import { AnimatedLink } from "@/components/ui/animated-link";
+import { MicroInteraction } from "@/components/ui/animation-library";
+import { SectionTransition } from "@/components/ui/section-transition";
+import { AnimatedButton } from "@/components/ui/animated-button";
 
 // Helper function to get a relevant icon based on species
 const getPetIcon = (species: string | null) => {
@@ -107,123 +111,145 @@ export default function PetsOverviewPage() {
   }, [pets]);
 
   if (authLoading) {
-    return <div className="flex justify-center items-center min-h-[400px]"><Loader2 className="h-8 w-8 animate-spin"/></div>;
+    return (
+      <ContentLoader 
+        isLoading={true} 
+        variant="pet" 
+        loadingText="Checking authentication..."
+        className="min-h-[400px]"
+      >
+        <div />
+      </ContentLoader>
+    );
   }
 
   if (!user) {
     return (
       <div className="container mx-auto py-8 px-4 md:px-6 text-center">
-        <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
-        <h1 className="text-2xl font-bold mb-2">Please Log In</h1>
-        <p className="text-muted-foreground mb-6">You need to be logged in to view your pets.</p>
-        <Link href="/auth/signin?redirect=/pets" passHref>
-          <Button>Log In</Button>
-        </Link>
+        <AnimatedLink href="/auth/signin?redirect=/pets">
+          <AnimatedButton animationPreset="glow">Log In</AnimatedButton>
+        </AnimatedLink>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold">Your Pets</h1>
-        <Link href="/pets/new" passHref>
-          <Button>
-            <PlusCircle className="h-4 w-4 mr-2" /> Add New Pet
-          </Button>
-        </Link>
-      </div>
-
-      {/* Filter/Sort Controls */} 
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <Input 
-          placeholder="Search by name or breed..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
-        <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Type..." />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            {petTypes.map(type => (
-              <SelectItem key={type} value={type}>{type}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by..." />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="name_asc">Name (A-Z)</SelectItem>
-            <SelectItem value="name_desc">Name (Z-A)</SelectItem>
-            <SelectItem value="age_asc">Age (Youngest First)</SelectItem>
-            <SelectItem value="age_desc">Age (Oldest First)</SelectItem>
-            <SelectItem value="recent">Date Added (Newest)</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Pet List/Grid */} 
-      {loading ? (
-        <div className="flex justify-center items-center min-h-[200px]"><Loader2 className="h-8 w-8 animate-spin"/></div>
-      ) : error ? (
-        <div className="text-center text-destructive p-4"><AlertCircle className="mx-auto h-6 w-6 mb-1"/>{error}</div>
-      ) : filteredAndSortedPets.length === 0 ? (
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">
-              {pets.length === 0 ? "You haven't added any pets yet." : "No pets found matching your filters."}
-            </p>
-            {pets.length === 0 && (
-              <div className="text-center mt-4">
-                <Link href="/pets/new" passHref>
-                  <Button>Add Your First Pet</Button>
-                </Link>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredAndSortedPets.map((pet) => (
-            <Card key={pet.id} className="overflow-hidden">
-              <Link href={`/pets/${pet.id}`} passHref legacyBehavior>
-                <a className="block hover:opacity-90 transition-opacity">
-                  <CardContent className="p-0">
-                    <AspectRatio ratio={1 / 1}>
-                      <Image
-                        src={pet.original_image_url || '/placeholder-pet.png'} // Use placeholder
-                        alt={pet.name || 'Pet'}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        unoptimized // if using external URLs
-                      />
-                    </AspectRatio>
-                  </CardContent>
-                </a>
-              </Link>
-              <CardHeader className="p-4">
-                <CardTitle className="text-lg truncate">{pet.name || 'Unnamed Pet'}</CardTitle>
-                <CardDescription className="text-sm flex items-center">
-                  {getPetIcon(pet.species)} 
-                  {pet.species || 'Unknown Type'}{pet.breed ? `, ${pet.breed}` : ''}
-                </CardDescription>
-              </CardHeader>
-              <CardFooter className="p-4 pt-0">
-                <Link href={`/pets/${pet.id}/edit`} passHref legacyBehavior>
-                  <Button variant="outline" size="sm" className="w-full">Edit</Button>
-                </Link>
-                {/* Add Delete button later */} 
-              </CardFooter>
-            </Card>
-          ))}
+      <SectionTransition direction="down" duration={0.4}>
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+          <h1 className="text-3xl font-bold">Your Pets</h1>
+          <AnimatedLink href="/pets/new" hoverEffect="none">
+            <AnimatedButton animationPreset="lift">
+              <PlusCircle className="h-4 w-4 mr-2" /> Add New Pet
+            </AnimatedButton>
+          </AnimatedLink>
         </div>
-      )}
+      </SectionTransition>
+
+      <SectionTransition direction="left" duration={0.4} delay={0.1}>
+        {/* Filter/Sort Controls */} 
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          <Input 
+            placeholder="Search by name or breed..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-sm"
+          />
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by Type..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              {petTypes.map(type => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name_asc">Name (A-Z)</SelectItem>
+              <SelectItem value="name_desc">Name (Z-A)</SelectItem>
+              <SelectItem value="age_asc">Age (Youngest First)</SelectItem>
+              <SelectItem value="age_desc">Age (Oldest First)</SelectItem>
+              <SelectItem value="recent">Date Added (Newest)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </SectionTransition>
+
+      <SectionTransition direction="up" duration={0.4} delay={0.2}>
+        {/* Pet List/Grid */} 
+        <ContentLoader isLoading={loading} variant="pet" loadingText="Loading your pets..." className="min-h-[200px]">
+          {error ? (
+            <div className="text-center text-destructive p-4">{error}</div>
+          ) : filteredAndSortedPets.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-center text-muted-foreground">
+                  {pets.length === 0 ? "You haven't added any pets yet." : "No pets found matching your filters."}
+                </p>
+                {pets.length === 0 && (
+                  <div className="text-center mt-4">
+                    <AnimatedLink href="/pets/new" hoverEffect="none">
+                      <AnimatedButton animationPreset="pulse" continuous={true}>
+                        Add Your First Pet
+                      </AnimatedButton>
+                    </AnimatedLink>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredAndSortedPets.map((pet, index) => (
+                <MicroInteraction key={pet.id} variant="hover" hoverPreset="hoverScale">
+                  <SectionTransition 
+                    direction="up" 
+                    duration={0.3} 
+                    delay={0.05 * index} 
+                    animateOnScroll={true}
+                  >
+                    <Card className="overflow-hidden">
+                      <AnimatedLink href={`/pets/${pet.id}`} hoverEffect="none" className="block">
+                        <CardContent className="p-0">
+                          <AspectRatio ratio={1 / 1}>
+                            <Image
+                              src={pet.original_image_url || '/placeholder-pet.png'} // Use placeholder
+                              alt={pet.name || 'Pet'}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              unoptimized // if using external URLs
+                            />
+                          </AspectRatio>
+                        </CardContent>
+                      </AnimatedLink>
+                      <CardHeader className="p-4">
+                        <CardTitle className="text-lg truncate">{pet.name || 'Unnamed Pet'}</CardTitle>
+                        <CardDescription className="text-sm flex items-center">
+                          {getPetIcon(pet.species)} 
+                          {pet.species || 'Unknown Type'}{pet.breed ? `, ${pet.breed}` : ''}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardFooter className="p-4 pt-0">
+                        <AnimatedLink href={`/pets/${pet.id}/edit`} hoverEffect="none" className="w-full">
+                          <AnimatedButton variant="outline" size="sm" className="w-full" animationPreset="lift">
+                            Edit
+                          </AnimatedButton>
+                        </AnimatedLink>
+                      </CardFooter>
+                    </Card>
+                  </SectionTransition>
+                </MicroInteraction>
+              ))}
+            </div>
+          )}
+        </ContentLoader>
+      </SectionTransition>
     </div>
   );
 } 

@@ -1,9 +1,39 @@
+export const dynamic = 'force-dynamic';
 import type { Metadata, Viewport } from "next";
-import { Inter, Montserrat } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Inter, Montserrat, Open_Sans, Caveat } from "next/font/google";
 import { Navigation } from "@/components/navigation";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { SkipLink } from "@/components/ui/skip-link";
+import { PageTransitionWrapper } from "@/components/ui/page-transition-wrapper";
+import { ClientProviders } from "@/components/client-providers";
 import "./globals.css";
+
+// Define a type for the metric object
+interface WebVitalsMetric {
+  id: string;
+  name: 'FCP' | 'LCP' | 'CLS' | 'FID' | 'TTFB' | 'INP'; // INP is the newer metric replacing FID
+  startTime: number;
+  value: number;
+  label: 'web-vital' | 'custom';
+  // Optional, specific to some metrics
+  attribution?: Record<string, unknown>; 
+  navigationType?: 'navigate' | 'reload' | 'back-forward';
+}
+
+// Function to report web vitals - can be defined in layout.tsx for App Router
+export function reportWebVitals(metric: WebVitalsMetric) {
+  // These metrics can be sent to any analytics service
+  console.log(metric);
+  // Example: Send to Google Analytics
+  // if (metric.label === 'web-vital') {
+  //   ga('send', 'event', {
+  //     eventCategory: 'Web Vitals',
+  //     eventAction: metric.name,
+  //     eventLabel: metric.id, // id unique to current page load
+  //     eventValue: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value), // values must be integers
+  //     nonInteraction: true, // avoids affecting bounce rate
+  //   });
+  // }
+}
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,24 +47,28 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-open-sans",
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "CanvaPet",
-  description: "Create beautiful portraits of your pets using AI",
-  authors: [{ name: "CanvaPet Team" }],
-  keywords: ["pet", "portrait", "AI", "art", "canvas", "pet portrait"],
+  title: "CanvaPet - Create Custom Pet Portraits",
+  description: "Create, customize and order unique AI-generated pet portraits and merchandise.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  minimumScale: 1,
   maximumScale: 5,
-  userScalable: true, // Allow users to zoom for accessibility
-  viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-  ],
+  userScalable: true, // Ensure users can zoom for accessibility
 };
 
 export default function RootLayout({
@@ -43,28 +77,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${montserrat.variable} font-sans antialiased min-h-full`}
+        className={`${inter.variable} ${montserrat.variable} ${openSans.variable} ${caveat.variable} font-sans`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <Navigation />
-              <main className="flex-1">{children}</main>
-              <footer className="py-6 border-t border-gray-200 dark:border-gray-800">
-                <div className="container mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                  &copy; {new Date().getFullYear()} CanvaPet. All rights reserved.
-                </div>
-              </footer>
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
+        {/* Temporarily commented out ClientProviders to debug hydration error */}
+        <ClientProviders>
+          <>
+            <SkipLink targetId="main-content" />
+            <Navigation />
+            <main id="main-content" tabIndex={-1}>
+              <PageTransitionWrapper>
+                {children}
+              </PageTransitionWrapper>
+            </main>
+          </>
+        </ClientProviders>
+        {/* </ClientProviders> */}
       </body>
     </html>
   );
